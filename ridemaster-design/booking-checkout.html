@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Tarifa Kite Week | RideMaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <style>
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-alt);
+      color: var(--color-text);
+      line-height: var(--line-height-normal);
+    }
+
+    /* Header */
+    .header {
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      height: var(--header-height);
+    }
+
+    .header-inner {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--font-size-lg);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .nav-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+    }
+
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2-5) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-lg {
+      padding: var(--space-4) var(--space-8);
+      font-size: var(--font-size-base);
+      border-radius: var(--radius-xl);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border-light);
+      padding: var(--space-4) 0;
+    }
+
+    .breadcrumb-inner {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    .breadcrumb-list {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-item a {
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+    }
+
+    .breadcrumb-item a:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb-separator {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Main Layout */
+    .main {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-6);
+    }
+
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--space-8);
+      align-items: start;
+    }
+
+    /* Form Sections */
+    .checkout-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .form-section {
+      background: var(--color-bg);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-card);
+    }
+
+    .section-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-5);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .section-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
+
+    /* Participant Box */
+    .participant-box {
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+
+    .participant-header {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-700);
+      margin-bottom: var(--space-4);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+    }
+
+    .form-label .required {
+      color: var(--color-error);
+    }
+
+    .form-input {
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-base);
+      background: var(--color-bg);
+      transition: var(--transition-all);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .form-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .form-input.prefilled {
+      background: var(--color-primary-50);
+      border-color: var(--color-primary-200);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .add-participant-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      transition: var(--transition-colors);
+    }
+
+    .add-participant-link:hover {
+      color: var(--color-primary-hover);
+    }
+
+    /* Insurance Info Box */
+    .info-box {
+      background: var(--color-primary-50);
+      border: 1px solid var(--color-primary-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .info-box-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-700);
+      margin-bottom: var(--space-2);
+    }
+
+    .info-box-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-primary-800);
+      line-height: var(--line-height-relaxed);
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 2px;
+      accent-color: var(--color-primary);
+    }
+
+    .checkbox-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .checkbox-label a {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+
+    .checkbox-label a:hover {
+      color: var(--color-primary-hover);
+    }
+
+    .affiliate-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-secondary-50);
+      border: 1px solid var(--color-secondary-200);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      color: var(--color-secondary-700);
+      transition: var(--transition-all);
+    }
+
+    .affiliate-link:hover {
+      background: var(--color-secondary-100);
+      border-color: var(--color-secondary-300);
+    }
+
+    /* Stripe Placeholder */
+    .stripe-placeholder {
+      background: var(--color-bg-alt);
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      text-align: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .stripe-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      color: #635BFF;
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-lg);
+      margin-bottom: var(--space-2);
+    }
+
+    .stripe-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .payment-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+
+    .payment-inputs .form-group:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .payment-icon {
+      position: absolute;
+      right: var(--space-3);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    /* Complete Booking Button */
+    .checkout-submit {
+      margin-top: var(--space-4);
+    }
+
+    .btn-complete {
+      width: 100%;
+      padding: var(--space-5) var(--space-8);
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-complete:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    /* Booking Summary Sidebar */
+    .booking-summary {
+      background: var(--color-bg);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-card);
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-8));
+    }
+
+    .summary-header {
+      display: flex;
+      gap: var(--space-4);
+      padding-bottom: var(--space-5);
+      border-bottom: 1px solid var(--color-border-light);
+      margin-bottom: var(--space-5);
+    }
+
+    .summary-image {
+      width: 100px;
+      height: 75px;
+      border-radius: var(--radius-lg);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .summary-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+    }
+
+    .summary-meta {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .summary-details {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding-bottom: var(--space-5);
+      border-bottom: 1px solid var(--color-border-light);
+      margin-bottom: var(--space-5);
+    }
+
+    .summary-detail {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .summary-detail-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
+
+    .summary-pricing {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding-bottom: var(--space-5);
+      border-bottom: 1px solid var(--color-border-light);
+      margin-bottom: var(--space-5);
+    }
+
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .pricing-row.included {
+      color: var(--color-success);
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-5);
+    }
+
+    .total-label {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .total-amount {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary-700);
+    }
+
+    .trust-badges {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .trust-badge-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-success);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-slate-900);
+      color: var(--color-text-inverse);
+      padding: var(--space-16) 0 var(--space-8);
+      margin-top: var(--space-16);
+    }
+
+    .footer-inner {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--space-12);
+      margin-bottom: var(--space-12);
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .footer-logo {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: white;
+    }
+
+    .footer-description {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .footer-column h4 {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: white;
+      margin-bottom: var(--space-4);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .footer-link {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-link:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      padding-top: var(--space-8);
+      border-top: 1px solid var(--color-slate-700);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copyright {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: var(--space-6);
+    }
+
+    .footer-legal a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-legal a:hover {
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .checkout-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-summary {
+        position: static;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .payment-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .payment-inputs .form-group:first-child {
+        grid-column: 1;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-8);
+      }
+
+      .nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+            <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+            <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+          </svg>
+        </div>
+        RideMaster
+      </a>
+      <nav class="nav">
+        <a href="spots.html" class="nav-link">Spots</a>
+        <a href="camps.html" class="nav-link">Camps</a>
+        <a href="coaches.html" class="nav-link">Coaches</a>
+        <a href="spots.html" class="nav-link">Spots</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-ghost">Sign In</button>
+        <button class="btn btn-primary">List Your Camp</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <div class="breadcrumb-inner">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </li>
+        <li class="breadcrumb-item"><a href="camps.html">Camps</a></li>
+        <li class="breadcrumb-separator">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </li>
+        <li class="breadcrumb-item"><a href="camp-detail.html">Tarifa Kite Week</a></li>
+        <li class="breadcrumb-separator">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </li>
+        <li class="breadcrumb-item breadcrumb-current">Checkout</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="checkout-layout">
+      <!-- Left Column - Form -->
+      <form class="checkout-form">
+        <!-- Section 1: Participant Details -->
+        <section class="form-section">
+          <h2 class="section-title">
+            <span class="section-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </span>
+            Participant Details
+          </h2>
+
+          <!-- Participant 1 -->
+          <div class="participant-box">
+            <div class="participant-header">Participant 1</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">First name <span class="required">*</span></label>
+                <input type="text" class="form-input" placeholder="Enter first name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last name <span class="required">*</span></label>
+                <input type="text" class="form-input" placeholder="Enter last name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date of birth <span class="required">*</span></label>
+                <input type="date" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nationality <span class="required">*</span></label>
+                <select class="form-input" required>
+                  <option value="">Select nationality</option>
+                  <option value="ES">Spain</option>
+                  <option value="FR">France</option>
+                  <option value="DE">Germany</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="US">United States</option>
+                  <option value="NL">Netherlands</option>
+                  <option value="IT">Italy</option>
+                  <option value="PT">Portugal</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Participant 2 -->
+          <div class="participant-box">
+            <div class="participant-header">Participant 2</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">First name <span class="required">*</span></label>
+                <input type="text" class="form-input" placeholder="Enter first name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last name <span class="required">*</span></label>
+                <input type="text" class="form-input" placeholder="Enter last name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date of birth <span class="required">*</span></label>
+                <input type="date" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nationality <span class="required">*</span></label>
+                <select class="form-input" required>
+                  <option value="">Select nationality</option>
+                  <option value="ES">Spain</option>
+                  <option value="FR">France</option>
+                  <option value="DE">Germany</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="US">United States</option>
+                  <option value="NL">Netherlands</option>
+                  <option value="IT">Italy</option>
+                  <option value="PT">Portugal</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <a href="#" class="add-participant-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            Add participant
+          </a>
+        </section>
+
+        <!-- Section 2: Contact Information -->
+        <section class="form-section">
+          <h2 class="section-title">
+            <span class="section-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </span>
+            Contact Information
+          </h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Email <span class="required">*</span></label>
+              <input type="email" class="form-input prefilled" value="john.doe@email.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone number <span class="required">*</span></label>
+              <input type="tel" class="form-input" placeholder="+34 600 000 000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Emergency contact name <span class="required">*</span></label>
+              <input type="text" class="form-input" placeholder="Full name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Emergency contact phone <span class="required">*</span></label>
+              <input type="tel" class="form-input" placeholder="+34 600 000 000" required>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Special Requests -->
+        <section class="form-section">
+          <h2 class="section-title">
+            <span class="section-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </span>
+            Special Requests
+          </h2>
+          <div class="form-group">
+            <label class="form-label">Dietary requirements, medical conditions, or other notes</label>
+            <textarea class="form-input form-textarea" placeholder="Please let us know about any dietary requirements, allergies, medical conditions, or other special requests that we should be aware of..."></textarea>
+          </div>
+        </section>
+
+        <!-- Section 4: Insurance -->
+        <section class="form-section">
+          <h2 class="section-title">
+            <span class="section-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </span>
+            Insurance
+          </h2>
+
+          <div class="info-box">
+            <div class="info-box-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              Individual Accident Insurance Included
+            </div>
+            <p class="info-box-text">
+              Your booking includes comprehensive individual accident insurance covering medical expenses,
+              emergency evacuation, and personal liability during all camp activities. Coverage is valid
+              for the duration of your camp and includes water sports activities.
+            </p>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" class="checkbox-input" id="insurance-confirm" required>
+            <label class="checkbox-label" for="insurance-confirm">
+              I confirm I have read and understood the
+              <a href="#" target="_blank">insurance coverage notice (PDF)</a> <span class="required">*</span>
+            </label>
+          </div>
+
+          <a href="#" class="affiliate-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            Want trip cancellation coverage? View our partner insurance options
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        </section>
+
+        <!-- Section 5: Payment -->
+        <section class="form-section">
+          <h2 class="section-title">
+            <span class="section-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </span>
+            Payment
+          </h2>
+
+          <div class="stripe-placeholder">
+            <div class="stripe-logo">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/>
+              </svg>
+              Stripe
+            </div>
+            <p class="stripe-text">Secure payment processing</p>
+          </div>
+
+          <div class="payment-inputs">
+            <div class="form-group">
+              <label class="form-label">Card number</label>
+              <div class="input-wrapper">
+                <input type="text" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Expiry date</label>
+              <input type="text" class="form-input" placeholder="MM/YY" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">CVC</label>
+              <input type="text" class="form-input" placeholder="123" maxlength="4">
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Terms -->
+        <section class="form-section">
+          <h2 class="section-title">
+            <span class="section-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </span>
+            Terms & Conditions
+          </h2>
+
+          <div class="checkbox-group">
+            <input type="checkbox" class="checkbox-input" id="terms-accept" required>
+            <label class="checkbox-label" for="terms-accept">
+              I accept the <a href="#">Terms & Conditions</a> and <a href="#">Cancellation Policy</a> <span class="required">*</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Submit Button -->
+        <div class="checkout-submit">
+          <button type="submit" class="btn btn-primary btn-complete">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Complete Booking
+          </button>
+        </div>
+      </form>
+
+      <!-- Right Column - Booking Summary -->
+      <aside class="booking-summary">
+        <div class="summary-header">
+          <img src="https://images.unsplash.com/photo-1559291001-693fb9166cba?w=200&h=150&fit=crop" alt="Tarifa Kite Week" class="summary-image">
+          <div>
+            <h3 class="summary-title">Tarifa Kite Week</h3>
+            <p class="summary-meta">7-Day Intensive Camp</p>
+          </div>
+        </div>
+
+        <div class="summary-details">
+          <div class="summary-detail">
+            <span class="summary-detail-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </span>
+            <span>Mar 15 - 22, 2026</span>
+          </div>
+          <div class="summary-detail">
+            <span class="summary-detail-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            <span>Coach: Maria Santos</span>
+          </div>
+          <div class="summary-detail">
+            <span class="summary-detail-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </span>
+            <span>2 adults</span>
+          </div>
+        </div>
+
+        <div class="summary-pricing">
+          <div class="pricing-row">
+            <span>Subtotal (890 x 2)</span>
+            <span>1,780</span>
+          </div>
+          <div class="pricing-row included">
+            <span>Insurance</span>
+            <span>Included</span>
+          </div>
+          <div class="pricing-row">
+            <span>Service fee</span>
+            <span>0</span>
+          </div>
+        </div>
+
+        <div class="summary-total">
+          <span class="total-label">Total</span>
+          <span class="total-amount">1,780</span>
+        </div>
+
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <span class="trust-badge-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <span>Secure payment with SSL encryption</span>
+          </div>
+          <div class="trust-badge">
+            <span class="trust-badge-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </span>
+            <span>Free cancellation 45+ days before</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">RideMaster</div>
+          <p class="footer-description">
+            The premier platform for kitesurfing, wingfoiling, and water sports camps.
+            Discover amazing destinations and expert coaches worldwide.
+          </p>
+        </div>
+        <div class="footer-column">
+          <h4>Explore</h4>
+          <nav class="footer-links">
+            <a href="spots.html" class="footer-link">Destinations</a>
+            <a href="camps.html" class="footer-link">All Camps</a>
+            <a href="coaches.html" class="footer-link">Coaches</a>
+            <a href="#" class="footer-link">Gift Cards</a>
+          </nav>
+        </div>
+        <div class="footer-column">
+          <h4>Company</h4>
+          <nav class="footer-links">
+            <a href="#" class="footer-link">About Us</a>
+            <a href="#" class="footer-link">Careers</a>
+            <a href="#" class="footer-link">Press</a>
+            <a href="#" class="footer-link">Blog</a>
+            <a href="dashboard-rider.html" class="footer-link">Rider Dashboard</a>
+            <a href="dashboard-coach.html" class="footer-link">Coach Dashboard</a>
+          </nav>
+        </div>
+        <div class="footer-column">
+          <h4>Support</h4>
+          <nav class="footer-links">
+            <a href="#" class="footer-link">Help Center</a>
+            <a href="#" class="footer-link">Contact Us</a>
+            <a href="#" class="footer-link">Safety</a>
+            <a href="#" class="footer-link">Accessibility</a>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">2026 RideMaster. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

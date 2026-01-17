@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RideMaster - Find Your Next Camp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <!-- ============================================
+       HEADER
+       ============================================ -->
+  <header class="header">
+    <div class="container header__container">
+      <!-- Logo -->
+      <a href="index.html" class="logo">
+        <span class="logo__ride">Ride</span><span class="logo__master">Master</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav nav--desktop">
+        <a href="camps.html" class="nav__link">Camps</a>
+        <a href="coaches.html" class="nav__link">Coaches</a>
+        <a href="spots.html" class="nav__link">Spots</a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header__actions">
+        <!-- Language Switcher -->
+        <div class="language-switcher">
+          <button class="language-switcher__btn language-switcher__btn--active">EN</button>
+          <span class="language-switcher__divider">/</span>
+          <button class="language-switcher__btn">FR</button>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="header__auth">
+          <a href="login.html" class="btn btn--ghost btn--sm">Log in</a>
+          <a href="register-rider.html" class="btn btn--primary btn--sm">Sign up</a>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="nav nav--mobile" aria-hidden="true">
+      <a href="camps.html" class="nav__link">Camps</a>
+      <a href="coaches.html" class="nav__link">Coaches</a>
+      <a href="spots.html" class="nav__link">Spots</a>
+      <div class="nav__divider"></div>
+      <a href="login.html" class="nav__link">Log in</a>
+      <a href="register-rider.html" class="nav__link nav__link--primary">Sign up</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="hero">
+      <div class="hero__background">
+        <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1920" alt="Surfer riding a wave" class="hero__image">
+        <div class="hero__overlay"></div>
+      </div>
+
+      <div class="container hero__content">
+        <h1 class="hero__title">Find Your Next Camp</h1>
+        <p class="hero__subtitle">Discover world-class camps with expert coaches at stunning destinations</p>
+
+        <!-- Search Bar -->
+        <form class="search-bar" action="search.html" method="GET">
+          <div class="search-bar__field search-bar__field--location">
+            <label for="search-location" class="search-bar__label">
+              <i data-lucide="map-pin"></i>
+              Location
+            </label>
+            <input type="text" id="search-location" name="location" class="search-bar__input" placeholder="Where do you want to go?">
+          </div>
+
+          <div class="search-bar__divider"></div>
+
+          <div class="search-bar__field search-bar__field--sport">
+            <label for="search-sport" class="search-bar__label">
+              <i data-lucide="wind"></i>
+              Sport
+            </label>
+            <select id="search-sport" name="sport" class="search-bar__select">
+              <option value="">All sports</option>
+              <option value="kitesurf">Kitesurf</option>
+              <option value="wingfoil">Wingfoil</option>
+              <option value="surf">Surf</option>
+              <option value="paraglide">Paraglide</option>
+              <option value="sailing">Sailing</option>
+            </select>
+          </div>
+
+          <div class="search-bar__divider"></div>
+
+          <div class="search-bar__field search-bar__field--level">
+            <label for="search-level" class="search-bar__label">
+              <i data-lucide="trending-up"></i>
+              Level
+            </label>
+            <select id="search-level" name="level" class="search-bar__select">
+              <option value="">All levels</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+
+          <div class="search-bar__divider"></div>
+
+          <div class="search-bar__field search-bar__field--dates">
+            <label for="search-dates" class="search-bar__label">
+              <i data-lucide="calendar"></i>
+              Dates
+            </label>
+            <input type="text" id="search-dates" name="dates" class="search-bar__input" placeholder="Add dates">
+          </div>
+
+          <button type="submit" class="search-bar__submit btn btn--primary">
+            <i data-lucide="search"></i>
+            <span>Search</span>
+          </button>
+        </form>
+
+        <!-- Trust Strip -->
+        <div class="trust-strip">
+          <div class="trust-strip__item">
+            <i data-lucide="shield-check"></i>
+            <span>Insurance included</span>
+          </div>
+          <div class="trust-strip__item">
+            <i data-lucide="lock"></i>
+            <span>Secure payment</span>
+          </div>
+          <div class="trust-strip__item">
+            <i data-lucide="refresh-cw"></i>
+            <span>Free cancellation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="hero__scroll-indicator">
+        <i data-lucide="chevron-down"></i>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SPORT CATEGORIES
+         ============================================ -->
+    <section class="section sport-categories">
+      <div class="container">
+        <div class="sport-categories__scroll">
+          <a href="camps.html?sport=kitesurf" class="sport-card sport-card--kitesurf">
+            <div class="sport-card__icon">
+              <span class="sport-card__emoji">🪁</span>
+            </div>
+            <h3 class="sport-card__name">Kitesurf</h3>
+            <span class="sport-card__count">42 camps</span>
+          </a>
+
+          <a href="camps.html?sport=wingfoil" class="sport-card sport-card--wingfoil">
+            <div class="sport-card__icon">
+              <span class="sport-card__emoji">🏄</span>
+            </div>
+            <h3 class="sport-card__name">Wingfoil</h3>
+            <span class="sport-card__count">28 camps</span>
+          </a>
+
+          <a href="camps.html?sport=surf" class="sport-card sport-card--surf">
+            <div class="sport-card__icon">
+              <span class="sport-card__emoji">🌊</span>
+            </div>
+            <h3 class="sport-card__name">Surf</h3>
+            <span class="sport-card__count">56 camps</span>
+          </a>
+
+          <a href="camps.html?sport=paraglide" class="sport-card sport-card--paraglide">
+            <div class="sport-card__icon">
+              <span class="sport-card__emoji">🪂</span>
+            </div>
+            <h3 class="sport-card__name">Paraglide</h3>
+            <span class="sport-card__count">19 camps</span>
+          </a>
+
+          <a href="camps.html?sport=sailing" class="sport-card sport-card--sailing">
+            <div class="sport-card__icon">
+              <span class="sport-card__emoji">⛵</span>
+            </div>
+            <h3 class="sport-card__name">Sailing</h3>
+            <span class="sport-card__count">31 camps</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         FEATURED CAMPS
+         ============================================ -->
+    <section class="section featured-camps">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Featured Camps</h2>
+          <a href="camps.html" class="section__link">
+            See all
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="camp-grid">
+          <!-- Camp Card 1 -->
+          <a href="camp-detail.html" class="camp-card">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=800&h=600&fit=crop" alt="Kitesurf camp in Tarifa" class="camp-card__image">
+              <button class="camp-card__favorite" aria-label="Add to favorites">
+                <i data-lucide="heart"></i>
+              </button>
+              <div class="camp-card__badges">
+                <span class="badge badge--kitesurf">Kitesurf</span>
+                <span class="badge badge--level">Beginner</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Ultimate Kitesurf Experience</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Tarifa, Spain</span>
+              </div>
+              <div class="camp-card__dates">
+                <i data-lucide="calendar"></i>
+                <span>Mar 15 - Mar 22, 2026</span>
+              </div>
+              <div class="camp-card__rating">
+                <span class="camp-card__stars">★</span>
+                <span class="camp-card__rating-value">4.9</span>
+                <span class="camp-card__rating-count">(127)</span>
+              </div>
+              <div class="camp-card__footer">
+                <div class="camp-card__coach">
+                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Coach Marco" class="camp-card__coach-avatar">
+                  <span class="camp-card__coach-name">Marco Silva</span>
+                </div>
+                <div class="camp-card__price">
+                  <span class="camp-card__price-amount">€890</span>
+                  <span class="camp-card__price-unit">/person</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Camp Card 2 -->
+          <a href="camp-detail.html" class="camp-card">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=800" alt="Wingfoil camp in Fuerteventura" class="camp-card__image">
+              <button class="camp-card__favorite" aria-label="Add to favorites">
+                <i data-lucide="heart"></i>
+              </button>
+              <div class="camp-card__badges">
+                <span class="badge badge--wingfoil">Wingfoil</span>
+                <span class="badge badge--level">Intermediate</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Wingfoil Discovery Week</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Fuerteventura, Spain</span>
+              </div>
+              <div class="camp-card__dates">
+                <i data-lucide="calendar"></i>
+                <span>Apr 5 - Apr 12, 2026</span>
+              </div>
+              <div class="camp-card__rating">
+                <span class="camp-card__stars">★</span>
+                <span class="camp-card__rating-value">4.8</span>
+                <span class="camp-card__rating-count">(89)</span>
+              </div>
+              <div class="camp-card__footer">
+                <div class="camp-card__coach">
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="Coach Lisa" class="camp-card__coach-avatar">
+                  <span class="camp-card__coach-name">Lisa Chen</span>
+                </div>
+                <div class="camp-card__price">
+                  <span class="camp-card__price-amount">€1,190</span>
+                  <span class="camp-card__price-unit">/person</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Camp Card 3 -->
+          <a href="camp-detail.html" class="camp-card">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1455264745730-cb3b76250ae8?w=800" alt="Surf camp in Hossegor" class="camp-card__image">
+              <button class="camp-card__favorite camp-card__favorite--active" aria-label="Remove from favorites">
+                <i data-lucide="heart"></i>
+              </button>
+              <div class="camp-card__badges">
+                <span class="badge badge--surf">Surf</span>
+                <span class="badge badge--level">All Levels</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Atlantic Surf Paradise</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Hossegor, France</span>
+              </div>
+              <div class="camp-card__dates">
+                <i data-lucide="calendar"></i>
+                <span>May 1 - May 8, 2026</span>
+              </div>
+              <div class="camp-card__rating">
+                <span class="camp-card__stars">★</span>
+                <span class="camp-card__rating-value">4.9</span>
+                <span class="camp-card__rating-count">(203)</span>
+              </div>
+              <div class="camp-card__footer">
+                <div class="camp-card__coach">
+                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" alt="Coach Pierre" class="camp-card__coach-avatar">
+                  <span class="camp-card__coach-name">Pierre Dubois</span>
+                </div>
+                <div class="camp-card__price">
+                  <span class="camp-card__price-amount">€750</span>
+                  <span class="camp-card__price-unit">/person</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Camp Card 4 -->
+          <a href="camp-detail.html" class="camp-card">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800" alt="Kitesurf camp in Dakhla" class="camp-card__image">
+              <button class="camp-card__favorite" aria-label="Add to favorites">
+                <i data-lucide="heart"></i>
+              </button>
+              <div class="camp-card__badges">
+                <span class="badge badge--kitesurf">Kitesurf</span>
+                <span class="badge badge--level">Advanced</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Dakhla Pro Training Camp</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Dakhla, Morocco</span>
+              </div>
+              <div class="camp-card__dates">
+                <i data-lucide="calendar"></i>
+                <span>Feb 20 - Feb 27, 2026</span>
+              </div>
+              <div class="camp-card__rating">
+                <span class="camp-card__stars">★</span>
+                <span class="camp-card__rating-value">5.0</span>
+                <span class="camp-card__rating-count">(64)</span>
+              </div>
+              <div class="camp-card__footer">
+                <div class="camp-card__coach">
+                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100" alt="Coach Youssef" class="camp-card__coach-avatar">
+                  <span class="camp-card__coach-name">Youssef Benali</span>
+                </div>
+                <div class="camp-card__price">
+                  <span class="camp-card__price-amount">€1,450</span>
+                  <span class="camp-card__price-unit">/person</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         HOW IT WORKS
+         ============================================ -->
+    <section class="section how-it-works">
+      <div class="container">
+        <h2 class="section__title section__title--center">How It Works</h2>
+        <p class="section__subtitle">Book your dream camp in three simple steps</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step__number">1</div>
+            <div class="step__icon">
+              <i data-lucide="search"></i>
+            </div>
+            <h3 class="step__title">Explore</h3>
+            <p class="step__description">Browse through hundreds of camps worldwide. Filter by sport, level, destination, and dates to find your perfect match.</p>
+          </div>
+
+          <div class="step">
+            <div class="step__number">2</div>
+            <div class="step__icon">
+              <i data-lucide="calendar-check"></i>
+            </div>
+            <h3 class="step__title">Book</h3>
+            <p class="step__description">Reserve your spot with secure payment. Enjoy flexible cancellation policies and comprehensive insurance coverage.</p>
+          </div>
+
+          <div class="step">
+            <div class="step__number">3</div>
+            <div class="step__icon">
+              <i data-lucide="sun"></i>
+            </div>
+            <h3 class="step__title">Ride</h3>
+            <p class="step__description">Show up and enjoy! Meet your coach, learn new skills, and create unforgettable memories on the water.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         TOP COACHES
+         ============================================ -->
+    <section class="section top-coaches">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Top Coaches</h2>
+          <a href="coaches.html" class="section__link">
+            View all coaches
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="coach-grid">
+          <!-- Coach Card 1 -->
+          <article class="coach-card">
+            <div class="coach-card__avatar-wrapper">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" alt="Marco Silva" class="coach-card__avatar">
+              <div class="coach-card__verified" title="Verified Coach">
+                <i data-lucide="badge-check"></i>
+              </div>
+            </div>
+            <div class="coach-card__content">
+              <h3 class="coach-card__name">Marco Silva</h3>
+              <div class="coach-card__sports">
+                <span class="badge badge--kitesurf badge--sm">Kitesurf</span>
+                <span class="badge badge--wingfoil badge--sm">Wingfoil</span>
+              </div>
+              <div class="coach-card__rating">
+                <span class="coach-card__stars">★★★★★</span>
+                <span class="coach-card__rating-value">4.9</span>
+                <span class="coach-card__rating-count">(312 reviews)</span>
+              </div>
+              <div class="coach-card__languages">
+                <span class="flag-icon">🇪🇸</span>
+                <span class="flag-icon">🇬🇧</span>
+                <span class="flag-icon">🇫🇷</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Coach Card 2 -->
+          <article class="coach-card">
+            <div class="coach-card__avatar-wrapper">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400" alt="Lisa Chen" class="coach-card__avatar">
+              <div class="coach-card__verified" title="Verified Coach">
+                <i data-lucide="badge-check"></i>
+              </div>
+            </div>
+            <div class="coach-card__content">
+              <h3 class="coach-card__name">Lisa Chen</h3>
+              <div class="coach-card__sports">
+                <span class="badge badge--wingfoil badge--sm">Wingfoil</span>
+                <span class="badge badge--surf badge--sm">Surf</span>
+              </div>
+              <div class="coach-card__rating">
+                <span class="coach-card__stars">★★★★★</span>
+                <span class="coach-card__rating-value">4.8</span>
+                <span class="coach-card__rating-count">(245 reviews)</span>
+              </div>
+              <div class="coach-card__languages">
+                <span class="flag-icon">🇬🇧</span>
+                <span class="flag-icon">🇨🇳</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Coach Card 3 -->
+          <article class="coach-card">
+            <div class="coach-card__avatar-wrapper">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400" alt="Pierre Dubois" class="coach-card__avatar">
+              <div class="coach-card__verified" title="Verified Coach">
+                <i data-lucide="badge-check"></i>
+              </div>
+            </div>
+            <div class="coach-card__content">
+              <h3 class="coach-card__name">Pierre Dubois</h3>
+              <div class="coach-card__sports">
+                <span class="badge badge--surf badge--sm">Surf</span>
+              </div>
+              <div class="coach-card__rating">
+                <span class="coach-card__stars">★★★★★</span>
+                <span class="coach-card__rating-value">5.0</span>
+                <span class="coach-card__rating-count">(189 reviews)</span>
+              </div>
+              <div class="coach-card__languages">
+                <span class="flag-icon">🇫🇷</span>
+                <span class="flag-icon">🇬🇧</span>
+                <span class="flag-icon">🇵🇹</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         POPULAR DESTINATIONS
+         ============================================ -->
+    <section class="section popular-destinations">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Popular Destinations</h2>
+          <a href="spots.html" class="section__link">
+            Explore all spots
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="destinations-grid destinations-grid--cards">
+          <!-- Card 1 - Tarifa -->
+          <a href="spot-detail.html?destination=tarifa" class="destination-card-v2">
+            <div class="destination-card-v2__image">
+              <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop" alt="Tarifa beach">
+            </div>
+            <div class="destination-card-v2__content">
+              <div class="destination-card-v2__location">
+                <span class="destination-card-v2__name">Tarifa,</span>
+                <span class="destination-card-v2__country">Spain</span>
+              </div>
+              <div class="destination-card-v2__meta">
+                <div class="destination-card-v2__camps">
+                  <svg class="destination-card-v2__camps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  <span>24 camps</span>
+                </div>
+                <div class="destination-card-v2__arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 2 - Dakhla -->
+          <a href="spot-detail.html?destination=dakhla" class="destination-card-v2">
+            <div class="destination-card-v2__image">
+              <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&h=400&fit=crop" alt="Dakhla lagoon">
+            </div>
+            <div class="destination-card-v2__content">
+              <div class="destination-card-v2__location">
+                <span class="destination-card-v2__name">Dakhla,</span>
+                <span class="destination-card-v2__country">Morocco</span>
+              </div>
+              <div class="destination-card-v2__meta">
+                <div class="destination-card-v2__camps">
+                  <svg class="destination-card-v2__camps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  <span>18 camps</span>
+                </div>
+                <div class="destination-card-v2__arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 3 - Hossegor -->
+          <a href="spot-detail.html?destination=hossegor" class="destination-card-v2">
+            <div class="destination-card-v2__image">
+              <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=600&h=400&fit=crop" alt="Hossegor waves">
+            </div>
+            <div class="destination-card-v2__content">
+              <div class="destination-card-v2__location">
+                <span class="destination-card-v2__name">Hossegor,</span>
+                <span class="destination-card-v2__country">France</span>
+              </div>
+              <div class="destination-card-v2__meta">
+                <div class="destination-card-v2__camps">
+                  <svg class="destination-card-v2__camps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  <span>15 camps</span>
+                </div>
+                <div class="destination-card-v2__arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 4 - Fuerteventura -->
+          <a href="spot-detail.html?destination=fuerteventura" class="destination-card-v2">
+            <div class="destination-card-v2__image">
+              <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=600&h=400&fit=crop" alt="Fuerteventura beach">
+            </div>
+            <div class="destination-card-v2__content">
+              <div class="destination-card-v2__location">
+                <span class="destination-card-v2__name">Fuerteventura,</span>
+                <span class="destination-card-v2__country">Spain</span>
+              </div>
+              <div class="destination-card-v2__meta">
+                <div class="destination-card-v2__camps">
+                  <svg class="destination-card-v2__camps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  <span>21 camps</span>
+                </div>
+                <div class="destination-card-v2__arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Card 5 - Lake Garda -->
+          <a href="spot-detail.html?destination=lake-garda" class="destination-card-v2">
+            <div class="destination-card-v2__image">
+              <img src="https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=600&h=400&fit=crop" alt="Lake Garda">
+            </div>
+            <div class="destination-card-v2__content">
+              <div class="destination-card-v2__location">
+                <span class="destination-card-v2__name">Lake Garda,</span>
+                <span class="destination-card-v2__country">Italy</span>
+              </div>
+              <div class="destination-card-v2__meta">
+                <div class="destination-card-v2__camps">
+                  <svg class="destination-card-v2__camps-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                  <span>12 camps</span>
+                </div>
+                <div class="destination-card-v2__arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         TRUST BLOCK
+         ============================================ -->
+    <section class="trust-block">
+      <div class="container">
+        <h2 class="trust-block__title">Book with Peace of Mind</h2>
+        <p class="trust-block__subtitle">Every booking comes with our comprehensive protection</p>
+
+        <div class="trust-block__items">
+          <div class="trust-block__item">
+            <div class="trust-block__icon">
+              <i data-lucide="shield"></i>
+            </div>
+            <h3 class="trust-block__item-title">Insurance Included</h3>
+            <p class="trust-block__item-description">Every camp includes comprehensive travel and activity insurance at no extra cost.</p>
+          </div>
+
+          <div class="trust-block__item">
+            <div class="trust-block__icon">
+              <i data-lucide="lock"></i>
+            </div>
+            <h3 class="trust-block__item-title">Secure Payment</h3>
+            <p class="trust-block__item-description">Your payment details are encrypted and protected with bank-level security.</p>
+          </div>
+
+          <div class="trust-block__item">
+            <div class="trust-block__icon">
+              <i data-lucide="refresh-cw"></i>
+            </div>
+            <h3 class="trust-block__item-title">Flexible Cancellation</h3>
+            <p class="trust-block__item-description">Plans change. Cancel up to 48 hours before your camp for a full refund.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         TESTIMONIALS
+         ============================================ -->
+    <section class="section testimonials">
+      <div class="container">
+        <h2 class="section__title section__title--center">What Our Riders Say</h2>
+
+        <div class="testimonials-carousel">
+          <div class="testimonials-carousel__track">
+            <!-- Testimonial 1 -->
+            <div class="testimonial testimonial--active">
+              <div class="testimonial__stars">★★★★★</div>
+              <blockquote class="testimonial__quote">
+                "This was my first kitesurf camp and it exceeded all expectations. Marco was an incredible coach - patient, knowledgeable, and genuinely passionate about teaching. I went from complete beginner to riding confidently in just 5 days!"
+              </blockquote>
+              <div class="testimonial__author">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200" alt="Sarah Mitchell" class="testimonial__avatar">
+                <div class="testimonial__author-info">
+                  <span class="testimonial__author-name">Sarah Mitchell</span>
+                  <span class="testimonial__camp-name">Ultimate Kitesurf Experience, Tarifa</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="testimonial">
+              <div class="testimonial__stars">★★★★★</div>
+              <blockquote class="testimonial__quote">
+                "The wingfoil camp in Fuerteventura was life-changing. Perfect conditions every day, top-notch equipment, and Lisa's teaching method is simply the best. Already booked my next camp!"
+              </blockquote>
+              <div class="testimonial__author">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200" alt="Thomas Weber" class="testimonial__avatar">
+                <div class="testimonial__author-info">
+                  <span class="testimonial__author-name">Thomas Weber</span>
+                  <span class="testimonial__camp-name">Wingfoil Discovery Week, Fuerteventura</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="testimonial">
+              <div class="testimonial__stars">★★★★★</div>
+              <blockquote class="testimonial__quote">
+                "As an advanced rider, I was looking for a camp that would push my limits. Dakhla delivered! Youssef helped me finally nail my handle passes. The lagoon is paradise for progression."
+              </blockquote>
+              <div class="testimonial__author">
+                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200" alt="James Cooper" class="testimonial__avatar">
+                <div class="testimonial__author-info">
+                  <span class="testimonial__author-name">James Cooper</span>
+                  <span class="testimonial__camp-name">Dakhla Pro Training Camp, Morocco</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carousel Navigation -->
+          <div class="testimonials-carousel__nav">
+            <button class="testimonials-carousel__dot testimonials-carousel__dot--active" aria-label="View testimonial 1"></button>
+            <button class="testimonials-carousel__dot" aria-label="View testimonial 2"></button>
+            <button class="testimonials-carousel__dot" aria-label="View testimonial 3"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         UPCOMING CAMPS
+         ============================================ -->
+    <section class="section upcoming-camps">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">Upcoming Camps</h2>
+          <a href="camps.html?sort=date" class="section__link">
+            View calendar
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="upcoming-camps__scroll">
+          <!-- Upcoming Camp 1 -->
+          <article class="camp-card camp-card--compact">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1559753867-4ec6fc647ed3?w=600" alt="Kitesurf camp" class="camp-card__image">
+              <div class="camp-card__countdown">In 5 days</div>
+              <div class="camp-card__badges">
+                <span class="badge badge--kitesurf">Kitesurf</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Beginner Kite Week</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Tarifa, Spain</span>
+              </div>
+              <div class="camp-card__price">
+                <span class="camp-card__price-amount">€690</span>
+                <span class="camp-card__price-unit">/person</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Upcoming Camp 2 -->
+          <article class="camp-card camp-card--compact">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1455264745730-cb3b76250ae8?w=600" alt="Surf camp" class="camp-card__image">
+              <div class="camp-card__countdown">In 8 days</div>
+              <div class="camp-card__badges">
+                <span class="badge badge--surf">Surf</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Weekend Surf Escape</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Hossegor, France</span>
+              </div>
+              <div class="camp-card__price">
+                <span class="camp-card__price-amount">€350</span>
+                <span class="camp-card__price-unit">/person</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Upcoming Camp 3 -->
+          <article class="camp-card camp-card--compact">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=600" alt="Wingfoil camp" class="camp-card__image">
+              <div class="camp-card__countdown">In 12 days</div>
+              <div class="camp-card__badges">
+                <span class="badge badge--wingfoil">Wingfoil</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Wingfoil Intensive</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Fuerteventura, Spain</span>
+              </div>
+              <div class="camp-card__price">
+                <span class="camp-card__price-amount">€990</span>
+                <span class="camp-card__price-unit">/person</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Upcoming Camp 4 -->
+          <article class="camp-card camp-card--compact">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=600" alt="Sailing camp" class="camp-card__image">
+              <div class="camp-card__countdown">In 15 days</div>
+              <div class="camp-card__badges">
+                <span class="badge badge--sailing">Sailing</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Lake Garda Sailing</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Riva del Garda, Italy</span>
+              </div>
+              <div class="camp-card__price">
+                <span class="camp-card__price-amount">€780</span>
+                <span class="camp-card__price-unit">/person</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Upcoming Camp 5 -->
+          <article class="camp-card camp-card--compact">
+            <div class="camp-card__image-wrapper">
+              <img src="https://images.unsplash.com/photo-1596463989358-37a59c6a0a03?w=600" alt="Paraglide camp" class="camp-card__image">
+              <div class="camp-card__countdown">In 18 days</div>
+              <div class="camp-card__badges">
+                <span class="badge badge--paraglide">Paraglide</span>
+              </div>
+            </div>
+            <div class="camp-card__content">
+              <h3 class="camp-card__title">Alpine Paragliding</h3>
+              <div class="camp-card__location">
+                <i data-lucide="map-pin"></i>
+                <span>Interlaken, Switzerland</span>
+              </div>
+              <div class="camp-card__price">
+                <span class="camp-card__price-amount">€1,250</span>
+                <span class="camp-card__price-unit">/person</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         NEWSLETTER
+         ============================================ -->
+    <section class="newsletter">
+      <div class="newsletter__background">
+        <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920" alt="Ocean sunset" class="newsletter__bg-image">
+        <div class="newsletter__overlay"></div>
+      </div>
+
+      <div class="container newsletter__content">
+        <h2 class="newsletter__title">Stay in the Loop</h2>
+        <p class="newsletter__subtitle">Get exclusive deals, new camp alerts, and riding tips delivered to your inbox.</p>
+
+        <form class="newsletter__form" action="#" method="POST">
+          <div class="newsletter__input-wrapper">
+            <input type="email" name="email" class="newsletter__input" placeholder="Enter your email address" required>
+            <button type="submit" class="btn btn--secondary newsletter__submit">
+              Subscribe
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+          <p class="newsletter__disclaimer">No spam, ever. Unsubscribe anytime.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__main">
+        <!-- Footer Brand -->
+        <div class="footer__brand">
+          <a href="index.html" class="logo logo--footer">
+            <span class="logo__ride">Ride</span><span class="logo__master">Master</span>
+          </a>
+          <p class="footer__tagline">Your gateway to world-class sport camps. Ride, learn, and explore with the best coaches at stunning destinations.</p>
+
+          <!-- Social Icons -->
+          <div class="footer__social">
+            <a href="#" class="footer__social-link" aria-label="Follow us on Instagram">
+              <i data-lucide="instagram"></i>
+            </a>
+            <a href="#" class="footer__social-link" aria-label="Follow us on Facebook">
+              <i data-lucide="facebook"></i>
+            </a>
+            <a href="#" class="footer__social-link" aria-label="Follow us on YouTube">
+              <i data-lucide="youtube"></i>
+            </a>
+            <a href="#" class="footer__social-link" aria-label="Follow us on Twitter">
+              <i data-lucide="twitter"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="footer__links">
+          <!-- Explore Column -->
+          <div class="footer__column">
+            <h4 class="footer__column-title">Explore</h4>
+            <ul class="footer__list">
+              <li><a href="camps.html" class="footer__link">All Camps</a></li>
+              <li><a href="coaches.html" class="footer__link">Coaches</a></li>
+              <li><a href="spots.html" class="footer__link">Destinations</a></li>
+              <li><a href="camps.html?sport=kitesurf" class="footer__link">Kitesurf</a></li>
+              <li><a href="camps.html?sport=wingfoil" class="footer__link">Wingfoil</a></li>
+              <li><a href="camps.html?sport=surf" class="footer__link">Surf</a></li>
+            </ul>
+          </div>
+
+          <!-- Company Column -->
+          <div class="footer__column">
+            <h4 class="footer__column-title">Company</h4>
+            <ul class="footer__list">
+              <li><a href="#" class="footer__link">About Us</a></li>
+              <li><a href="#" class="footer__link">Careers</a></li>
+              <li><a href="#" class="footer__link">Press</a></li>
+              <li><a href="#" class="footer__link">Blog</a></li>
+              <li><a href="#" class="footer__link">Partners</a></li>
+              <li><a href="dashboard-rider.html" class="footer__link">Rider Dashboard</a></li>
+              <li><a href="dashboard-coach.html" class="footer__link">Coach Dashboard</a></li>
+            </ul>
+          </div>
+
+          <!-- Support Column -->
+          <div class="footer__column">
+            <h4 class="footer__column-title">Support</h4>
+            <ul class="footer__list">
+              <li><a href="#" class="footer__link">Help Center</a></li>
+              <li><a href="#" class="footer__link">Contact Us</a></li>
+              <li><a href="#" class="footer__link">FAQ</a></li>
+              <li><a href="#" class="footer__link">Terms of Service</a></li>
+              <li><a href="#" class="footer__link">Privacy Policy</a></li>
+              <li><a href="#" class="footer__link">Cancellation Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+      <div class="footer__bottom">
+        <p class="footer__copyright">&copy; 2026 RideMaster. All rights reserved.</p>
+
+        <div class="footer__bottom-right">
+          <!-- Language Switcher -->
+          <div class="language-switcher language-switcher--footer">
+            <i data-lucide="globe"></i>
+            <select class="language-switcher__select">
+              <option value="en" selected>English</option>
+              <option value="fr">Francais</option>
+              <option value="es">Espanol</option>
+              <option value="de">Deutsch</option>
+            </select>
+          </div>
+
+          <!-- Currency -->
+          <div class="currency-switcher">
+            <select class="currency-switcher__select">
+              <option value="eur" selected>EUR (€)</option>
+              <option value="usd">USD ($)</option>
+              <option value="gbp">GBP (£)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coach Dashboard - RideMaster</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-alt);
+      color: var(--color-text);
+    }
+
+    /* Header */
+    .header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      height: var(--header-height);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-fixed);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .header-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .header-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+      position: relative;
+    }
+
+    .header-icon-btn:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: var(--color-secondary);
+      border-radius: var(--radius-full);
+    }
+
+    .header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--color-secondary-400) 0%, var(--color-secondary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      transition: var(--transition-shadow);
+    }
+
+    .header-avatar:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Dashboard Layout */
+    .dashboard {
+      display: flex;
+      padding-top: var(--header-height);
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: var(--space-6);
+    }
+
+    .sidebar-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: var(--space-6);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-4);
+    }
+
+    .sidebar-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--color-secondary-400) 0%, var(--color-secondary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-3);
+    }
+
+    .sidebar-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+    }
+
+    .coach-badge {
+      background: var(--color-secondary-100);
+      color: var(--color-secondary-700);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+      transition: var(--transition-all);
+    }
+
+    .nav-link:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .nav-link.active {
+      background: var(--color-primary-50);
+      color: var(--color-primary);
+    }
+
+    .nav-link svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .nav-divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: var(--space-3) 0;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: var(--space-8);
+      max-width: calc(100% - var(--sidebar-width));
+    }
+
+    .page-header {
+      margin-bottom: var(--space-8);
+    }
+
+    .page-title {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    .stat-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-all);
+    }
+
+    .stat-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .stat-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-4);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .stat-icon.revenue {
+      background: var(--color-success-100);
+      color: var(--color-success-600);
+    }
+
+    .stat-icon.bookings {
+      background: var(--color-info-100);
+      color: var(--color-info-600);
+    }
+
+    .stat-icon.rating {
+      background: var(--color-warning-100);
+      color: var(--color-warning-600);
+    }
+
+    .stat-trend {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .stat-trend.up {
+      color: var(--color-success-600);
+    }
+
+    .stat-trend svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .stat-value {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      line-height: 1;
+      margin-bottom: var(--space-1);
+    }
+
+    .stat-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: var(--space-8);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-5);
+    }
+
+    .section-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .section-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      transition: var(--transition-colors);
+    }
+
+    .section-link:hover {
+      color: var(--color-primary-hover);
+    }
+
+    .section-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Upcoming Sessions */
+    .sessions-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .session-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+      transition: var(--transition-all);
+    }
+
+    .session-card:hover {
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .session-time {
+      min-width: 100px;
+      text-align: center;
+      padding: var(--space-4);
+      background: var(--color-primary-50);
+      border-radius: var(--radius-lg);
+    }
+
+    .session-time-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+      margin-bottom: var(--space-1);
+    }
+
+    .session-time-value {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary-700);
+    }
+
+    .session-info {
+      flex: 1;
+    }
+
+    .session-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .session-participants {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .session-participants svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .session-actions {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      transition: var(--transition-all);
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Bookings Table */
+    .table-container {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .bookings-table {
+      width: 100%;
+    }
+
+    .bookings-table th,
+    .bookings-table td {
+      padding: var(--space-4) var(--space-5);
+      text-align: left;
+    }
+
+    .bookings-table thead {
+      background: var(--color-bg-subtle);
+    }
+
+    .bookings-table th {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+    }
+
+    .bookings-table tbody tr {
+      border-top: 1px solid var(--color-border-light);
+      transition: var(--transition-colors);
+    }
+
+    .bookings-table tbody tr:hover {
+      background: var(--color-bg-alt);
+    }
+
+    .rider-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .rider-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--color-slate-300) 0%, var(--color-slate-400) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .rider-name {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    .camp-name {
+      color: var(--color-text);
+    }
+
+    .date-cell {
+      color: var(--color-text-secondary);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .status-badge.confirmed {
+      background: var(--color-success-100);
+      color: var(--color-success-700);
+    }
+
+    .status-badge.pending {
+      background: var(--color-warning-100);
+      color: var(--color-warning-700);
+    }
+
+    .amount-cell {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    /* Earnings Chart */
+    .chart-container {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-card);
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+    }
+
+    .chart-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .chart-placeholder {
+      height: 280px;
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .chart-placeholder svg {
+      width: 48px;
+      height: 48px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <a href="index.html" class="header-logo">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M10 20C10 20 13 12 16 12C19 12 22 20 22 20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="16" cy="10" r="2" fill="currentColor"/>
+      </svg>
+      RideMaster
+    </a>
+    <div class="header-right">
+      <button class="header-icon-btn">
+        <i data-lucide="search"></i>
+      </button>
+      <button class="header-icon-btn">
+        <i data-lucide="bell"></i>
+        <span class="notification-badge"></span>
+      </button>
+      <button class="header-icon-btn">
+        <i data-lucide="message-square"></i>
+      </button>
+      <div class="header-avatar">M</div>
+    </div>
+  </header>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-profile">
+        <div class="sidebar-avatar">M</div>
+        <span class="sidebar-name">Maria Santos</span>
+        <span class="coach-badge">Coach</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-link active">
+          <i data-lucide="home"></i>
+          Dashboard
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="tent"></i>
+          My Camps
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="users"></i>
+          Bookings
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="calendar"></i>
+          Calendar
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="message-square"></i>
+          Messages
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="star"></i>
+          Reviews
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="credit-card"></i>
+          Earnings
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="settings"></i>
+          Settings
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <a href="#" class="nav-link">
+          <i data-lucide="help-circle"></i>
+          Help
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="log-out"></i>
+          Logout
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-icon revenue">
+              <i data-lucide="euro"></i>
+            </div>
+            <span class="stat-trend up">
+              <i data-lucide="trending-up"></i>
+              +12%
+            </span>
+          </div>
+          <div class="stat-value">€4,250</div>
+          <div class="stat-label">this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-icon bookings">
+              <i data-lucide="calendar-check"></i>
+            </div>
+            <span class="stat-trend up">
+              <i data-lucide="trending-up"></i>
+              +8%
+            </span>
+          </div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-icon rating">
+              <i data-lucide="star"></i>
+            </div>
+          </div>
+          <div class="stat-value">4.9</div>
+          <div class="stat-label">(89 reviews)</div>
+        </div>
+      </div>
+
+      <!-- Upcoming Sessions -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Upcoming Sessions</h2>
+          <a href="#" class="section-link">
+            View calendar
+            <i data-lucide="chevron-right"></i>
+          </a>
+        </div>
+        <div class="sessions-list">
+          <div class="session-card">
+            <div class="session-time">
+              <div class="session-time-label">Today</div>
+              <div class="session-time-value">10:00</div>
+            </div>
+            <div class="session-info">
+              <h3 class="session-title">Kite Beginner Session</h3>
+              <p class="session-participants">
+                <i data-lucide="users"></i>
+                4 participants
+              </p>
+            </div>
+            <div class="session-actions">
+              <button class="btn btn-primary">
+                <i data-lucide="eye"></i>
+                View
+              </button>
+              <button class="btn btn-outline">
+                <i data-lucide="message-square"></i>
+                Message group
+              </button>
+            </div>
+          </div>
+          <div class="session-card">
+            <div class="session-time">
+              <div class="session-time-label">Tomorrow</div>
+              <div class="session-time-value">14:00</div>
+            </div>
+            <div class="session-info">
+              <h3 class="session-title">Advanced Tricks</h3>
+              <p class="session-participants">
+                <i data-lucide="users"></i>
+                3 participants
+              </p>
+            </div>
+            <div class="session-actions">
+              <button class="btn btn-primary">
+                <i data-lucide="eye"></i>
+                View
+              </button>
+              <button class="btn btn-outline">
+                <i data-lucide="message-square"></i>
+                Message group
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Bookings -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Recent Bookings</h2>
+          <a href="#" class="section-link">
+            View all
+            <i data-lucide="chevron-right"></i>
+          </a>
+        </div>
+        <div class="table-container">
+          <table class="bookings-table">
+            <thead>
+              <tr>
+                <th>Rider</th>
+                <th>Camp</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="rider-cell">
+                    <div class="rider-avatar">SL</div>
+                    <span class="rider-name">Sophie Laurent</span>
+                  </div>
+                </td>
+                <td class="camp-name">Tarifa Kite Week</td>
+                <td class="date-cell">Mar 15-22</td>
+                <td><span class="status-badge confirmed">Confirmed</span></td>
+                <td class="amount-cell">€890</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rider-cell">
+                    <div class="rider-avatar">JM</div>
+                    <span class="rider-name">James Miller</span>
+                  </div>
+                </td>
+                <td class="camp-name">Weekend Kite Intro</td>
+                <td class="date-cell">Feb 8-9</td>
+                <td><span class="status-badge pending">Pending</span></td>
+                <td class="amount-cell">€350</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rider-cell">
+                    <div class="rider-avatar">EK</div>
+                    <span class="rider-name">Emma Klein</span>
+                  </div>
+                </td>
+                <td class="camp-name">Tarifa Kite Week</td>
+                <td class="date-cell">Mar 15-22</td>
+                <td><span class="status-badge confirmed">Confirmed</span></td>
+                <td class="amount-cell">€890</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rider-cell">
+                    <div class="rider-avatar">LC</div>
+                    <span class="rider-name">Lucas Chen</span>
+                  </div>
+                </td>
+                <td class="camp-name">Private Coaching</td>
+                <td class="date-cell">Jan 28</td>
+                <td><span class="status-badge confirmed">Confirmed</span></td>
+                <td class="amount-cell">€180</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rider-cell">
+                    <div class="rider-avatar">AR</div>
+                    <span class="rider-name">Anna Rodriguez</span>
+                  </div>
+                </td>
+                <td class="camp-name">Advanced Tricks Camp</td>
+                <td class="date-cell">Apr 5-7</td>
+                <td><span class="status-badge pending">Pending</span></td>
+                <td class="amount-cell">€450</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Earnings Chart -->
+      <section class="section">
+        <div class="chart-container">
+          <div class="chart-header">
+            <h2 class="chart-title">Earnings - Last 6 Months</h2>
+          </div>
+          <div class="chart-placeholder">
+            <i data-lucide="bar-chart-3"></i>
+            <span>Chart visualization placeholder</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rider Dashboard - RideMaster</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-alt);
+      color: var(--color-text);
+    }
+
+    /* Header */
+    .header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      height: var(--header-height);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-fixed);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .header-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .header-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+      position: relative;
+    }
+
+    .header-icon-btn:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: var(--color-secondary);
+      border-radius: var(--radius-full);
+    }
+
+    .header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-primary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      transition: var(--transition-shadow);
+    }
+
+    .header-avatar:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Dashboard Layout */
+    .dashboard {
+      display: flex;
+      padding-top: var(--header-height);
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: var(--space-6);
+    }
+
+    .sidebar-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: var(--space-6);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-4);
+    }
+
+    .sidebar-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-primary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-3);
+    }
+
+    .sidebar-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-lg);
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+      transition: var(--transition-all);
+    }
+
+    .nav-link:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .nav-link.active {
+      background: var(--color-primary-50);
+      color: var(--color-primary);
+    }
+
+    .nav-link svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .nav-divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: var(--space-3) 0;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: var(--space-8);
+      max-width: calc(100% - var(--sidebar-width));
+    }
+
+    .page-header {
+      margin-bottom: var(--space-8);
+    }
+
+    .page-title {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    /* Next Adventure Card */
+    .next-adventure {
+      background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+      display: flex;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .next-adventure-image {
+      width: 400px;
+      min-height: 280px;
+      background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-900) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .next-adventure-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="80" r="60" fill="rgba(255,255,255,0.05)"/><circle cx="80" cy="20" r="40" fill="rgba(255,255,255,0.03)"/></svg>');
+      background-size: cover;
+    }
+
+    .next-adventure-image svg {
+      width: 80px;
+      height: 80px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .next-adventure-content {
+      flex: 1;
+      padding: var(--space-8);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .adventure-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+      opacity: 0.8;
+      margin-bottom: var(--space-2);
+    }
+
+    .adventure-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-2);
+    }
+
+    .adventure-coach {
+      font-size: var(--font-size-base);
+      opacity: 0.9;
+      margin-bottom: var(--space-1);
+    }
+
+    .adventure-date {
+      font-size: var(--font-size-base);
+      opacity: 0.8;
+      margin-bottom: var(--space-4);
+    }
+
+    .countdown-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-6);
+      width: fit-content;
+    }
+
+    .adventure-actions {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      transition: var(--transition-all);
+      cursor: pointer;
+    }
+
+    .btn-white {
+      background: white;
+      color: var(--color-primary-700);
+    }
+
+    .btn-white:hover {
+      background: var(--color-slate-100);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline-white {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.5);
+      color: white;
+    }
+
+    .btn-outline-white:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: white;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: var(--space-8);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-5);
+    }
+
+    .section-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .section-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      transition: var(--transition-colors);
+    }
+
+    .section-link:hover {
+      color: var(--color-primary-hover);
+    }
+
+    .section-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6);
+    }
+
+    /* Past Booking Card */
+    .past-booking-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-all);
+      display: flex;
+    }
+
+    .past-booking-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .past-booking-image {
+      width: 140px;
+      min-height: 140px;
+      background: linear-gradient(135deg, var(--color-kitesurf) 0%, var(--color-primary-700) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .past-booking-image svg {
+      width: 40px;
+      height: 40px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .past-booking-content {
+      flex: 1;
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .past-booking-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .past-booking-date {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
+    }
+
+    .btn-review {
+      background: var(--color-gold-light);
+      color: var(--color-gold-dark);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      width: fit-content;
+      transition: var(--transition-all);
+    }
+
+    .btn-review:hover {
+      background: var(--color-gold-400);
+      color: var(--color-gold-700);
+    }
+
+    .btn-review svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Camp Card */
+    .camp-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-all);
+    }
+
+    .camp-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-4px);
+    }
+
+    .camp-card-image {
+      height: 160px;
+      background: linear-gradient(135deg, var(--color-secondary-400) 0%, var(--color-secondary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .camp-card-image svg {
+      width: 48px;
+      height: 48px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .camp-card-badge {
+      position: absolute;
+      top: var(--space-3);
+      left: var(--space-3);
+      background: rgba(255,255,255,0.95);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-kitesurf);
+    }
+
+    .camp-card-content {
+      padding: var(--space-4);
+    }
+
+    .camp-card-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .camp-card-location {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      margin-bottom: var(--space-3);
+    }
+
+    .camp-card-location svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .camp-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .camp-card-price {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .camp-card-price span {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-normal);
+      color: var(--color-text-muted);
+    }
+
+    .camp-card-rating {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+    }
+
+    .camp-card-rating svg {
+      width: 16px;
+      height: 16px;
+      color: var(--color-gold);
+      fill: var(--color-gold);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <a href="index.html" class="header-logo">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M10 20C10 20 13 12 16 12C19 12 22 20 22 20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="16" cy="10" r="2" fill="currentColor"/>
+      </svg>
+      RideMaster
+    </a>
+    <div class="header-right">
+      <button class="header-icon-btn">
+        <i data-lucide="search"></i>
+      </button>
+      <button class="header-icon-btn">
+        <i data-lucide="bell"></i>
+        <span class="notification-badge"></span>
+      </button>
+      <button class="header-icon-btn">
+        <i data-lucide="message-square"></i>
+      </button>
+      <div class="header-avatar">S</div>
+    </div>
+  </header>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-profile">
+        <div class="sidebar-avatar">S</div>
+        <span class="sidebar-name">Sophie Martin</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-link active">
+          <i data-lucide="home"></i>
+          Dashboard
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="calendar"></i>
+          My Bookings
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="heart"></i>
+          Favorites
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="message-square"></i>
+          Messages
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="star"></i>
+          Reviews
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="settings"></i>
+          Settings
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <a href="#" class="nav-link">
+          <i data-lucide="help-circle"></i>
+          Help
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="log-out"></i>
+          Logout
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <h1 class="page-title">Welcome back, Sophie!</h1>
+      </div>
+
+      <!-- Next Adventure -->
+      <div class="next-adventure">
+        <div class="next-adventure-image">
+          <i data-lucide="wind"></i>
+        </div>
+        <div class="next-adventure-content">
+          <span class="adventure-label">Next Adventure</span>
+          <h2 class="adventure-title">Tarifa Kite Week</h2>
+          <p class="adventure-coach">with Maria Santos</p>
+          <p class="adventure-date">Mar 15-22, 2026</p>
+          <div class="countdown-badge">
+            <i data-lucide="clock"></i>
+            In 45 days
+          </div>
+          <div class="adventure-actions">
+            <button class="btn btn-white">
+              <i data-lucide="eye"></i>
+              View details
+            </button>
+            <button class="btn btn-outline-white">
+              <i data-lucide="message-square"></i>
+              Contact coach
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Bookings -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Past Bookings</h2>
+          <a href="#" class="section-link">
+            View all
+            <i data-lucide="chevron-right"></i>
+          </a>
+        </div>
+        <div class="cards-grid">
+          <div class="past-booking-card">
+            <div class="past-booking-image">
+              <i data-lucide="waves"></i>
+            </div>
+            <div class="past-booking-content">
+              <h3 class="past-booking-title">Fuerteventura Surf Camp</h3>
+              <p class="past-booking-date">Dec 10-17, 2025</p>
+              <button class="btn-review">
+                <i data-lucide="star"></i>
+                Leave a review
+              </button>
+            </div>
+          </div>
+          <div class="past-booking-card">
+            <div class="past-booking-image" style="background: linear-gradient(135deg, var(--color-wingfoil) 0%, #5B21B6 100%);">
+              <i data-lucide="sailboat"></i>
+            </div>
+            <div class="past-booking-content">
+              <h3 class="past-booking-title">Lake Garda Wing Intro</h3>
+              <p class="past-booking-date">Sep 5-8, 2025</p>
+              <button class="btn-review">
+                <i data-lucide="star"></i>
+                Leave a review
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recommended for You -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Recommended for You</h2>
+          <a href="#" class="section-link">
+            Explore all
+            <i data-lucide="chevron-right"></i>
+          </a>
+        </div>
+        <div class="cards-grid">
+          <div class="camp-card">
+            <div class="camp-card-image">
+              <i data-lucide="wind"></i>
+              <span class="camp-card-badge">Kitesurfing</span>
+            </div>
+            <div class="camp-card-content">
+              <h3 class="camp-card-title">Portugal Wave Riding</h3>
+              <p class="camp-card-location">
+                <i data-lucide="map-pin"></i>
+                Peniche, Portugal
+              </p>
+              <div class="camp-card-footer">
+                <div class="camp-card-price">
+                  €890 <span>/ 5 days</span>
+                </div>
+                <div class="camp-card-rating">
+                  <i data-lucide="star"></i>
+                  4.9
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="camp-card">
+            <div class="camp-card-image" style="background: linear-gradient(135deg, var(--color-kitesurf) 0%, #0E7490 100%);">
+              <i data-lucide="wind"></i>
+              <span class="camp-card-badge">Kitesurfing</span>
+            </div>
+            <div class="camp-card-content">
+              <h3 class="camp-card-title">Egypt Kite Safari</h3>
+              <p class="camp-card-location">
+                <i data-lucide="map-pin"></i>
+                El Gouna, Egypt
+              </p>
+              <div class="camp-card-footer">
+                <div class="camp-card-price">
+                  €1,250 <span>/ 7 days</span>
+                </div>
+                <div class="camp-card-rating">
+                  <i data-lucide="star"></i>
+                  4.8
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

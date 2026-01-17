@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Coaches - RideMaster</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: var(--line-height-normal);
+    }
+
+    .container {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    /* Header */
+    .header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      height: var(--header-height);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .nav-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2-5) var(--space-5);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-outline:hover {
+      background: var(--color-bg-subtle);
+      border-color: var(--color-slate-300);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: var(--transition-all);
+    }
+
+    .icon-btn:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .avatar-sm {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: var(--space-4) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb a {
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+    }
+
+    .breadcrumb a:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb-separator {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Page Header */
+    .page-header {
+      padding: var(--space-8) 0 var(--space-6);
+    }
+
+    .page-header h1 {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: var(--letter-spacing-tight);
+      margin-bottom: var(--space-2);
+    }
+
+    .page-header-subtitle {
+      font-size: var(--font-size-lg);
+      color: var(--color-text-secondary);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4) var(--space-6);
+      margin-bottom: var(--space-8);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .filter-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+    }
+
+    .filter-select {
+      padding: var(--space-2) var(--space-4);
+      padding-right: var(--space-8);
+      font-size: var(--font-size-sm);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface);
+      color: var(--color-text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      cursor: pointer;
+      transition: var(--transition-all);
+      min-width: 140px;
+    }
+
+    .filter-select:hover {
+      border-color: var(--color-slate-300);
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .filter-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--color-border);
+    }
+
+    .filter-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .btn-sm {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
+    }
+
+    /* Coach Grid */
+    .coach-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-12);
+    }
+
+    @media (max-width: 1024px) {
+      .coach-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .coach-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Coach Card */
+    .coach-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      transition: var(--transition-all);
+      cursor: pointer;
+    }
+
+    .coach-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      border-color: var(--color-slate-300);
+      transform: translateY(-2px);
+    }
+
+    .coach-card:hover .coach-action-image img {
+      transform: scale(1.05);
+    }
+
+    .coach-action-image {
+      position: relative;
+      height: 160px;
+      overflow: hidden;
+    }
+
+    .coach-action-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition-slow);
+    }
+
+    .coach-card-body {
+      padding: var(--space-5);
+    }
+
+    .coach-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .coach-avatar {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .coach-avatar img {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+
+    .verified-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 24px;
+      height: 24px;
+      background: var(--color-primary);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .verified-badge svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .coach-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .coach-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .coach-sports {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+    }
+
+    .sport-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-2);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-md);
+    }
+
+    .sport-tag.kitesurf {
+      background: var(--color-kitesurf-light);
+      color: var(--color-kitesurf);
+    }
+
+    .sport-tag.wingfoil {
+      background: var(--color-wingfoil-light);
+      color: var(--color-wingfoil);
+    }
+
+    .sport-tag.surf {
+      background: var(--color-surf-light);
+      color: var(--color-surf);
+    }
+
+    .coach-rating {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .rating-star {
+      color: var(--color-gold);
+    }
+
+    .rating-value {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .coach-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .coach-languages {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-lg);
+    }
+
+    .coach-location {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .coach-location svg {
+      width: 14px;
+      height: 14px;
+      color: var(--color-text-muted);
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-8) 0;
+    }
+
+    .pagination-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      transition: var(--transition-all);
+    }
+
+    .pagination-btn:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .pagination-btn.active {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .pagination-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination-ellipsis {
+      color: var(--color-text-muted);
+      padding: 0 var(--space-2);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-slate-900);
+      color: var(--color-text-inverse);
+      padding: var(--space-16) 0 var(--space-8);
+      margin-top: var(--space-16);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: var(--space-12);
+      margin-bottom: var(--space-12);
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .footer-brand {
+      max-width: 280px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: white;
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-description {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-6);
+    }
+
+    .social-links {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--color-slate-800);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-slate-400);
+      transition: var(--transition-all);
+    }
+
+    .social-link:hover {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .footer-column h4 {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .footer-link {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-link:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      padding-top: var(--space-8);
+      border-top: 1px solid var(--color-slate-800);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+
+    .footer-copyright {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: var(--space-6);
+    }
+
+    .footer-legal a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+      transition: var(--transition-colors);
+    }
+
+    .footer-legal a:hover {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">
+          <i data-lucide="wind" style="width: 20px; height: 20px;"></i>
+        </div>
+        RideMaster
+      </a>
+
+      <nav class="nav">
+        <a href="camps.html" class="nav-link">Camps</a>
+        <a href="coaches.html" class="nav-link active">Coaches</a>
+        <a href="spots.html" class="nav-link">Spots</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn">
+          <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+        </button>
+        <button class="icon-btn">
+          <i data-lucide="heart" style="width: 20px; height: 20px;"></i>
+        </button>
+        <button class="btn btn-ghost">Sign In</button>
+        <button class="btn btn-primary">Get Started</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-separator">
+          <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+        </span>
+        <span class="breadcrumb-current">Coaches</span>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>Our Coaches</h1>
+        <p class="page-header-subtitle">45 verified coaches ready to help you progress</p>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label class="filter-label">Sport</label>
+          <select class="filter-select">
+            <option value="">All Sports</option>
+            <option value="kitesurf">Kitesurf</option>
+            <option value="wingfoil">Wingfoil</option>
+            <option value="surf">Surf</option>
+            <option value="windsurf">Windsurf</option>
+          </select>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <label class="filter-label">Location</label>
+          <select class="filter-select">
+            <option value="">All Locations</option>
+            <option value="spain">Spain</option>
+            <option value="portugal">Portugal</option>
+            <option value="france">France</option>
+            <option value="brazil">Brazil</option>
+            <option value="morocco">Morocco</option>
+          </select>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <label class="filter-label">Language</label>
+          <select class="filter-select">
+            <option value="">All Languages</option>
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="pt">Portuguese</option>
+            <option value="de">German</option>
+          </select>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <label class="filter-label">Rating</label>
+          <select class="filter-select">
+            <option value="">Any Rating</option>
+            <option value="4.5">4.5+ Stars</option>
+            <option value="4.0">4.0+ Stars</option>
+            <option value="3.5">3.5+ Stars</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-outline btn-sm">
+            <i data-lucide="sliders-horizontal" style="width: 16px; height: 16px;"></i>
+            More Filters
+          </button>
+          <button class="btn btn-ghost btn-sm">Reset</button>
+        </div>
+      </div>
+
+      <!-- Coach Grid -->
+      <div class="coach-grid">
+        <!-- Coach Card 1 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=400&h=200&fit=crop" alt="Maria Santos kitesurfing">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face" alt="Maria Santos">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Maria Santos</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag kitesurf">Kitesurf</span>
+                  <span class="sport-tag wingfoil">Wingfoil</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.9</span>
+                  <span>(89 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="French">🇫🇷</span>
+                <span title="English">🇬🇧</span>
+                <span title="Spanish">🇪🇸</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Tarifa, Spain
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 2 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400&h=200&fit=crop" alt="Lucas Meyer kitesurfing">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face" alt="Lucas Meyer">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Lucas Meyer</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag kitesurf">Kitesurf</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.8</span>
+                  <span>(124 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="German">🇩🇪</span>
+                <span title="English">🇬🇧</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Fuerteventura, Spain
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 3 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=400&h=200&fit=crop" alt="Sophie Laurent wingfoiling">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face" alt="Sophie Laurent">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Sophie Laurent</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag wingfoil">Wingfoil</span>
+                  <span class="sport-tag surf">Surf</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.7</span>
+                  <span>(67 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="French">🇫🇷</span>
+                <span title="English">🇬🇧</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Hossegor, France
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 4 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1560089000-7433a4ebbd64?w=400&h=200&fit=crop" alt="Pedro Costa kitesurfing">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face" alt="Pedro Costa">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Pedro Costa</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag kitesurf">Kitesurf</span>
+                  <span class="sport-tag wingfoil">Wingfoil</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.9</span>
+                  <span>(156 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="Portuguese">🇵🇹</span>
+                <span title="English">🇬🇧</span>
+                <span title="Spanish">🇪🇸</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Lagos, Portugal
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 5 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&h=200&fit=crop" alt="Anna Schmidt kitesurfing">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face" alt="Anna Schmidt">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Anna Schmidt</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag kitesurf">Kitesurf</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.6</span>
+                  <span>(43 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="German">🇩🇪</span>
+                <span title="English">🇬🇧</span>
+                <span title="Dutch">🇳🇱</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Dakhla, Morocco
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 6 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=200&fit=crop" alt="Thomas Wright surfing">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face" alt="Thomas Wright">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Thomas Wright</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag surf">Surf</span>
+                  <span class="sport-tag wingfoil">Wingfoil</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.8</span>
+                  <span>(98 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="English">🇬🇧</span>
+                <span title="French">🇫🇷</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Biarritz, France
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 7 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400&h=200&fit=crop" alt="Carolina Silva kitesurfing">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face" alt="Carolina Silva">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Carolina Silva</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag kitesurf">Kitesurf</span>
+                  <span class="sport-tag wingfoil">Wingfoil</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.9</span>
+                  <span>(201 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="Portuguese">🇧🇷</span>
+                <span title="English">🇬🇧</span>
+                <span title="Spanish">🇪🇸</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Cumbuco, Brazil
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 8 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1537519646099-335112f03225?w=400&h=200&fit=crop" alt="Marco Rossi kitesurfing">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1463453091185-61582044d556?w=200&h=200&fit=crop&crop=face" alt="Marco Rossi">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Marco Rossi</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag kitesurf">Kitesurf</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.7</span>
+                  <span>(78 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="Italian">🇮🇹</span>
+                <span title="English">🇬🇧</span>
+                <span title="German">🇩🇪</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Sardinia, Italy
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coach Card 9 -->
+        <a href="coach-profile.html" class="coach-card">
+          <div class="coach-action-image">
+            <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=400&h=200&fit=crop" alt="Emma Nielsen wingfoiling">
+          </div>
+          <div class="coach-card-body">
+            <div class="coach-card-header">
+              <div class="coach-avatar">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face" alt="Emma Nielsen">
+                <div class="verified-badge">
+                  <i data-lucide="check"></i>
+                </div>
+              </div>
+              <div class="coach-info">
+                <h3 class="coach-name">Emma Nielsen</h3>
+                <div class="coach-sports">
+                  <span class="sport-tag wingfoil">Wingfoil</span>
+                  <span class="sport-tag surf">Surf</span>
+                </div>
+                <div class="coach-rating">
+                  <i data-lucide="star" class="rating-star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                  <span class="rating-value">4.8</span>
+                  <span>(112 reviews)</span>
+                </div>
+              </div>
+            </div>
+            <div class="coach-card-footer">
+              <div class="coach-languages">
+                <span title="Danish">🇩🇰</span>
+                <span title="English">🇬🇧</span>
+                <span title="German">🇩🇪</span>
+              </div>
+              <div class="coach-location">
+                <i data-lucide="map-pin"></i>
+                Klitmoller, Denmark
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Pagination -->
+      <nav class="pagination">
+        <button class="pagination-btn disabled">
+          <i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i>
+        </button>
+        <button class="pagination-btn active">1</button>
+        <button class="pagination-btn">2</button>
+        <button class="pagination-btn">3</button>
+        <span class="pagination-ellipsis">...</span>
+        <button class="pagination-btn">5</button>
+        <button class="pagination-btn">
+          <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
+        </button>
+      </nav>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="logo-icon">
+              <i data-lucide="wind" style="width: 20px; height: 20px;"></i>
+            </div>
+            RideMaster
+          </div>
+          <p class="footer-description">
+            Your gateway to kitesurfing, wingfoil, and water sports adventures worldwide.
+            Connect with certified coaches and find your perfect camp.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link">
+              <i data-lucide="instagram" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="youtube" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="facebook" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="twitter" style="width: 18px; height: 18px;"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>Explore</h4>
+          <div class="footer-links">
+            <a href="camps.html" class="footer-link">Browse Camps</a>
+            <a href="coaches.html" class="footer-link">Find Coaches</a>
+            <a href="spots.html" class="footer-link">Discover Spots</a>
+            <a href="#" class="footer-link">Events Calendar</a>
+            <a href="#" class="footer-link">Gift Cards</a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>For Coaches</h4>
+          <div class="footer-links">
+            <a href="#" class="footer-link">List Your Camp</a>
+            <a href="dashboard-coach.html" class="footer-link">Coach Dashboard</a>
+            <a href="dashboard-rider.html" class="footer-link">Rider Dashboard</a>
+            <a href="#" class="footer-link">Resources</a>
+            <a href="#" class="footer-link">Certification</a>
+            <a href="#" class="footer-link">Success Stories</a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>Support</h4>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Help Center</a>
+            <a href="#" class="footer-link">Contact Us</a>
+            <a href="#" class="footer-link">Safety Guidelines</a>
+            <a href="#" class="footer-link">Cancellation Policy</a>
+            <a href="#" class="footer-link">Insurance Info</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          &copy; 2025 RideMaster. All rights reserved.
+        </p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

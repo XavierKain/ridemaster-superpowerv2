@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitesurf Camps - RideMaster</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+
+  <style>
+    /* Base Styles */
+    body {
+      font-family: var(--font-family-sans);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: var(--line-height-normal);
+    }
+
+    /* Container */
+    .container {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-4);
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 0 var(--space-6);
+      }
+    }
+
+    /* Header */
+    .header {
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--header-height);
+      gap: var(--space-6);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .nav {
+      display: none;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    @media (min-width: 1024px) {
+      .nav {
+        display: flex;
+      }
+    }
+
+    .nav-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+      position: relative;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--color-text);
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2-5) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-outline:hover {
+      background: var(--color-bg-subtle);
+      border-color: var(--color-slate-300);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: var(--radius-full);
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: var(--color-primary-100);
+      color: var(--color-primary-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-sm);
+    }
+
+    .mobile-menu-btn {
+      display: flex;
+      padding: var(--space-2);
+    }
+
+    @media (min-width: 1024px) {
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: var(--space-4) 0;
+      background: var(--color-bg);
+    }
+
+    .breadcrumb-list {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--color-text-secondary);
+    }
+
+    .breadcrumb-item a:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb-item.active {
+      color: var(--color-text);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .breadcrumb-separator {
+      color: var(--color-text-muted);
+    }
+
+    /* Page Header */
+    .page-header {
+      background: var(--color-bg-alt);
+      padding: var(--space-8) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .page-header-content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    @media (min-width: 768px) {
+      .page-header-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .page-title {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: var(--letter-spacing-tight);
+    }
+
+    @media (min-width: 768px) {
+      .page-title {
+        font-size: var(--font-size-4xl);
+      }
+    }
+
+    .page-subtitle {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      background: var(--color-bg);
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: var(--header-height);
+      z-index: calc(var(--z-sticky) - 1);
+    }
+
+    .filter-bar-inner {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    @media (min-width: 1024px) {
+      .filter-bar-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1-5);
+      padding: var(--space-2) var(--space-3);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: var(--transition-all);
+      white-space: nowrap;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--color-slate-300);
+      color: var(--color-text);
+    }
+
+    .filter-chip.active {
+      background: var(--color-primary-50);
+      border-color: var(--color-primary);
+      color: var(--color-primary-700);
+    }
+
+    .filter-chip-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    .active-filter {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1-5) var(--space-3);
+      background: var(--color-primary-100);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary-700);
+    }
+
+    .active-filter-remove {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: var(--transition-opacity);
+    }
+
+    .active-filter-remove:hover {
+      opacity: 1;
+    }
+
+    .clear-filters {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: var(--transition-colors);
+    }
+
+    .clear-filters:hover {
+      color: var(--color-error);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      padding: var(--space-4) 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    @media (min-width: 640px) {
+      .toolbar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .results-count {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .sort-select {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      cursor: pointer;
+    }
+
+    .sort-select:hover {
+      border-color: var(--color-slate-300);
+    }
+
+    .view-toggle {
+      display: flex;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .view-toggle-btn {
+      padding: var(--space-2);
+      background: var(--color-bg);
+      color: var(--color-text-muted);
+      transition: var(--transition-all);
+    }
+
+    .view-toggle-btn:hover {
+      color: var(--color-text);
+    }
+
+    .view-toggle-btn.active {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    /* Results Grid */
+    .results-section {
+      padding: var(--space-6) 0 var(--space-12);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    @media (min-width: 640px) {
+      .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .results-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .results-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Camp Card */
+    .camp-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-all);
+    }
+
+    .camp-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .camp-card-image {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+
+    .camp-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-slow);
+    }
+
+    .camp-card:hover .camp-card-image img {
+      transform: scale(1.05);
+    }
+
+    .camp-card-badges {
+      position: absolute;
+      top: var(--space-3);
+      left: var(--space-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1-5);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-2-5);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .badge-sport {
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--color-kitesurf);
+    }
+
+    .badge-sport.wingfoil {
+      color: var(--color-wingfoil);
+    }
+
+    .badge-sport.surf {
+      color: var(--color-surf);
+    }
+
+    .badge-level {
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--color-text-secondary);
+    }
+
+    .badge-featured {
+      background: var(--color-gold);
+      color: white;
+    }
+
+    .badge-discount {
+      background: var(--color-error);
+      color: white;
+    }
+
+    .camp-card-favorite {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: var(--transition-all);
+    }
+
+    .camp-card-favorite:hover {
+      color: var(--color-error);
+      transform: scale(1.1);
+    }
+
+    .camp-card-favorite.active {
+      color: var(--color-error);
+      background: var(--color-error-50);
+    }
+
+    .camp-card-content {
+      padding: var(--space-4);
+    }
+
+    .camp-card-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .camp-card-location {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    .camp-card-dates {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
+    }
+
+    .camp-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .camp-card-coach {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .coach-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+
+    .coach-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .coach-name {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    .coach-rating {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .rating-star {
+      color: var(--color-gold);
+    }
+
+    .camp-card-price {
+      text-align: right;
+    }
+
+    .price-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .price-value {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .price-original {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      text-decoration: line-through;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: var(--space-8) 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .pagination-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+      padding: 0 var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: var(--transition-all);
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--color-bg-subtle);
+      border-color: var(--color-slate-300);
+      color: var(--color-text);
+    }
+
+    .pagination-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination-ellipsis {
+      padding: 0 var(--space-2);
+      color: var(--color-text-muted);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-slate-900);
+      color: var(--color-slate-300);
+      padding: var(--space-16) 0 var(--space-8);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+      margin-bottom: var(--space-12);
+    }
+
+    @media (min-width: 640px) {
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .footer-grid {
+        grid-template-columns: 2fr repeat(3, 1fr);
+      }
+    }
+
+    .footer-brand {
+      max-width: 300px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: white;
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-tagline {
+      font-size: var(--font-size-sm);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-6);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      background: var(--color-slate-800);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-slate-400);
+      transition: var(--transition-all);
+    }
+
+    .social-link:hover {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .footer-nav h4 {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: white;
+      margin-bottom: var(--space-4);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+    }
+
+    .footer-nav ul {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .footer-nav a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-nav a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      padding-top: var(--space-8);
+      border-top: 1px solid var(--color-slate-800);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      align-items: center;
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+      }
+    }
+
+    .footer-copyright {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--space-6);
+    }
+
+    .footer-links a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+      transition: var(--transition-colors);
+    }
+
+    .footer-links a:hover {
+      color: var(--color-slate-300);
+    }
+
+    /* Icon utility */
+    .icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .icon-sm {
+      width: 16px;
+      height: 16px;
+    }
+
+    .icon-lg {
+      width: 24px;
+      height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+              <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+              <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+            </svg>
+          </div>
+          RideMaster
+        </a>
+
+        <nav class="nav">
+          <a href="camps.html" class="nav-link active">Camps</a>
+          <a href="coaches.html" class="nav-link">Coaches</a>
+          <a href="spots.html" class="nav-link">Spots</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="btn btn-ghost icon-btn" aria-label="Search">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.3-4.3"/>
+            </svg>
+          </button>
+          <button class="btn btn-ghost icon-btn" aria-label="Favorites">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            </svg>
+          </button>
+          <div class="avatar">JD</div>
+          <button class="btn btn-ghost mobile-menu-btn" aria-label="Menu">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" x2="20" y1="12" y2="12"/>
+              <line x1="4" x2="20" y1="6" y2="6"/>
+              <line x1="4" x2="20" y1="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="index.html">Home</a>
+        </li>
+        <li class="breadcrumb-separator">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="camps.html">Camps</a>
+        </li>
+        <li class="breadcrumb-separator">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </li>
+        <li class="breadcrumb-item active">Kitesurf</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <div class="page-header-content">
+        <div>
+          <h1 class="page-title">Kitesurf Camps</h1>
+          <p class="page-subtitle">127 camps available</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="container">
+      <div class="filter-bar-inner">
+        <div class="filter-chips">
+          <button class="filter-chip active">
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+              <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+              <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+            </svg>
+            <span>Kitesurf</span>
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <button class="filter-chip">
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 20h.01"/>
+              <path d="M7 20v-4"/>
+              <path d="M12 20v-8"/>
+              <path d="M17 20V8"/>
+            </svg>
+            <span>Level</span>
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <button class="filter-chip">
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+              <line x1="16" x2="16" y1="2" y2="6"/>
+              <line x1="8" x2="8" y1="2" y2="6"/>
+              <line x1="3" x2="21" y1="10" y2="10"/>
+            </svg>
+            <span>Dates</span>
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <button class="filter-chip">
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" x2="12" y1="2" y2="22"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            <span>Price Range</span>
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <button class="filter-chip">
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <span>More Filters</span>
+            <svg class="filter-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+        <div class="active-filters">
+          <span class="active-filter">
+            Beginner
+            <span class="active-filter-remove">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/>
+                <path d="m6 6 12 12"/>
+              </svg>
+            </span>
+          </span>
+          <span class="active-filter">
+            Under $2,000
+            <span class="active-filter-remove">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/>
+                <path d="m6 6 12 12"/>
+              </svg>
+            </span>
+          </span>
+          <span class="active-filter">
+            Europe
+            <span class="active-filter-remove">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/>
+                <path d="m6 6 12 12"/>
+              </svg>
+            </span>
+          </span>
+          <button class="clear-filters">Clear all</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="container">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="results-count">Showing 1-12 of 127</span>
+      </div>
+      <div class="toolbar-right">
+        <button class="sort-select">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 16 4 4 4-4"/>
+            <path d="M7 20V4"/>
+            <path d="m21 8-4-4-4 4"/>
+            <path d="M17 4v16"/>
+          </svg>
+          <span>Recommended</span>
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+        <div class="view-toggle">
+          <button class="view-toggle-btn active" aria-label="Grid view">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="7" height="7" x="3" y="3" rx="1"/>
+              <rect width="7" height="7" x="14" y="3" rx="1"/>
+              <rect width="7" height="7" x="14" y="14" rx="1"/>
+              <rect width="7" height="7" x="3" y="14" rx="1"/>
+            </svg>
+          </button>
+          <button class="view-toggle-btn" aria-label="List view">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" x2="21" y1="6" y2="6"/>
+              <line x1="8" x2="21" y1="12" y2="12"/>
+              <line x1="8" x2="21" y1="18" y2="18"/>
+              <line x1="3" x2="3.01" y1="6" y2="6"/>
+              <line x1="3" x2="3.01" y1="12" y2="12"/>
+              <line x1="3" x2="3.01" y1="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Grid -->
+  <main class="results-section">
+    <div class="container">
+      <div class="results-grid">
+        <!-- Camp Card 1 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=450&fit=crop" alt="Kitesurf camp in Tarifa">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport">Kitesurf</span>
+              <span class="badge badge-level">Beginner</span>
+              <span class="badge badge-featured">Featured</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Tarifa Kitesurf Adventure Week</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Tarifa, Spain</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Mar 15 - Mar 22, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=56&h=56&fit=crop" alt="Coach Miguel" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Miguel Santos</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.9 (127)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$1,299</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 2 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=600&h=450&fit=crop" alt="Surf camp in Bali">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport surf">Surf</span>
+              <span class="badge badge-level">All Levels</span>
+            </div>
+            <button class="camp-card-favorite active" aria-label="Remove from favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Bali Surf & Soul Retreat</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Canggu, Bali</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Apr 5 - Apr 12, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=56&h=56&fit=crop" alt="Coach Sarah" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Sarah Miller</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.8 (89)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$1,849</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 3 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1520443240718-fce21901db79?w=600&h=450&fit=crop" alt="Wingfoil camp in Hawaii">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport wingfoil">Wingfoil</span>
+              <span class="badge badge-level">Intermediate</span>
+              <span class="badge badge-discount">-20%</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Maui Wingfoil Progression Camp</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Maui, Hawaii</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>May 1 - May 8, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=56&h=56&fit=crop" alt="Coach Jake" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Jake Williams</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>5.0 (64)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-original">$2,499</span>
+                <span class="price-value">$1,999</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 4 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1505459668311-8dfac7952bf0?w=600&h=450&fit=crop" alt="Kitesurf camp in Cape Town">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport">Kitesurf</span>
+              <span class="badge badge-level">Advanced</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Cape Town Big Air Kite Camp</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Cape Town, South Africa</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Jun 10 - Jun 17, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=56&h=56&fit=crop" alt="Coach Pieter" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Pieter van der Berg</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.7 (156)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$2,199</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 5 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1527769929977-c341ee9f2e66?w=600&h=450&fit=crop" alt="Surf camp in Portugal">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport surf">Surf</span>
+              <span class="badge badge-level">Beginner</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Ericeira Surf Discovery</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Ericeira, Portugal</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Mar 20 - Mar 27, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=56&h=56&fit=crop" alt="Coach Maria" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Maria Costa</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.9 (203)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$899</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 6 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1517699418036-fb5d179fef0c?w=600&h=450&fit=crop" alt="Kitesurf camp in Brazil">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport">Kitesurf</span>
+              <span class="badge badge-level">All Levels</span>
+              <span class="badge badge-featured">Featured</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Jericoacoara Kite Paradise</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Jericoacoara, Brazil</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Jul 5 - Jul 15, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=56&h=56&fit=crop" alt="Coach Lucas" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Lucas Ferreira</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.8 (178)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$1,599</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 7 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1537519646099-335112f03225?w=600&h=450&fit=crop" alt="Wingfoil camp in Greece">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport wingfoil">Wingfoil</span>
+              <span class="badge badge-level">Beginner</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Rhodes Wingfoil Introduction</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Rhodes, Greece</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Aug 1 - Aug 7, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=56&h=56&fit=crop" alt="Coach Nikos" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Nikos Papadopoulos</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.6 (92)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$1,199</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 8 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=450&fit=crop" alt="Kitesurf camp in Dominican Republic">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport">Kitesurf</span>
+              <span class="badge badge-level">Intermediate</span>
+              <span class="badge badge-discount">-15%</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Cabarete Freestyle Kite Camp</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Cabarete, Dominican Republic</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Feb 15 - Feb 22, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=56&h=56&fit=crop" alt="Coach Carlos" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Carlos Martinez</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.9 (145)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-original">$1,699</span>
+                <span class="price-value">$1,444</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 9 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=450&fit=crop" alt="Surf camp in Morocco">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport surf">Surf</span>
+              <span class="badge badge-level">Intermediate</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Taghazout Surf & Yoga Retreat</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Taghazout, Morocco</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Apr 12 - Apr 19, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=56&h=56&fit=crop" alt="Coach Amina" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Amina Benali</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.8 (112)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$799</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 10 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1552083375-1447ce886485?w=600&h=450&fit=crop" alt="Kitesurf camp in Zanzibar">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport">Kitesurf</span>
+              <span class="badge badge-level">All Levels</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Zanzibar Tropical Kite Experience</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Paje, Zanzibar</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Sep 5 - Sep 12, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=56&h=56&fit=crop" alt="Coach John" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">John Kimani</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.7 (98)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$1,399</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 11 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1518637521592-8c8e6f5e3f4a?w=600&h=450&fit=crop" alt="Wingfoil camp in Fuerteventura">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport wingfoil">Wingfoil</span>
+              <span class="badge badge-level">Advanced</span>
+              <span class="badge badge-featured">Featured</span>
+            </div>
+            <button class="camp-card-favorite" aria-label="Add to favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Fuerteventura Wingfoil Mastery</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Fuerteventura, Spain</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Oct 10 - Oct 17, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=56&h=56&fit=crop" alt="Coach Hans" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Hans Mueller</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>5.0 (87)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-label">From</span>
+                <span class="price-value">$2,299</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 12 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1455729552865-3658a5d39692?w=600&h=450&fit=crop" alt="Surf camp in Costa Rica">
+            <div class="camp-card-badges">
+              <span class="badge badge-sport surf">Surf</span>
+              <span class="badge badge-level">All Levels</span>
+              <span class="badge badge-discount">-10%</span>
+            </div>
+            <button class="camp-card-favorite active" aria-label="Remove from favorites">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <h3 class="camp-card-title">Santa Teresa Pura Vida Surf Camp</h3>
+            <div class="camp-card-location">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Santa Teresa, Costa Rica</span>
+            </div>
+            <div class="camp-card-dates">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+              <span>Nov 8 - Nov 15, 2026</span>
+            </div>
+            <div class="camp-card-meta">
+              <div class="camp-card-coach">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=56&h=56&fit=crop" alt="Coach Elena" class="coach-avatar">
+                <div class="coach-info">
+                  <span class="coach-name">Elena Rojas</span>
+                  <div class="coach-rating">
+                    <svg class="icon-sm rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <span>4.9 (167)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="camp-card-price">
+                <span class="price-original">$1,499</span>
+                <span class="price-value">$1,349</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Pagination -->
+      <nav class="pagination" aria-label="Pagination">
+        <button class="pagination-btn" disabled aria-label="Previous page">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+        </button>
+        <button class="pagination-btn active" aria-current="page">1</button>
+        <button class="pagination-btn">2</button>
+        <button class="pagination-btn">3</button>
+        <button class="pagination-btn">4</button>
+        <button class="pagination-btn">5</button>
+        <span class="pagination-ellipsis">...</span>
+        <button class="pagination-btn">11</button>
+        <button class="pagination-btn" aria-label="Next page">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">
+            <div class="logo-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+                <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+                <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+              </svg>
+            </div>
+            RideMaster
+          </a>
+          <p class="footer-tagline">Connect with world-class coaches and discover epic water sports adventures. Your journey to mastering the elements starts here.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="YouTube">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
+                <path d="m10 15 5-3-5-3z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <nav class="footer-nav">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="camps.html">Camps</a></li>
+            <li><a href="#">Coaches</a></li>
+            <li><a href="#">Destinations</a></li>
+            <li><a href="#">Sports</a></li>
+            <li><a href="#">Gift Cards</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="dashboard-rider.html">Rider Dashboard</a></li>
+            <li><a href="dashboard-coach.html">Coach Dashboard</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Safety</a></li>
+            <li><a href="#">Cancellation Policy</a></li>
+            <li><a href="#">Coach Resources</a></li>
+            <li><a href="#">Community</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">2026 RideMaster. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maria Santos - Kitesurf Coach - RideMaster</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-alt);
+      color: var(--color-text);
+      line-height: var(--line-height-normal);
+    }
+
+    .container {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    /* Header */
+    .header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      height: var(--header-height);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .nav-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2-5) var(--space-5);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--color-secondary);
+      color: var(--color-text-inverse);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-secondary-hover);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-outline:hover {
+      background: var(--color-bg-subtle);
+      border-color: var(--color-slate-300);
+    }
+
+    .btn-lg {
+      padding: var(--space-3) var(--space-6);
+      font-size: var(--font-size-base);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: var(--transition-all);
+    }
+
+    .icon-btn:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: var(--space-4) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb a {
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+    }
+
+    .breadcrumb a:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb-separator {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Profile Hero */
+    .profile-hero {
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-card);
+    }
+
+    .profile-cover {
+      height: 280px;
+      background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 50%);
+    }
+
+    .profile-main {
+      padding: var(--space-6) var(--space-8);
+      display: flex;
+      gap: var(--space-8);
+      position: relative;
+    }
+
+    .profile-avatar {
+      margin-top: -80px;
+      flex-shrink: 0;
+    }
+
+    .profile-avatar img {
+      width: 160px;
+      height: 160px;
+      border-radius: var(--radius-full);
+      border: 4px solid white;
+      object-fit: cover;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .profile-content {
+      flex: 1;
+      padding-top: var(--space-2);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: var(--space-4);
+    }
+
+    .profile-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+
+    .profile-name {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .verified-badge-lg {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-3);
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-full);
+    }
+
+    .verified-badge-lg svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .profile-stats {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
+    }
+
+    .profile-stat {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .profile-stat-value {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .rating-star {
+      color: var(--color-gold);
+    }
+
+    .profile-stat-separator {
+      color: var(--color-text-muted);
+    }
+
+    .profile-sports {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+
+    .sport-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1-5) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-md);
+    }
+
+    .sport-tag.kitesurf {
+      background: var(--color-kitesurf-light);
+      color: var(--color-kitesurf);
+    }
+
+    .sport-tag.wingfoil {
+      background: var(--color-wingfoil-light);
+      color: var(--color-wingfoil);
+    }
+
+    .sport-tag.surf {
+      background: var(--color-surf-light);
+      color: var(--color-surf);
+    }
+
+    .profile-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .profile-languages {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-lg);
+    }
+
+    .profile-location {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    /* Tab Navigation */
+    .tabs {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-1);
+      display: inline-flex;
+      gap: var(--space-1);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-btn {
+      padding: var(--space-3) var(--space-6);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+    }
+
+    .tab-btn:hover {
+      color: var(--color-text);
+      background: var(--color-bg-subtle);
+    }
+
+    .tab-btn.active {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    /* About Section */
+    .profile-section {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-card);
+    }
+
+    .section-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .section-title svg {
+      color: var(--color-primary);
+    }
+
+    .bio-text {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-4);
+    }
+
+    .bio-text:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Certifications */
+    .certifications-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-6);
+    }
+
+    .certification-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border-light);
+    }
+
+    .certification-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      background: var(--color-primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .certification-info h4 {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .certification-info p {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    /* Experience List */
+    .experience-list {
+      margin-top: var(--space-6);
+    }
+
+    .experience-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .experience-item:last-child {
+      border-bottom: none;
+    }
+
+    .experience-bullet {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--color-primary);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .experience-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+    }
+
+    /* Specialties */
+    .specialties-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-6);
+    }
+
+    .specialty-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      transition: var(--transition-all);
+    }
+
+    .specialty-tag:hover {
+      background: var(--color-primary-light);
+      border-color: var(--color-primary-200);
+      color: var(--color-primary-700);
+    }
+
+    /* Camps Section */
+    .camps-section {
+      margin-bottom: var(--space-8);
+    }
+
+    .camps-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+    }
+
+    .camps-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .camps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+
+    @media (max-width: 1024px) {
+      .camps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .camps-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Camp Card */
+    .camp-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-all);
+    }
+
+    .camp-card:hover {
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-4px);
+    }
+
+    .camp-image {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .camp-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camp-badge {
+      position: absolute;
+      top: var(--space-3);
+      left: var(--space-3);
+      padding: var(--space-1) var(--space-3);
+      background: var(--color-secondary);
+      color: white;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-full);
+    }
+
+    .camp-content {
+      padding: var(--space-5);
+    }
+
+    .camp-sport {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-2);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-2);
+    }
+
+    .camp-sport.kitesurf {
+      background: var(--color-kitesurf-light);
+      color: var(--color-kitesurf);
+    }
+
+    .camp-sport.wingfoil {
+      background: var(--color-wingfoil-light);
+      color: var(--color-wingfoil);
+    }
+
+    .camp-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+      line-height: var(--line-height-snug);
+    }
+
+    .camp-meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .camp-meta-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .camp-meta-item svg {
+      width: 16px;
+      height: 16px;
+      color: var(--color-text-muted);
+    }
+
+    .camp-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .camp-price {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .camp-price span {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-normal);
+      color: var(--color-text-muted);
+    }
+
+    .camp-spots {
+      font-size: var(--font-size-sm);
+      color: var(--color-success);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-slate-900);
+      color: var(--color-text-inverse);
+      padding: var(--space-16) 0 var(--space-8);
+      margin-top: var(--space-16);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: var(--space-12);
+      margin-bottom: var(--space-12);
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .footer-brand {
+      max-width: 280px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: white;
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-description {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-6);
+    }
+
+    .social-links {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--color-slate-800);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-slate-400);
+      transition: var(--transition-all);
+    }
+
+    .social-link:hover {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .footer-column h4 {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .footer-link {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-link:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      padding-top: var(--space-8);
+      border-top: 1px solid var(--color-slate-800);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+
+    .footer-copyright {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: var(--space-6);
+    }
+
+    .footer-legal a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+      transition: var(--transition-colors);
+    }
+
+    .footer-legal a:hover {
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .profile-main {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .profile-avatar {
+        margin-top: -60px;
+      }
+
+      .profile-avatar img {
+        width: 120px;
+        height: 120px;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .profile-stats,
+      .profile-sports,
+      .profile-meta {
+        justify-content: center;
+      }
+
+      .profile-actions {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .tabs {
+        display: flex;
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .tab-btn {
+        flex: 1;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">
+          <i data-lucide="wind" style="width: 20px; height: 20px;"></i>
+        </div>
+        RideMaster
+      </a>
+
+      <nav class="nav">
+        <a href="camps.html" class="nav-link">
+          <i data-lucide="compass" style="width: 16px; height: 16px;"></i>
+          Explore Camps
+        </a>
+        <a href="coaches.html" class="nav-link active">
+          <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+          Find Coaches
+        </a>
+        <a href="spots.html" class="nav-link">
+          <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i>
+          Spots
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+          Events
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn">
+          <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+        </button>
+        <button class="icon-btn">
+          <i data-lucide="heart" style="width: 20px; height: 20px;"></i>
+        </button>
+        <button class="btn btn-ghost">Sign In</button>
+        <button class="btn btn-primary">Get Started</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-separator">
+          <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+        </span>
+        <a href="coaches.html">Coaches</a>
+        <span class="breadcrumb-separator">
+          <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+        </span>
+        <span class="breadcrumb-current">Maria Santos</span>
+      </nav>
+
+      <!-- Profile Hero -->
+      <div class="profile-hero">
+        <div class="profile-cover">
+          <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1600&h=400&fit=crop" alt="Kitesurfing action shot at Tarifa beach">
+          <div class="profile-cover-overlay"></div>
+        </div>
+        <div class="profile-main">
+          <div class="profile-avatar">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=320&h=320&fit=crop&crop=face" alt="Maria Santos">
+          </div>
+          <div class="profile-content">
+            <div class="profile-header">
+              <div>
+                <div class="profile-title">
+                  <h1 class="profile-name">Maria Santos</h1>
+                  <span class="verified-badge-lg">
+                    <i data-lucide="badge-check"></i>
+                    Verified Coach
+                  </span>
+                </div>
+                <div class="profile-stats">
+                  <div class="profile-stat">
+                    <i data-lucide="star" class="rating-star" style="width: 18px; height: 18px; fill: currentColor;"></i>
+                    <span class="profile-stat-value">4.9</span>
+                    <span>(89 reviews)</span>
+                  </div>
+                  <span class="profile-stat-separator">·</span>
+                  <div class="profile-stat">
+                    <i data-lucide="users" style="width: 18px; height: 18px; color: var(--color-text-muted);"></i>
+                    <span class="profile-stat-value">127</span>
+                    <span>students</span>
+                  </div>
+                </div>
+                <div class="profile-sports">
+                  <span class="sport-tag kitesurf">Kitesurf</span>
+                  <span class="sport-tag wingfoil">Wingfoil</span>
+                </div>
+                <div class="profile-meta">
+                  <div class="profile-languages">
+                    <span title="French">🇫🇷</span>
+                    <span title="English">🇬🇧</span>
+                    <span title="Spanish">🇪🇸</span>
+                  </div>
+                  <span class="profile-stat-separator">·</span>
+                  <div class="profile-location">
+                    <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i>
+                    Tarifa, Spain
+                  </div>
+                </div>
+              </div>
+              <div class="profile-actions">
+                <button class="btn btn-outline btn-lg">
+                  <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
+                  Follow
+                </button>
+                <button class="btn btn-primary btn-lg">
+                  <i data-lucide="message-circle" style="width: 18px; height: 18px;"></i>
+                  Message
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tabs">
+        <button class="tab-btn active">About</button>
+        <button class="tab-btn">Camps</button>
+        <button class="tab-btn">Reviews</button>
+        <button class="tab-btn">Gallery</button>
+      </div>
+
+      <!-- About Section -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <i data-lucide="user" style="width: 24px; height: 24px;"></i>
+          About Maria
+        </h2>
+        <p class="bio-text">
+          With over 12 years of experience in kitesurfing and 5 years in wingfoil, I've dedicated my life to helping students
+          discover the thrill of wind-powered water sports. My journey started right here in Tarifa, where the legendary
+          Levante winds first introduced me to kiting at age 16.
+        </p>
+        <p class="bio-text">
+          After competing professionally for 6 years and traveling to over 30 countries chasing the best conditions, I found
+          my true passion in coaching. There's nothing more rewarding than seeing a student's face light up when they complete
+          their first water start or land their first jump. I specialize in taking beginners from zero to independent riders,
+          as well as helping intermediate kiters unlock their freestyle potential.
+        </p>
+        <p class="bio-text">
+          My teaching philosophy centers on building confidence through progressive skill development. Every student learns
+          differently, so I adapt my approach to match your learning style, goals, and comfort level. Safety is always my
+          top priority - the ocean deserves respect, and I make sure every session is both fun and secure.
+        </p>
+      </div>
+
+      <!-- Certifications Section -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <i data-lucide="award" style="width: 24px; height: 24px;"></i>
+          Certifications
+        </h2>
+        <div class="certifications-grid">
+          <div class="certification-card">
+            <div class="certification-icon">
+              <i data-lucide="shield-check" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="certification-info">
+              <h4>IKO Level 3 Instructor</h4>
+              <p>International Kiteboarding Organization</p>
+            </div>
+          </div>
+          <div class="certification-card">
+            <div class="certification-icon">
+              <i data-lucide="heart-pulse" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="certification-info">
+              <h4>First Aid Certified</h4>
+              <p>Red Cross International</p>
+            </div>
+          </div>
+          <div class="certification-card">
+            <div class="certification-icon">
+              <i data-lucide="life-buoy" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="certification-info">
+              <h4>Water Rescue Certification</h4>
+              <p>Spanish Lifeguard Association</p>
+            </div>
+          </div>
+          <div class="certification-card">
+            <div class="certification-icon">
+              <i data-lucide="wind" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="certification-info">
+              <h4>Wingfoil Instructor</h4>
+              <p>GWA Certified Coach</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experience Section -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <i data-lucide="briefcase" style="width: 24px; height: 24px;"></i>
+          Experience
+        </h2>
+        <div class="experience-list">
+          <div class="experience-item">
+            <div class="experience-bullet"></div>
+            <p class="experience-text">12+ years of professional kitesurfing experience across 30+ countries</p>
+          </div>
+          <div class="experience-item">
+            <div class="experience-bullet"></div>
+            <p class="experience-text">Former professional competitor with multiple podium finishes in European championships</p>
+          </div>
+          <div class="experience-item">
+            <div class="experience-bullet"></div>
+            <p class="experience-text">Trained over 500 students from complete beginners to advanced freestyle</p>
+          </div>
+          <div class="experience-item">
+            <div class="experience-bullet"></div>
+            <p class="experience-text">5 years teaching wingfoil since the sport's early days - one of the first certified instructors in Spain</p>
+          </div>
+          <div class="experience-item">
+            <div class="experience-bullet"></div>
+            <p class="experience-text">Head coach at Tarifa Kite Academy from 2018-2022</p>
+          </div>
+          <div class="experience-item">
+            <div class="experience-bullet"></div>
+            <p class="experience-text">Fluent in French, English, and Spanish with basic Portuguese</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specialties Section -->
+      <div class="profile-section">
+        <h2 class="section-title">
+          <i data-lucide="target" style="width: 24px; height: 24px;"></i>
+          Specialties
+        </h2>
+        <div class="specialties-tags">
+          <span class="specialty-tag">
+            <i data-lucide="baby" style="width: 16px; height: 16px;"></i>
+            Beginners
+          </span>
+          <span class="specialty-tag">
+            <i data-lucide="waves" style="width: 16px; height: 16px;"></i>
+            Wave Riding
+          </span>
+          <span class="specialty-tag">
+            <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
+            Freestyle
+          </span>
+          <span class="specialty-tag">
+            <i data-lucide="wind" style="width: 16px; height: 16px;"></i>
+            Light Wind Sessions
+          </span>
+          <span class="specialty-tag">
+            <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+            Group Lessons
+          </span>
+          <span class="specialty-tag">
+            <i data-lucide="shield" style="width: 16px; height: 16px;"></i>
+            Safety Training
+          </span>
+          <span class="specialty-tag">
+            <i data-lucide="compass" style="width: 16px; height: 16px;"></i>
+            Spot Guidance
+          </span>
+          <span class="specialty-tag">
+            <i data-lucide="video" style="width: 16px; height: 16px;"></i>
+            Video Analysis
+          </span>
+        </div>
+      </div>
+
+      <!-- Upcoming Camps -->
+      <section class="camps-section">
+        <div class="camps-header">
+          <h2 class="camps-title">Upcoming Camps by Maria</h2>
+          <a href="camps.html" class="btn btn-outline">
+            View All
+            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+          </a>
+        </div>
+        <div class="camps-grid">
+          <!-- Camp Card 1 -->
+          <a href="camp-detail.html" class="camp-card">
+            <div class="camp-image">
+              <img src="https://images.unsplash.com/photo-1621264448270-9ef00e88a935?w=600&h=400&fit=crop" alt="Kitesurf Beginner Camp">
+              <span class="camp-badge">Early Bird</span>
+            </div>
+            <div class="camp-content">
+              <span class="camp-sport kitesurf">Kitesurf</span>
+              <h3 class="camp-title">Beginner Kitesurf Week in Tarifa</h3>
+              <div class="camp-meta">
+                <div class="camp-meta-item">
+                  <i data-lucide="calendar"></i>
+                  Mar 15-22, 2025
+                </div>
+                <div class="camp-meta-item">
+                  <i data-lucide="map-pin"></i>
+                  Tarifa, Spain
+                </div>
+                <div class="camp-meta-item">
+                  <i data-lucide="users"></i>
+                  Max 6 students
+                </div>
+              </div>
+              <div class="camp-footer">
+                <div class="camp-price">
+                  €1,290 <span>/ person</span>
+                </div>
+                <span class="camp-spots">4 spots left</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Camp Card 2 -->
+          <a href="camp-detail.html" class="camp-card">
+            <div class="camp-image">
+              <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop" alt="Wingfoil Progression Camp">
+            </div>
+            <div class="camp-content">
+              <span class="camp-sport wingfoil">Wingfoil</span>
+              <h3 class="camp-title">Wingfoil Progression Weekend</h3>
+              <div class="camp-meta">
+                <div class="camp-meta-item">
+                  <i data-lucide="calendar"></i>
+                  Apr 5-7, 2025
+                </div>
+                <div class="camp-meta-item">
+                  <i data-lucide="map-pin"></i>
+                  Tarifa, Spain
+                </div>
+                <div class="camp-meta-item">
+                  <i data-lucide="users"></i>
+                  Max 4 students
+                </div>
+              </div>
+              <div class="camp-footer">
+                <div class="camp-price">
+                  €590 <span>/ person</span>
+                </div>
+                <span class="camp-spots">2 spots left</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Camp Card 3 -->
+          <a href="camp-detail.html" class="camp-card">
+            <div class="camp-image">
+              <img src="https://images.unsplash.com/photo-1520116468816-95b69f847357?w=600&h=400&fit=crop" alt="Advanced Freestyle Camp">
+            </div>
+            <div class="camp-content">
+              <span class="camp-sport kitesurf">Kitesurf</span>
+              <h3 class="camp-title">Freestyle Masterclass Week</h3>
+              <div class="camp-meta">
+                <div class="camp-meta-item">
+                  <i data-lucide="calendar"></i>
+                  May 10-17, 2025
+                </div>
+                <div class="camp-meta-item">
+                  <i data-lucide="map-pin"></i>
+                  Tarifa, Spain
+                </div>
+                <div class="camp-meta-item">
+                  <i data-lucide="users"></i>
+                  Max 8 students
+                </div>
+              </div>
+              <div class="camp-footer">
+                <div class="camp-price">
+                  €1,490 <span>/ person</span>
+                </div>
+                <span class="camp-spots">6 spots left</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="logo-icon">
+              <i data-lucide="wind" style="width: 20px; height: 20px;"></i>
+            </div>
+            RideMaster
+          </div>
+          <p class="footer-description">
+            Your gateway to kitesurfing, wingfoil, and water sports adventures worldwide.
+            Connect with certified coaches and find your perfect camp.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link">
+              <i data-lucide="instagram" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="youtube" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="facebook" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="twitter" style="width: 18px; height: 18px;"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>Explore</h4>
+          <div class="footer-links">
+            <a href="camps.html" class="footer-link">Browse Camps</a>
+            <a href="coaches.html" class="footer-link">Find Coaches</a>
+            <a href="spots.html" class="footer-link">Discover Spots</a>
+            <a href="#" class="footer-link">Events Calendar</a>
+            <a href="#" class="footer-link">Gift Cards</a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>For Coaches</h4>
+          <div class="footer-links">
+            <a href="#" class="footer-link">List Your Camp</a>
+            <a href="dashboard-coach.html" class="footer-link">Coach Dashboard</a>
+            <a href="dashboard-rider.html" class="footer-link">Rider Dashboard</a>
+            <a href="#" class="footer-link">Resources</a>
+            <a href="#" class="footer-link">Certification</a>
+            <a href="#" class="footer-link">Success Stories</a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>Support</h4>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Help Center</a>
+            <a href="#" class="footer-link">Contact Us</a>
+            <a href="#" class="footer-link">Safety Guidelines</a>
+            <a href="#" class="footer-link">Cancellation Policy</a>
+            <a href="#" class="footer-link">Insurance Info</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          &copy; 2025 RideMaster. All rights reserved.
+        </p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

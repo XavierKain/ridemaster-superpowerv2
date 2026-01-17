@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarifa Kite Week - RideMaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    body {
+      font-family: var(--font-family-sans);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: var(--line-height-normal);
+    }
+
+    /* Container */
+    .container {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    /* Header */
+    .header {
+      height: var(--header-height);
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--color-primary);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .nav-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+    }
+
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2-5) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+      cursor: pointer;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-primary-large {
+      padding: var(--space-4) var(--space-6);
+      font-size: var(--font-size-base);
+      width: 100%;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: var(--space-4) 0;
+      background: var(--color-bg-alt);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .breadcrumb-list {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-link {
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+    }
+
+    .breadcrumb-link:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb-current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Image Gallery */
+    .gallery {
+      padding: var(--space-8) 0;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 200px 200px;
+      gap: var(--space-3);
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+    }
+
+    .gallery-main {
+      grid-row: 1 / 3;
+      position: relative;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-thumb {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-thumb:last-child::after {
+      content: '+12 more';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+    }
+
+    .gallery-actions {
+      position: absolute;
+      top: var(--space-4);
+      right: var(--space-4);
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .gallery-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--color-bg);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition-all);
+      cursor: pointer;
+    }
+
+    .gallery-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Main Content Layout */
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: var(--space-12);
+      padding-bottom: var(--space-16);
+    }
+
+    /* Left Column - Content */
+    .content-column {
+      min-width: 0;
+    }
+
+    /* Badges */
+    .badges {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-full);
+    }
+
+    .badge-kitesurf {
+      background: var(--color-kitesurf-light);
+      color: var(--color-kitesurf);
+    }
+
+    .badge-level {
+      background: var(--color-bg-subtle);
+      color: var(--color-text-secondary);
+    }
+
+    /* Title Section */
+    .camp-title {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+      line-height: var(--line-height-tight);
+    }
+
+    .camp-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-6);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      color: var(--color-gold);
+    }
+
+    .rating-text {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .rating-count {
+      color: var(--color-text-secondary);
+    }
+
+    .meta-separator {
+      color: var(--color-text-muted);
+    }
+
+    /* Coach Preview */
+    .coach-preview {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-xl);
+      margin-bottom: var(--space-8);
+    }
+
+    .coach-photo {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 3px solid var(--color-bg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .coach-info {
+      flex: 1;
+    }
+
+    .coach-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+      margin-bottom: var(--space-1);
+    }
+
+    .coach-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .coach-certification {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .coach-flags {
+      display: flex;
+      gap: var(--space-1);
+      font-size: var(--font-size-base);
+    }
+
+    /* Section Styles */
+    .section {
+      margin-bottom: var(--space-10);
+    }
+
+    .section-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .section-content p {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-4);
+      line-height: var(--line-height-relaxed);
+    }
+
+    /* What's Included */
+    .included-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .included-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-lg);
+    }
+
+    .included-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+    }
+
+    .included-icon.yes {
+      background: var(--color-success-light);
+      color: var(--color-success);
+    }
+
+    .included-icon.no {
+      background: var(--color-error-light);
+      color: var(--color-error);
+    }
+
+    .included-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+    }
+
+    /* The Spot Section */
+    .spot-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+    }
+
+    .map-placeholder {
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-xl);
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      border: 2px dashed var(--color-border);
+    }
+
+    .spot-details {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .spot-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .spot-icon {
+      color: var(--color-primary);
+      margin-top: 2px;
+    }
+
+    .spot-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+    }
+
+    .spot-value {
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Reviews Section */
+    .reviews-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+    }
+
+    .rating-summary {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .rating-big {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .rating-stars {
+      display: flex;
+      gap: var(--space-1);
+      color: var(--color-gold);
+    }
+
+    .rating-info {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .reviews-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .review-card {
+      padding: var(--space-5);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-xl);
+    }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+
+    .review-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+
+    .review-author {
+      flex: 1;
+    }
+
+    .review-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .review-date {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .review-rating {
+      display: flex;
+      gap: 2px;
+      color: var(--color-gold);
+    }
+
+    .review-quote {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+      font-style: italic;
+    }
+
+    /* Right Column - Booking Card */
+    .booking-column {
+      position: relative;
+    }
+
+    .booking-card {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-6));
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .booking-price {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-6);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .price-from {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .price-amount {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .price-unit {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-normal);
+      color: var(--color-text-secondary);
+    }
+
+    .booking-field {
+      margin-bottom: var(--space-4);
+    }
+
+    .field-label {
+      display: block;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+      margin-bottom: var(--space-2);
+    }
+
+    .date-selector {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: var(--transition-all);
+    }
+
+    .date-selector:hover {
+      border-color: var(--color-primary);
+    }
+
+    .date-icon {
+      color: var(--color-primary);
+    }
+
+    .date-text {
+      flex: 1;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    .participants-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+
+    .participants-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .counter-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: var(--transition-all);
+    }
+
+    .counter-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .counter-value {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .price-breakdown {
+      margin: var(--space-6) 0;
+      padding: var(--space-4);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-lg);
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    .breakdown-row:last-child {
+      margin-bottom: 0;
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--color-border);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .trust-indicators {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin-top: var(--space-5);
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .trust-icon {
+      color: var(--color-success);
+    }
+
+    /* Similar Camps Section */
+    .similar-camps {
+      padding: var(--space-16) 0;
+      background: var(--color-bg-alt);
+    }
+
+    .similar-camps-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-8);
+    }
+
+    .similar-camps-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .camps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-6);
+    }
+
+    .camp-card {
+      background: var(--color-bg);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-all);
+    }
+
+    .camp-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .camp-card-image {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    .camp-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camp-card-badge {
+      position: absolute;
+      top: var(--space-3);
+      left: var(--space-3);
+      padding: var(--space-1) var(--space-2);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-kitesurf);
+    }
+
+    .camp-card-favorite {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-all);
+    }
+
+    .camp-card-favorite:hover {
+      background: var(--color-bg);
+      color: var(--color-secondary);
+    }
+
+    .camp-card-content {
+      padding: var(--space-4);
+    }
+
+    .camp-card-location {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-1);
+    }
+
+    .camp-card-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+    }
+
+    .camp-card-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
+    }
+
+    .camp-card-rating {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      color: var(--color-gold);
+    }
+
+    .camp-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    .camp-card-price {
+      font-size: var(--font-size-sm);
+    }
+
+    .camp-card-price strong {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-slate-900);
+      color: var(--color-slate-300);
+      padding: var(--space-16) 0 var(--space-8);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: var(--space-12);
+      margin-bottom: var(--space-12);
+    }
+
+    .footer-brand {
+      max-width: 280px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-inverse);
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--color-primary);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-tagline {
+      font-size: var(--font-size-sm);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-6);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      background: var(--color-slate-800);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-slate-400);
+      transition: var(--transition-all);
+    }
+
+    .social-link:hover {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .footer-column-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-inverse);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wider);
+      margin-bottom: var(--space-5);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .footer-link {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-link:hover {
+      color: var(--color-primary-300);
+    }
+
+    .footer-bottom {
+      padding-top: var(--space-8);
+      border-top: 1px solid var(--color-slate-800);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copyright {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: var(--space-6);
+    }
+
+    .footer-legal a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+      transition: var(--transition-colors);
+    }
+
+    .footer-legal a:hover {
+      color: var(--color-slate-300);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-column {
+        order: -1;
+      }
+
+      .booking-card {
+        position: relative;
+        top: 0;
+      }
+
+      .camps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-brand {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 200px 100px 100px;
+      }
+
+      .gallery-main {
+        grid-column: span 2;
+        grid-row: span 1;
+      }
+
+      .included-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .spot-content {
+        grid-template-columns: 1fr;
+      }
+
+      .camps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-content">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <i data-lucide="wind" style="width: 20px; height: 20px;"></i>
+        </span>
+        RideMaster
+      </a>
+
+      <nav class="nav">
+        <a href="camps.html" class="nav-link">Find Camps</a>
+        <a href="coaches.html" class="nav-link">Find Coaches</a>
+        <a href="spots.html" class="nav-link">Destinations</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="btn btn-outline">Log in</a>
+        <a href="register-rider.html" class="btn btn-primary">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <div class="container">
+      <ol class="breadcrumb-list">
+        <li><a href="#" class="breadcrumb-link">Home</a></li>
+        <li><i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></li>
+        <li><a href="#" class="breadcrumb-link">Camps</a></li>
+        <li><i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></li>
+        <li><a href="#" class="breadcrumb-link">Kitesurf</a></li>
+        <li><i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></li>
+        <li class="breadcrumb-current">Tarifa Kite Week</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Image Gallery -->
+  <section class="gallery">
+    <div class="container">
+      <div class="gallery-grid">
+        <div class="gallery-main">
+          <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&h=600&fit=crop" alt="Kitesurfing in Tarifa" class="gallery-image">
+          <div class="gallery-actions">
+            <button class="gallery-btn">
+              <i data-lucide="share" style="width: 18px; height: 18px;"></i>
+            </button>
+            <button class="gallery-btn">
+              <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
+            </button>
+          </div>
+        </div>
+        <div class="gallery-thumb">
+          <img src="https://images.unsplash.com/photo-1534378038909-2dbc99e4e6f3?w=400&h=300&fit=crop" alt="Kitesurfing beach" class="gallery-image">
+        </div>
+        <div class="gallery-thumb">
+          <img src="https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=400&h=300&fit=crop" alt="Tarifa coastline" class="gallery-image">
+        </div>
+        <div class="gallery-thumb">
+          <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=400&h=300&fit=crop" alt="Kite equipment" class="gallery-image">
+        </div>
+        <div class="gallery-thumb">
+          <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400&h=300&fit=crop" alt="Beach sunset" class="gallery-image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container">
+    <div class="main-content">
+      <!-- Left Column - Content -->
+      <div class="content-column">
+        <!-- Badges & Title -->
+        <div class="badges">
+          <span class="badge badge-kitesurf">Kitesurf</span>
+          <span class="badge badge-level">Intermediate</span>
+        </div>
+
+        <h1 class="camp-title">Tarifa Kite Week</h1>
+
+        <div class="camp-meta">
+          <div class="meta-item">
+            <span class="rating">
+              <i data-lucide="star" style="width: 16px; height: 16px; fill: currentColor;"></i>
+              <span class="rating-text">4.9</span>
+            </span>
+            <span class="rating-count">(23 reviews)</span>
+          </div>
+          <span class="meta-separator">-</span>
+          <div class="meta-item">
+            <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i>
+            Tarifa, Spain
+          </div>
+          <span class="meta-separator">-</span>
+          <div class="meta-item">
+            <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+            7 days
+          </div>
+          <span class="meta-separator">-</span>
+          <div class="meta-item">
+            <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+            Max 8 participants
+          </div>
+        </div>
+
+        <!-- Coach Preview -->
+        <div class="coach-preview">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" alt="Maria Santos" class="coach-photo">
+          <div class="coach-info">
+            <span class="coach-label">Your Coach</span>
+            <h3 class="coach-name">Maria Santos</h3>
+            <div class="coach-certification">
+              <span>IKO Level 3 Instructor</span>
+              <span class="coach-flags">
+                <span title="Spanish">ES</span>
+                <span title="English">GB</span>
+                <span title="Portuguese">PT</span>
+              </span>
+            </div>
+          </div>
+          <button class="btn btn-outline">View Profile</button>
+        </div>
+
+        <!-- Description Section -->
+        <section class="section">
+          <h2 class="section-title">
+            <i data-lucide="info" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+            About This Camp
+          </h2>
+          <div class="section-content">
+            <p>
+              Join us for an unforgettable week of kitesurfing in Tarifa, Europe's wind capital. This intermediate-level camp is designed for kiters who have mastered the basics and want to take their riding to the next level. With consistent thermal winds averaging 20-30 knots and the stunning backdrop of the African coastline, Tarifa offers perfect conditions for progression.
+            </p>
+            <p>
+              Our structured program includes 5 days of intensive coaching, video analysis sessions, and theory workshops. You'll work on upwind riding, transitions, jumps, and board recovery techniques. Small group sizes ensure personalized attention, while our experienced team provides all the support you need to achieve your kiting goals.
+            </p>
+          </div>
+        </section>
+
+        <!-- What's Included Section -->
+        <section class="section">
+          <h2 class="section-title">
+            <i data-lucide="check-circle" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+            What's Included
+          </h2>
+          <div class="included-grid">
+            <div class="included-item">
+              <span class="included-icon yes">
+                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">5 days of professional coaching</span>
+            </div>
+            <div class="included-item">
+              <span class="included-icon yes">
+                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">Full equipment rental (kites, boards, harness)</span>
+            </div>
+            <div class="included-item">
+              <span class="included-icon yes">
+                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">Beachfront accommodation (shared room)</span>
+            </div>
+            <div class="included-item">
+              <span class="included-icon yes">
+                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">Video analysis sessions</span>
+            </div>
+            <div class="included-item">
+              <span class="included-icon yes">
+                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">Airport transfers (Malaga/Gibraltar)</span>
+            </div>
+            <div class="included-item">
+              <span class="included-icon no">
+                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">Flights to/from destination</span>
+            </div>
+            <div class="included-item">
+              <span class="included-icon no">
+                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">Meals and refreshments</span>
+            </div>
+            <div class="included-item">
+              <span class="included-icon no">
+                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+              </span>
+              <span class="included-text">Travel insurance</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- The Spot Section -->
+        <section class="section">
+          <h2 class="section-title">
+            <i data-lucide="map" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+            The Spot
+          </h2>
+          <div class="spot-content">
+            <div class="map-placeholder">
+              <div style="text-align: center;">
+                <i data-lucide="map" style="width: 48px; height: 48px; margin-bottom: var(--space-2);"></i>
+                <div>Interactive map</div>
+              </div>
+            </div>
+            <div class="spot-details">
+              <div class="spot-item">
+                <i data-lucide="map-pin" style="width: 18px; height: 18px;" class="spot-icon"></i>
+                <div>
+                  <div class="spot-label">Location</div>
+                  <div class="spot-value">Playa de Los Lances, Tarifa, Cadiz, Spain</div>
+                </div>
+              </div>
+              <div class="spot-item">
+                <i data-lucide="wind" style="width: 18px; height: 18px;" class="spot-icon"></i>
+                <div>
+                  <div class="spot-label">Wind Conditions</div>
+                  <div class="spot-value">Levante (E) & Poniente (W), 15-35 knots</div>
+                </div>
+              </div>
+              <div class="spot-item">
+                <i data-lucide="calendar" style="width: 18px; height: 18px;" class="spot-icon"></i>
+                <div>
+                  <div class="spot-label">Best Season</div>
+                  <div class="spot-value">March - October (300+ wind days/year)</div>
+                </div>
+              </div>
+              <div class="spot-item">
+                <i data-lucide="thermometer" style="width: 18px; height: 18px;" class="spot-icon"></i>
+                <div>
+                  <div class="spot-label">Water Temperature</div>
+                  <div class="spot-value">18-23C (March: 17C, Summer: 22C)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="section">
+          <div class="reviews-header">
+            <h2 class="section-title" style="margin-bottom: 0;">
+              <i data-lucide="message-circle" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+              Reviews
+            </h2>
+            <a href="#" class="btn btn-outline" style="font-size: var(--font-size-sm);">See all reviews</a>
+          </div>
+
+          <div class="rating-summary">
+            <span class="rating-big">4.9</span>
+            <div>
+              <div class="rating-stars">
+                <i data-lucide="star" style="width: 18px; height: 18px; fill: currentColor;"></i>
+                <i data-lucide="star" style="width: 18px; height: 18px; fill: currentColor;"></i>
+                <i data-lucide="star" style="width: 18px; height: 18px; fill: currentColor;"></i>
+                <i data-lucide="star" style="width: 18px; height: 18px; fill: currentColor;"></i>
+                <i data-lucide="star" style="width: 18px; height: 18px; fill: currentColor;"></i>
+              </div>
+              <div class="rating-info">Based on 23 reviews</div>
+            </div>
+          </div>
+
+          <div class="reviews-grid" style="margin-top: var(--space-6);">
+            <div class="review-card">
+              <div class="review-header">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Thomas" class="review-avatar">
+                <div class="review-author">
+                  <div class="review-name">Thomas Weber</div>
+                  <div class="review-date">October 2025</div>
+                </div>
+                <div class="review-rating">
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                </div>
+              </div>
+              <p class="review-quote">"Maria is an incredible coach! Her attention to detail and patience helped me finally nail my transitions. The video analysis sessions were game-changing - highly recommend this camp for anyone looking to progress."</p>
+            </div>
+
+            <div class="review-card">
+              <div class="review-header">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" alt="Sophie" class="review-avatar">
+                <div class="review-author">
+                  <div class="review-name">Sophie Laurent</div>
+                  <div class="review-date">September 2025</div>
+                </div>
+                <div class="review-rating">
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                </div>
+              </div>
+              <p class="review-quote">"Best kite camp experience ever! Perfect location, amazing wind, and the group atmosphere was fantastic. Made friends for life and improved my riding massively. Can't wait to come back!"</p>
+            </div>
+
+            <div class="review-card">
+              <div class="review-header">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="Marco" class="review-avatar">
+                <div class="review-author">
+                  <div class="review-name">Marco Rossi</div>
+                  <div class="review-date">August 2025</div>
+                </div>
+                <div class="review-rating">
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: currentColor;"></i>
+                </div>
+              </div>
+              <p class="review-quote">"Tarifa truly lives up to its reputation as the wind capital of Europe. Had wind every single day! The accommodation was comfortable and the whole organization was super professional."</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column - Booking Card -->
+      <aside class="booking-column">
+        <div class="booking-card">
+          <div class="booking-price">
+            <span class="price-from">From</span>
+            <div>
+              <span class="price-amount">890</span>
+              <span class="price-unit">/ person</span>
+            </div>
+          </div>
+
+          <div class="booking-field">
+            <label class="field-label">Select Date</label>
+            <button class="date-selector">
+              <i data-lucide="calendar" style="width: 18px; height: 18px;" class="date-icon"></i>
+              <span class="date-text">Mar 15 - 22, 2026</span>
+              <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+            </button>
+          </div>
+
+          <div class="booking-field">
+            <label class="field-label">Participants</label>
+            <div class="participants-selector">
+              <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">Guests</span>
+              <div class="participants-controls">
+                <button class="counter-btn">
+                  <i data-lucide="minus" style="width: 16px; height: 16px;"></i>
+                </button>
+                <span class="counter-value">2</span>
+                <button class="counter-btn">
+                  <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="price-breakdown">
+            <div class="breakdown-row">
+              <span>890 x 2 persons</span>
+              <span>1,780</span>
+            </div>
+            <div class="breakdown-row">
+              <span>Service fee</span>
+              <span>89</span>
+            </div>
+            <div class="breakdown-row">
+              <span>Total</span>
+              <span>1,869</span>
+            </div>
+          </div>
+
+          <a href="booking-checkout.html" class="btn btn-primary btn-primary-large">
+            <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
+            Book Now
+          </a>
+
+          <div class="trust-indicators">
+            <div class="trust-item">
+              <i data-lucide="shield-check" style="width: 18px; height: 18px;" class="trust-icon"></i>
+              <span>Insurance included in price</span>
+            </div>
+            <div class="trust-item">
+              <i data-lucide="calendar-x" style="width: 18px; height: 18px;" class="trust-icon"></i>
+              <span>Free cancellation up to 14 days before</span>
+            </div>
+            <div class="trust-item">
+              <i data-lucide="credit-card" style="width: 18px; height: 18px;" class="trust-icon"></i>
+              <span>Secure payment via Stripe</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Similar Camps Section -->
+  <section class="similar-camps">
+    <div class="container">
+      <div class="similar-camps-header">
+        <h2 class="similar-camps-title">Similar Camps You Might Like</h2>
+        <a href="#" class="btn btn-outline">View all camps</a>
+      </div>
+
+      <div class="camps-grid">
+        <!-- Camp Card 1 -->
+        <article class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=400&h=300&fit=crop" alt="Fuerteventura Kite Camp">
+            <span class="camp-card-badge">Kitesurf</span>
+            <button class="camp-card-favorite">
+              <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <div class="camp-card-location">
+              <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+              Fuerteventura, Spain
+            </div>
+            <h3 class="camp-card-title">Fuerteventura Wave Riding</h3>
+            <div class="camp-card-meta">
+              <span class="camp-card-rating">
+                <i data-lucide="star" style="width: 12px; height: 12px; fill: currentColor;"></i>
+                4.8
+              </span>
+              <span>5 days</span>
+              <span>Intermediate</span>
+            </div>
+            <div class="camp-card-footer">
+              <div class="camp-card-price">
+                From <strong>750</strong>
+              </div>
+              <a href="#" class="btn btn-outline" style="padding: var(--space-1-5) var(--space-3); font-size: var(--font-size-xs);">View</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Camp Card 2 -->
+        <article class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop" alt="Dakhla Kite Camp">
+            <span class="camp-card-badge">Kitesurf</span>
+            <button class="camp-card-favorite">
+              <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <div class="camp-card-location">
+              <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+              Dakhla, Morocco
+            </div>
+            <h3 class="camp-card-title">Dakhla Lagoon Experience</h3>
+            <div class="camp-card-meta">
+              <span class="camp-card-rating">
+                <i data-lucide="star" style="width: 12px; height: 12px; fill: currentColor;"></i>
+                4.9
+              </span>
+              <span>7 days</span>
+              <span>All Levels</span>
+            </div>
+            <div class="camp-card-footer">
+              <div class="camp-card-price">
+                From <strong>1,190</strong>
+              </div>
+              <a href="#" class="btn btn-outline" style="padding: var(--space-1-5) var(--space-3); font-size: var(--font-size-xs);">View</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Camp Card 3 -->
+        <article class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop" alt="Zanzibar Kite Camp">
+            <span class="camp-card-badge">Kitesurf</span>
+            <button class="camp-card-favorite">
+              <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <div class="camp-card-location">
+              <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+              Paje, Zanzibar
+            </div>
+            <h3 class="camp-card-title">Zanzibar Tropical Kite Week</h3>
+            <div class="camp-card-meta">
+              <span class="camp-card-rating">
+                <i data-lucide="star" style="width: 12px; height: 12px; fill: currentColor;"></i>
+                4.7
+              </span>
+              <span>7 days</span>
+              <span>Beginner</span>
+            </div>
+            <div class="camp-card-footer">
+              <div class="camp-card-price">
+                From <strong>1,350</strong>
+              </div>
+              <a href="#" class="btn btn-outline" style="padding: var(--space-1-5) var(--space-3); font-size: var(--font-size-xs);">View</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Camp Card 4 -->
+        <article class="camp-card">
+          <div class="camp-card-image">
+            <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400&h=300&fit=crop" alt="Cabarete Kite Camp">
+            <span class="camp-card-badge">Kitesurf</span>
+            <button class="camp-card-favorite">
+              <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
+          <div class="camp-card-content">
+            <div class="camp-card-location">
+              <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+              Cabarete, Dominican Republic
+            </div>
+            <h3 class="camp-card-title">Caribbean Freestyle Camp</h3>
+            <div class="camp-card-meta">
+              <span class="camp-card-rating">
+                <i data-lucide="star" style="width: 12px; height: 12px; fill: currentColor;"></i>
+                4.8
+              </span>
+              <span>6 days</span>
+              <span>Advanced</span>
+            </div>
+            <div class="camp-card-footer">
+              <div class="camp-card-price">
+                From <strong>1,100</strong>
+              </div>
+              <a href="#" class="btn btn-outline" style="padding: var(--space-1-5) var(--space-3); font-size: var(--font-size-xs);">View</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="footer-logo">
+            <span class="footer-logo-icon">
+              <i data-lucide="wind" style="width: 20px; height: 20px; color: white;"></i>
+            </span>
+            RideMaster
+          </a>
+          <p class="footer-tagline">
+            Connect with the best coaches and camps for kitesurfing, wingfoil, surf, and more. Your next adventure starts here.
+          </p>
+          <div class="footer-social">
+            <a href="#" class="social-link">
+              <i data-lucide="instagram" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="facebook" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="youtube" style="width: 18px; height: 18px;"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i data-lucide="twitter" style="width: 18px; height: 18px;"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-column-title">Explore</h3>
+          <nav class="footer-links">
+            <a href="#" class="footer-link">Find Camps</a>
+            <a href="#" class="footer-link">Find Coaches</a>
+            <a href="#" class="footer-link">Destinations</a>
+            <a href="#" class="footer-link">Sports</a>
+          </nav>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-column-title">Sports</h3>
+          <nav class="footer-links">
+            <a href="#" class="footer-link">Kitesurfing</a>
+            <a href="#" class="footer-link">Wingfoil</a>
+            <a href="#" class="footer-link">Surfing</a>
+            <a href="#" class="footer-link">Paragliding</a>
+          </nav>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-column-title">For Coaches</h3>
+          <nav class="footer-links">
+            <a href="#" class="footer-link">List Your Camp</a>
+            <a href="dashboard-coach.html" class="footer-link">Coach Dashboard</a>
+            <a href="dashboard-rider.html" class="footer-link">Rider Dashboard</a>
+            <a href="#" class="footer-link">Resources</a>
+            <a href="#" class="footer-link">Success Stories</a>
+          </nav>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-column-title">Support</h3>
+          <nav class="footer-links">
+            <a href="#" class="footer-link">Help Center</a>
+            <a href="#" class="footer-link">Contact Us</a>
+            <a href="#" class="footer-link">Trust & Safety</a>
+            <a href="#" class="footer-link">Cancellation Policy</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          2026 RideMaster. All rights reserved.
+        </p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

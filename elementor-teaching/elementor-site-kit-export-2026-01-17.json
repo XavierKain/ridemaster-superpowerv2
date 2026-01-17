@@ -1,0 +1,3330 @@
+{
+    "meta": {
+        "generated_at": "2026-01-17T10:15:26+00:00",
+        "site_url": "https://ridemaster.eu/",
+        "wp_version": "6.9",
+        "php_version": "8.2.30",
+        "elementor_loaded": true,
+        "elementor_version": "3.34.1",
+        "elementor_pro_version": "3.34.0"
+    },
+    "elementor": {
+        "active_kit": {
+            "kit_id": 121,
+            "kit_post": {
+                "ID": 121,
+                "post_title": "RideMaster Site Kit",
+                "post_type": "elementor_library",
+                "post_status": "publish"
+            },
+            "kit_settings": {
+                "template": "default",
+                "site_name": "Ridemaster",
+                "site_description": "Coaching Kitesurf &amp; Wingfoil",
+                "system_colors": [
+                    {
+                        "_id": "primary",
+                        "title": "Primary (Ocean Teal)",
+                        "color": "#0D9488"
+                    },
+                    {
+                        "_id": "secondary",
+                        "title": "Secondary (Gold)",
+                        "color": "#EAB308"
+                    },
+                    {
+                        "_id": "text",
+                        "title": "Text",
+                        "color": "#1E293B"
+                    },
+                    {
+                        "_id": "accent",
+                        "title": "Accent (Sunset Orange)",
+                        "color": "#F97316"
+                    }
+                ],
+                "custom_colors": [
+                    {
+                        "_id": "rm_primary_50",
+                        "title": "Primary 50",
+                        "color": "#F0FDFA"
+                    },
+                    {
+                        "_id": "rm_primary_100",
+                        "title": "Primary 100",
+                        "color": "#CCFBF1"
+                    },
+                    {
+                        "_id": "rm_primary_200",
+                        "title": "Primary 200",
+                        "color": "#99F6E4"
+                    },
+                    {
+                        "_id": "rm_primary_300",
+                        "title": "Primary 300",
+                        "color": "#5EEAD4"
+                    },
+                    {
+                        "_id": "rm_primary_400",
+                        "title": "Primary 400",
+                        "color": "#2DD4BF"
+                    },
+                    {
+                        "_id": "rm_primary_500",
+                        "title": "Primary 500",
+                        "color": "#14B8A6"
+                    },
+                    {
+                        "_id": "rm_primary_600",
+                        "title": "Primary 600",
+                        "color": "#0D9488"
+                    },
+                    {
+                        "_id": "rm_primary_700",
+                        "title": "Primary 700",
+                        "color": "#0F766E"
+                    },
+                    {
+                        "_id": "rm_primary_800",
+                        "title": "Primary 800",
+                        "color": "#115E59"
+                    },
+                    {
+                        "_id": "rm_secondary_400",
+                        "title": "Secondary 400 (Orange)",
+                        "color": "#FB923C"
+                    },
+                    {
+                        "_id": "rm_secondary_500",
+                        "title": "Secondary 500 (Orange)",
+                        "color": "#F97316"
+                    },
+                    {
+                        "_id": "rm_secondary_600",
+                        "title": "Secondary 600 (Orange)",
+                        "color": "#EA580C"
+                    },
+                    {
+                        "_id": "rm_gold_400",
+                        "title": "Gold 400",
+                        "color": "#FACC15"
+                    },
+                    {
+                        "_id": "rm_gold_500",
+                        "title": "Gold 500",
+                        "color": "#EAB308"
+                    },
+                    {
+                        "_id": "rm_gold_600",
+                        "title": "Gold 600",
+                        "color": "#CA8A04"
+                    },
+                    {
+                        "_id": "rm_success",
+                        "title": "Success",
+                        "color": "#10B981"
+                    },
+                    {
+                        "_id": "rm_success_light",
+                        "title": "Success Light",
+                        "color": "#D1FAE5"
+                    },
+                    {
+                        "_id": "rm_error",
+                        "title": "Error",
+                        "color": "#EF4444"
+                    },
+                    {
+                        "_id": "rm_error_light",
+                        "title": "Error Light",
+                        "color": "#FEE2E2"
+                    },
+                    {
+                        "_id": "rm_warning",
+                        "title": "Warning",
+                        "color": "#F59E0B"
+                    },
+                    {
+                        "_id": "rm_warning_light",
+                        "title": "Warning Light",
+                        "color": "#FEF3C7"
+                    },
+                    {
+                        "_id": "rm_info",
+                        "title": "Info",
+                        "color": "#3B82F6"
+                    },
+                    {
+                        "_id": "rm_info_light",
+                        "title": "Info Light",
+                        "color": "#DBEAFE"
+                    },
+                    {
+                        "_id": "rm_kitesurf",
+                        "title": "Kitesurf Blue",
+                        "color": "#3B82F6"
+                    },
+                    {
+                        "_id": "rm_kitesurf_light",
+                        "title": "Kitesurf Blue Light",
+                        "color": "#DBEAFE"
+                    },
+                    {
+                        "_id": "rm_wingfoil",
+                        "title": "Wingfoil Purple",
+                        "color": "#8B5CF6"
+                    },
+                    {
+                        "_id": "rm_wingfoil_light",
+                        "title": "Wingfoil Purple Light",
+                        "color": "#EDE9FE"
+                    },
+                    {
+                        "_id": "rm_slate_50",
+                        "title": "Slate 50",
+                        "color": "#F8FAFC"
+                    },
+                    {
+                        "_id": "rm_slate_100",
+                        "title": "Slate 100",
+                        "color": "#F1F5F9"
+                    },
+                    {
+                        "_id": "rm_slate_200",
+                        "title": "Slate 200",
+                        "color": "#E2E8F0"
+                    },
+                    {
+                        "_id": "rm_slate_300",
+                        "title": "Slate 300",
+                        "color": "#CBD5E1"
+                    },
+                    {
+                        "_id": "rm_slate_400",
+                        "title": "Slate 400",
+                        "color": "#94A3B8"
+                    },
+                    {
+                        "_id": "rm_slate_500",
+                        "title": "Slate 500",
+                        "color": "#64748B"
+                    },
+                    {
+                        "_id": "rm_slate_600",
+                        "title": "Slate 600",
+                        "color": "#475569"
+                    },
+                    {
+                        "_id": "rm_slate_700",
+                        "title": "Slate 700",
+                        "color": "#334155"
+                    },
+                    {
+                        "_id": "rm_slate_800",
+                        "title": "Slate 800",
+                        "color": "#1E293B"
+                    },
+                    {
+                        "_id": "rm_slate_900",
+                        "title": "Slate 900",
+                        "color": "#0F172A"
+                    }
+                ],
+                "typography_enable_styleguide_preview": "yes",
+                "system_typography": [
+                    {
+                        "_id": "primary",
+                        "title": "Headings",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25,
+                            "sizes": []
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        }
+                    },
+                    {
+                        "_id": "secondary",
+                        "title": "Subheadings",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375,
+                            "sizes": []
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        }
+                    },
+                    {
+                        "_id": "text",
+                        "title": "Body Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5,
+                            "sizes": []
+                        }
+                    },
+                    {
+                        "_id": "accent",
+                        "title": "Accent Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5,
+                            "sizes": []
+                        }
+                    }
+                ],
+                "custom_typography": [
+                    {
+                        "_id": "rm_display",
+                        "title": "Display (5XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 48
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 36
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": -0.025000000000000001387778780781445675529539585113525390625
+                        }
+                    },
+                    {
+                        "_id": "rm_hero_title",
+                        "title": "Hero Title (4XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 36
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": -0.025000000000000001387778780781445675529539585113525390625
+                        }
+                    },
+                    {
+                        "_id": "rm_page_title",
+                        "title": "Page Title (3XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_section_title",
+                        "title": "Section Title (2XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375
+                        }
+                    },
+                    {
+                        "_id": "rm_card_title",
+                        "title": "Card Title (XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375
+                        }
+                    },
+                    {
+                        "_id": "rm_lead_text",
+                        "title": "Lead Text (LG)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        }
+                    },
+                    {
+                        "_id": "rm_body",
+                        "title": "Body (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_body_medium",
+                        "title": "Body Medium (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_body_semibold",
+                        "title": "Body Semibold (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small",
+                        "title": "Small Text (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small_medium",
+                        "title": "Small Medium (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small_semibold",
+                        "title": "Small Semibold (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_caption",
+                        "title": "Caption (XS)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_caption_medium",
+                        "title": "Caption Medium (XS)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_badge",
+                        "title": "Badge Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    },
+                    {
+                        "_id": "rm_button",
+                        "title": "Button Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_button_large",
+                        "title": "Button Text Large",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_button_small",
+                        "title": "Button Text Small",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_label",
+                        "title": "Form Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_input",
+                        "title": "Form Input",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_nav_link",
+                        "title": "Navigation Link",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_price",
+                        "title": "Price Display",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_price_large",
+                        "title": "Price Display Large",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_rating",
+                        "title": "Rating Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_meta",
+                        "title": "Meta Info",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_font_style": "normal"
+                    },
+                    {
+                        "_id": "rm_section_label",
+                        "title": "Section Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.1000000000000000055511151231257827021181583404541015625
+                        }
+                    },
+                    {
+                        "_id": "rm_eyebrow",
+                        "title": "Eyebrow Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    },
+                    {
+                        "_id": "rm_stat_value",
+                        "title": "Stat Value",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_stat_label",
+                        "title": "Stat Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_quote",
+                        "title": "Quote Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        },
+                        "typography_font_style": "italic"
+                    },
+                    {
+                        "_id": "rm_footer_text",
+                        "title": "Footer Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        }
+                    },
+                    {
+                        "_id": "rm_footer_title",
+                        "title": "Footer Title",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    }
+                ],
+                "default_generic_fonts": "Sans-serif",
+                "page_title_selector": "h1.entry-title",
+                "hello_footer_copyright_text": "RideMaster - All rights reserved",
+                "activeItemIndex": 1,
+                "viewport_md": 768,
+                "viewport_lg": 1025,
+                "site_logo": {
+                    "url": "https://ridemaster.eu/wp-content/uploads/2026/01/favicon-ridemaster.png",
+                    "id": 85,
+                    "size": "",
+                    "alt": "",
+                    "source": "library"
+                },
+                "colors_enable_styleguide_preview": "yes",
+                "woocommerce_cart_page_id": "7",
+                "woocommerce_checkout_page_id": "8",
+                "woocommerce_myaccount_page_id": "9",
+                "woocommerce_terms_page_id": "",
+                "woocommerce_purchase_summary_page_id": "",
+                "woocommerce_shop_page_id": "6",
+                "post_title": "RideMaster Site Kit",
+                "post_status": "publish",
+                "button_background_color": "",
+                "button_background_color_b": "#f2295b",
+                "button_background_video_link": "",
+                "button_background_video_start": "",
+                "button_background_video_end": "",
+                "button_background_play_once": "",
+                "button_background_play_on_mobile": "",
+                "button_background_privacy_mode": "",
+                "button_background_slideshow_gallery": [],
+                "button_background_slideshow_loop": "yes",
+                "button_background_slideshow_slide_duration": 5000,
+                "button_background_slideshow_slide_transition": "fade",
+                "button_background_slideshow_transition_duration": 500,
+                "button_background_slideshow_lazyload": "",
+                "button_background_slideshow_ken_burns": "",
+                "button_background_slideshow_ken_burns_zoom_direction": "in",
+                "button_hover_background_color": "",
+                "button_hover_background_color_b": "#f2295b",
+                "button_hover_background_video_link": "",
+                "button_hover_background_video_start": "",
+                "button_hover_background_video_end": "",
+                "button_hover_background_play_once": "",
+                "button_hover_background_play_on_mobile": "",
+                "button_hover_background_privacy_mode": "",
+                "button_hover_background_slideshow_gallery": [],
+                "button_hover_background_slideshow_loop": "yes",
+                "button_hover_background_slideshow_slide_duration": 5000,
+                "button_hover_background_slideshow_slide_transition": "fade",
+                "button_hover_background_slideshow_transition_duration": 500,
+                "button_hover_background_slideshow_lazyload": "",
+                "button_hover_background_slideshow_ken_burns": "",
+                "button_hover_background_slideshow_ken_burns_zoom_direction": "in",
+                "site_favicon": {
+                    "url": "https://ridemaster.eu/wp-content/uploads/2026/01/cropped-favicon-ridemaster.png",
+                    "id": "86",
+                    "size": ""
+                },
+                "body_background_background": "",
+                "body_background_color": "",
+                "body_background_color_b": "#f2295b",
+                "body_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "body_background_video_link": "",
+                "body_background_video_start": "",
+                "body_background_video_end": "",
+                "body_background_play_once": "",
+                "body_background_play_on_mobile": "",
+                "body_background_privacy_mode": "",
+                "body_background_slideshow_gallery": [],
+                "body_background_slideshow_loop": "yes",
+                "body_background_slideshow_slide_duration": 5000,
+                "body_background_slideshow_slide_transition": "fade",
+                "body_background_slideshow_transition_duration": 500,
+                "body_background_slideshow_lazyload": "",
+                "body_background_slideshow_ken_burns": "",
+                "body_background_slideshow_ken_burns_zoom_direction": "in",
+                "mobile_browser_background": "",
+                "stretched_section_container": "",
+                "default_page_template": "default",
+                "active_breakpoints": [
+                    "viewport_mobile",
+                    "viewport_tablet"
+                ],
+                "viewport_mobile": "",
+                "viewport_mobile_extra": "",
+                "viewport_tablet": "",
+                "viewport_tablet_extra": "",
+                "viewport_laptop": "",
+                "viewport_widescreen": "",
+                "global_image_lightbox": "yes",
+                "lightbox_enable_counter": "yes",
+                "lightbox_enable_fullscreen": "yes",
+                "lightbox_enable_zoom": "yes",
+                "lightbox_enable_share": "yes",
+                "lightbox_title_src": "title",
+                "lightbox_description_src": "description",
+                "settings_page_transitions_background_color": "#FFBC7D",
+                "settings_page_transitions_background_color_b": "#f2295b",
+                "settings_page_transitions_background_video_link": "",
+                "settings_page_transitions_background_video_start": "",
+                "settings_page_transitions_background_video_end": "",
+                "settings_page_transitions_background_play_once": "",
+                "settings_page_transitions_background_play_on_mobile": "",
+                "settings_page_transitions_background_privacy_mode": "",
+                "settings_page_transitions_background_slideshow_gallery": [],
+                "settings_page_transitions_background_slideshow_loop": "yes",
+                "settings_page_transitions_background_slideshow_slide_duration": 5000,
+                "settings_page_transitions_background_slideshow_slide_transition": "fade",
+                "settings_page_transitions_background_slideshow_transition_duration": 500,
+                "settings_page_transitions_background_slideshow_lazyload": "",
+                "settings_page_transitions_background_slideshow_ken_burns": "",
+                "settings_page_transitions_background_slideshow_ken_burns_zoom_direction": "in",
+                "settings_page_transitions_preloader_type": "",
+                "settings_page_transitions_preloader_icon": {
+                    "value": "fas fa-spinner",
+                    "library": "fa-solid"
+                },
+                "settings_page_transitions_preloader_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "settings_page_transitions_preloader_animation_type": "circle",
+                "scroll_snap": "",
+                "woocommerce_notices_elements": [],
+                "error_notice_box_background_color": "",
+                "error_notice_box_background_color_b": "#f2295b",
+                "error_notice_box_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "error_notice_box_background_video_link": "",
+                "error_notice_box_background_video_start": "",
+                "error_notice_box_background_video_end": "",
+                "error_notice_box_background_play_once": "",
+                "error_notice_box_background_play_on_mobile": "",
+                "error_notice_box_background_privacy_mode": "",
+                "error_notice_box_background_slideshow_gallery": [],
+                "error_notice_box_background_slideshow_loop": "yes",
+                "error_notice_box_background_slideshow_slide_duration": 5000,
+                "error_notice_box_background_slideshow_slide_transition": "fade",
+                "error_notice_box_background_slideshow_transition_duration": 500,
+                "error_notice_box_background_slideshow_lazyload": "",
+                "error_notice_box_background_slideshow_ken_burns": "",
+                "error_notice_box_background_slideshow_ken_burns_zoom_direction": "in",
+                "message_notice_box_background_color": "",
+                "message_notice_box_background_color_b": "#f2295b",
+                "message_notice_box_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "message_notice_box_background_video_link": "",
+                "message_notice_box_background_video_start": "",
+                "message_notice_box_background_video_end": "",
+                "message_notice_box_background_play_once": "",
+                "message_notice_box_background_play_on_mobile": "",
+                "message_notice_box_background_privacy_mode": "",
+                "message_notice_box_background_slideshow_gallery": [],
+                "message_notice_box_background_slideshow_loop": "yes",
+                "message_notice_box_background_slideshow_slide_duration": 5000,
+                "message_notice_box_background_slideshow_slide_transition": "fade",
+                "message_notice_box_background_slideshow_transition_duration": 500,
+                "message_notice_box_background_slideshow_lazyload": "",
+                "message_notice_box_background_slideshow_ken_burns": "",
+                "message_notice_box_background_slideshow_ken_burns_zoom_direction": "in",
+                "message_buttons_normal_background_color": "",
+                "message_buttons_normal_background_color_b": "#f2295b",
+                "message_buttons_normal_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "message_buttons_normal_background_video_link": "",
+                "message_buttons_normal_background_video_start": "",
+                "message_buttons_normal_background_video_end": "",
+                "message_buttons_normal_background_play_once": "",
+                "message_buttons_normal_background_play_on_mobile": "",
+                "message_buttons_normal_background_privacy_mode": "",
+                "message_buttons_normal_background_slideshow_gallery": [],
+                "message_buttons_normal_background_slideshow_loop": "yes",
+                "message_buttons_normal_background_slideshow_slide_duration": 5000,
+                "message_buttons_normal_background_slideshow_slide_transition": "fade",
+                "message_buttons_normal_background_slideshow_transition_duration": 500,
+                "message_buttons_normal_background_slideshow_lazyload": "",
+                "message_buttons_normal_background_slideshow_ken_burns": "",
+                "message_buttons_normal_background_slideshow_ken_burns_zoom_direction": "in",
+                "message_buttons_hover_background_color": "",
+                "message_buttons_hover_background_color_b": "#f2295b",
+                "message_buttons_hover_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "message_buttons_hover_background_video_link": "",
+                "message_buttons_hover_background_video_start": "",
+                "message_buttons_hover_background_video_end": "",
+                "message_buttons_hover_background_play_once": "",
+                "message_buttons_hover_background_play_on_mobile": "",
+                "message_buttons_hover_background_privacy_mode": "",
+                "message_buttons_hover_background_slideshow_gallery": [],
+                "message_buttons_hover_background_slideshow_loop": "yes",
+                "message_buttons_hover_background_slideshow_slide_duration": 5000,
+                "message_buttons_hover_background_slideshow_slide_transition": "fade",
+                "message_buttons_hover_background_slideshow_transition_duration": 500,
+                "message_buttons_hover_background_slideshow_lazyload": "",
+                "message_buttons_hover_background_slideshow_ken_burns": "",
+                "message_buttons_hover_background_slideshow_ken_burns_zoom_direction": "in",
+                "info_notice_box_background_color": "",
+                "info_notice_box_background_color_b": "#f2295b",
+                "info_notice_box_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "info_notice_box_background_video_link": "",
+                "info_notice_box_background_video_start": "",
+                "info_notice_box_background_video_end": "",
+                "info_notice_box_background_play_once": "",
+                "info_notice_box_background_play_on_mobile": "",
+                "info_notice_box_background_privacy_mode": "",
+                "info_notice_box_background_slideshow_gallery": [],
+                "info_notice_box_background_slideshow_loop": "yes",
+                "info_notice_box_background_slideshow_slide_duration": 5000,
+                "info_notice_box_background_slideshow_slide_transition": "fade",
+                "info_notice_box_background_slideshow_transition_duration": 500,
+                "info_notice_box_background_slideshow_lazyload": "",
+                "info_notice_box_background_slideshow_ken_burns": "",
+                "info_notice_box_background_slideshow_ken_burns_zoom_direction": "in",
+                "info_buttons_normal_background_color": "",
+                "info_buttons_normal_background_color_b": "#f2295b",
+                "info_buttons_normal_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "info_buttons_normal_background_video_link": "",
+                "info_buttons_normal_background_video_start": "",
+                "info_buttons_normal_background_video_end": "",
+                "info_buttons_normal_background_play_once": "",
+                "info_buttons_normal_background_play_on_mobile": "",
+                "info_buttons_normal_background_privacy_mode": "",
+                "info_buttons_normal_background_slideshow_gallery": [],
+                "info_buttons_normal_background_slideshow_loop": "yes",
+                "info_buttons_normal_background_slideshow_slide_duration": 5000,
+                "info_buttons_normal_background_slideshow_slide_transition": "fade",
+                "info_buttons_normal_background_slideshow_transition_duration": 500,
+                "info_buttons_normal_background_slideshow_lazyload": "",
+                "info_buttons_normal_background_slideshow_ken_burns": "",
+                "info_buttons_normal_background_slideshow_ken_burns_zoom_direction": "in",
+                "info_buttons_hover_background_color": "",
+                "info_buttons_hover_background_color_b": "#f2295b",
+                "info_buttons_hover_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "info_buttons_hover_background_video_link": "",
+                "info_buttons_hover_background_video_start": "",
+                "info_buttons_hover_background_video_end": "",
+                "info_buttons_hover_background_play_once": "",
+                "info_buttons_hover_background_play_on_mobile": "",
+                "info_buttons_hover_background_privacy_mode": "",
+                "info_buttons_hover_background_slideshow_gallery": [],
+                "info_buttons_hover_background_slideshow_loop": "yes",
+                "info_buttons_hover_background_slideshow_slide_duration": 5000,
+                "info_buttons_hover_background_slideshow_slide_transition": "fade",
+                "info_buttons_hover_background_slideshow_transition_duration": 500,
+                "info_buttons_hover_background_slideshow_lazyload": "",
+                "info_buttons_hover_background_slideshow_ken_burns": "",
+                "info_buttons_hover_background_slideshow_ken_burns_zoom_direction": "in",
+                "hello_header_logo_display": "yes",
+                "hello_header_tagline_display": "yes",
+                "hello_header_menu_display": "yes",
+                "hello_header_layout": "default",
+                "hello_header_width": "boxed",
+                "hello_header_background_color": "",
+                "hello_header_background_color_b": "#f2295b",
+                "hello_header_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "hello_header_background_video_link": "",
+                "hello_header_background_video_start": "",
+                "hello_header_background_video_end": "",
+                "hello_header_background_play_once": "",
+                "hello_header_background_play_on_mobile": "",
+                "hello_header_background_privacy_mode": "",
+                "hello_header_background_slideshow_gallery": [],
+                "hello_header_background_slideshow_loop": "yes",
+                "hello_header_background_slideshow_slide_duration": 5000,
+                "hello_header_background_slideshow_slide_transition": "fade",
+                "hello_header_background_slideshow_transition_duration": 500,
+                "hello_header_background_slideshow_lazyload": "",
+                "hello_header_background_slideshow_ken_burns": "",
+                "hello_header_background_slideshow_ken_burns_zoom_direction": "in",
+                "hello_header_logo_type": "logo",
+                "hello_header_menu": 0,
+                "hello_header_menu_layout": "horizontal",
+                "hello_header_menu_dropdown": "tablet",
+                "hello_footer_logo_display": "yes",
+                "hello_footer_tagline_display": "yes",
+                "hello_footer_menu_display": "yes",
+                "hello_footer_copyright_display": "yes",
+                "hello_footer_layout": "default",
+                "hello_footer_width": "boxed",
+                "hello_footer_background_color": "",
+                "hello_footer_background_color_b": "#f2295b",
+                "hello_footer_background_image": {
+                    "url": "",
+                    "id": "",
+                    "size": ""
+                },
+                "hello_footer_background_video_link": "",
+                "hello_footer_background_video_start": "",
+                "hello_footer_background_video_end": "",
+                "hello_footer_background_play_once": "",
+                "hello_footer_background_play_on_mobile": "",
+                "hello_footer_background_privacy_mode": "",
+                "hello_footer_background_slideshow_gallery": [],
+                "hello_footer_background_slideshow_loop": "yes",
+                "hello_footer_background_slideshow_slide_duration": 5000,
+                "hello_footer_background_slideshow_slide_transition": "fade",
+                "hello_footer_background_slideshow_transition_duration": 500,
+                "hello_footer_background_slideshow_lazyload": "",
+                "hello_footer_background_slideshow_ken_burns": "",
+                "hello_footer_background_slideshow_ken_burns_zoom_direction": "in",
+                "hello_footer_logo_type": "logo",
+                "hello_footer_menu": 0
+            },
+            "kit_page_settings_meta": {
+                "site_name": "Ridemaster",
+                "site_description": "Coaching Kitesurf &amp; Wingfoil",
+                "system_colors": [
+                    {
+                        "_id": "primary",
+                        "title": "Primary (Ocean Teal)",
+                        "color": "#0D9488"
+                    },
+                    {
+                        "_id": "secondary",
+                        "title": "Secondary (Gold)",
+                        "color": "#EAB308"
+                    },
+                    {
+                        "_id": "text",
+                        "title": "Text",
+                        "color": "#1E293B"
+                    },
+                    {
+                        "_id": "accent",
+                        "title": "Accent (Sunset Orange)",
+                        "color": "#F97316"
+                    }
+                ],
+                "custom_colors": [
+                    {
+                        "_id": "rm_primary_50",
+                        "title": "Primary 50",
+                        "color": "#F0FDFA"
+                    },
+                    {
+                        "_id": "rm_primary_100",
+                        "title": "Primary 100",
+                        "color": "#CCFBF1"
+                    },
+                    {
+                        "_id": "rm_primary_200",
+                        "title": "Primary 200",
+                        "color": "#99F6E4"
+                    },
+                    {
+                        "_id": "rm_primary_300",
+                        "title": "Primary 300",
+                        "color": "#5EEAD4"
+                    },
+                    {
+                        "_id": "rm_primary_400",
+                        "title": "Primary 400",
+                        "color": "#2DD4BF"
+                    },
+                    {
+                        "_id": "rm_primary_500",
+                        "title": "Primary 500",
+                        "color": "#14B8A6"
+                    },
+                    {
+                        "_id": "rm_primary_600",
+                        "title": "Primary 600",
+                        "color": "#0D9488"
+                    },
+                    {
+                        "_id": "rm_primary_700",
+                        "title": "Primary 700",
+                        "color": "#0F766E"
+                    },
+                    {
+                        "_id": "rm_primary_800",
+                        "title": "Primary 800",
+                        "color": "#115E59"
+                    },
+                    {
+                        "_id": "rm_secondary_400",
+                        "title": "Secondary 400 (Orange)",
+                        "color": "#FB923C"
+                    },
+                    {
+                        "_id": "rm_secondary_500",
+                        "title": "Secondary 500 (Orange)",
+                        "color": "#F97316"
+                    },
+                    {
+                        "_id": "rm_secondary_600",
+                        "title": "Secondary 600 (Orange)",
+                        "color": "#EA580C"
+                    },
+                    {
+                        "_id": "rm_gold_400",
+                        "title": "Gold 400",
+                        "color": "#FACC15"
+                    },
+                    {
+                        "_id": "rm_gold_500",
+                        "title": "Gold 500",
+                        "color": "#EAB308"
+                    },
+                    {
+                        "_id": "rm_gold_600",
+                        "title": "Gold 600",
+                        "color": "#CA8A04"
+                    },
+                    {
+                        "_id": "rm_success",
+                        "title": "Success",
+                        "color": "#10B981"
+                    },
+                    {
+                        "_id": "rm_success_light",
+                        "title": "Success Light",
+                        "color": "#D1FAE5"
+                    },
+                    {
+                        "_id": "rm_error",
+                        "title": "Error",
+                        "color": "#EF4444"
+                    },
+                    {
+                        "_id": "rm_error_light",
+                        "title": "Error Light",
+                        "color": "#FEE2E2"
+                    },
+                    {
+                        "_id": "rm_warning",
+                        "title": "Warning",
+                        "color": "#F59E0B"
+                    },
+                    {
+                        "_id": "rm_warning_light",
+                        "title": "Warning Light",
+                        "color": "#FEF3C7"
+                    },
+                    {
+                        "_id": "rm_info",
+                        "title": "Info",
+                        "color": "#3B82F6"
+                    },
+                    {
+                        "_id": "rm_info_light",
+                        "title": "Info Light",
+                        "color": "#DBEAFE"
+                    },
+                    {
+                        "_id": "rm_kitesurf",
+                        "title": "Kitesurf Blue",
+                        "color": "#3B82F6"
+                    },
+                    {
+                        "_id": "rm_kitesurf_light",
+                        "title": "Kitesurf Blue Light",
+                        "color": "#DBEAFE"
+                    },
+                    {
+                        "_id": "rm_wingfoil",
+                        "title": "Wingfoil Purple",
+                        "color": "#8B5CF6"
+                    },
+                    {
+                        "_id": "rm_wingfoil_light",
+                        "title": "Wingfoil Purple Light",
+                        "color": "#EDE9FE"
+                    },
+                    {
+                        "_id": "rm_slate_50",
+                        "title": "Slate 50",
+                        "color": "#F8FAFC"
+                    },
+                    {
+                        "_id": "rm_slate_100",
+                        "title": "Slate 100",
+                        "color": "#F1F5F9"
+                    },
+                    {
+                        "_id": "rm_slate_200",
+                        "title": "Slate 200",
+                        "color": "#E2E8F0"
+                    },
+                    {
+                        "_id": "rm_slate_300",
+                        "title": "Slate 300",
+                        "color": "#CBD5E1"
+                    },
+                    {
+                        "_id": "rm_slate_400",
+                        "title": "Slate 400",
+                        "color": "#94A3B8"
+                    },
+                    {
+                        "_id": "rm_slate_500",
+                        "title": "Slate 500",
+                        "color": "#64748B"
+                    },
+                    {
+                        "_id": "rm_slate_600",
+                        "title": "Slate 600",
+                        "color": "#475569"
+                    },
+                    {
+                        "_id": "rm_slate_700",
+                        "title": "Slate 700",
+                        "color": "#334155"
+                    },
+                    {
+                        "_id": "rm_slate_800",
+                        "title": "Slate 800",
+                        "color": "#1E293B"
+                    },
+                    {
+                        "_id": "rm_slate_900",
+                        "title": "Slate 900",
+                        "color": "#0F172A"
+                    }
+                ],
+                "typography_enable_styleguide_preview": "yes",
+                "system_typography": [
+                    {
+                        "_id": "primary",
+                        "title": "Headings",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25,
+                            "sizes": []
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        }
+                    },
+                    {
+                        "_id": "secondary",
+                        "title": "Subheadings",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375,
+                            "sizes": []
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        }
+                    },
+                    {
+                        "_id": "text",
+                        "title": "Body Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5,
+                            "sizes": []
+                        }
+                    },
+                    {
+                        "_id": "accent",
+                        "title": "Accent Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5,
+                            "sizes": []
+                        }
+                    }
+                ],
+                "custom_typography": [
+                    {
+                        "_id": "rm_display",
+                        "title": "Display (5XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 48
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 36
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": -0.025000000000000001387778780781445675529539585113525390625
+                        }
+                    },
+                    {
+                        "_id": "rm_hero_title",
+                        "title": "Hero Title (4XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 36
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": -0.025000000000000001387778780781445675529539585113525390625
+                        }
+                    },
+                    {
+                        "_id": "rm_page_title",
+                        "title": "Page Title (3XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_section_title",
+                        "title": "Section Title (2XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375
+                        }
+                    },
+                    {
+                        "_id": "rm_card_title",
+                        "title": "Card Title (XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375
+                        }
+                    },
+                    {
+                        "_id": "rm_lead_text",
+                        "title": "Lead Text (LG)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        }
+                    },
+                    {
+                        "_id": "rm_body",
+                        "title": "Body (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_body_medium",
+                        "title": "Body Medium (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_body_semibold",
+                        "title": "Body Semibold (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small",
+                        "title": "Small Text (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small_medium",
+                        "title": "Small Medium (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small_semibold",
+                        "title": "Small Semibold (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_caption",
+                        "title": "Caption (XS)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_caption_medium",
+                        "title": "Caption Medium (XS)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_badge",
+                        "title": "Badge Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    },
+                    {
+                        "_id": "rm_button",
+                        "title": "Button Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_button_large",
+                        "title": "Button Text Large",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_button_small",
+                        "title": "Button Text Small",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_label",
+                        "title": "Form Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_input",
+                        "title": "Form Input",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_nav_link",
+                        "title": "Navigation Link",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_price",
+                        "title": "Price Display",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_price_large",
+                        "title": "Price Display Large",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_rating",
+                        "title": "Rating Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_meta",
+                        "title": "Meta Info",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_font_style": "normal"
+                    },
+                    {
+                        "_id": "rm_section_label",
+                        "title": "Section Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.1000000000000000055511151231257827021181583404541015625
+                        }
+                    },
+                    {
+                        "_id": "rm_eyebrow",
+                        "title": "Eyebrow Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    },
+                    {
+                        "_id": "rm_stat_value",
+                        "title": "Stat Value",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_stat_label",
+                        "title": "Stat Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_quote",
+                        "title": "Quote Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        },
+                        "typography_font_style": "italic"
+                    },
+                    {
+                        "_id": "rm_footer_text",
+                        "title": "Footer Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        }
+                    },
+                    {
+                        "_id": "rm_footer_title",
+                        "title": "Footer Title",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    }
+                ],
+                "default_generic_fonts": "Sans-serif",
+                "page_title_selector": "h1.entry-title",
+                "hello_footer_copyright_text": "RideMaster - All rights reserved",
+                "activeItemIndex": 1,
+                "viewport_md": 768,
+                "viewport_lg": 1025,
+                "site_logo": {
+                    "url": "https://ridemaster.eu/wp-content/uploads/2026/01/favicon-ridemaster.png",
+                    "id": 85,
+                    "size": "",
+                    "alt": "",
+                    "source": "library"
+                },
+                "colors_enable_styleguide_preview": "yes",
+                "woocommerce_cart_page_id": "7",
+                "woocommerce_checkout_page_id": "8",
+                "woocommerce_myaccount_page_id": "9",
+                "woocommerce_terms_page_id": "",
+                "woocommerce_purchase_summary_page_id": "",
+                "woocommerce_shop_page_id": "6"
+            },
+            "globals_extracted": {
+                "system_colors": [
+                    {
+                        "_id": "primary",
+                        "title": "Primary (Ocean Teal)",
+                        "color": "#0D9488"
+                    },
+                    {
+                        "_id": "secondary",
+                        "title": "Secondary (Gold)",
+                        "color": "#EAB308"
+                    },
+                    {
+                        "_id": "text",
+                        "title": "Text",
+                        "color": "#1E293B"
+                    },
+                    {
+                        "_id": "accent",
+                        "title": "Accent (Sunset Orange)",
+                        "color": "#F97316"
+                    }
+                ],
+                "custom_colors": [
+                    {
+                        "_id": "rm_primary_50",
+                        "title": "Primary 50",
+                        "color": "#F0FDFA"
+                    },
+                    {
+                        "_id": "rm_primary_100",
+                        "title": "Primary 100",
+                        "color": "#CCFBF1"
+                    },
+                    {
+                        "_id": "rm_primary_200",
+                        "title": "Primary 200",
+                        "color": "#99F6E4"
+                    },
+                    {
+                        "_id": "rm_primary_300",
+                        "title": "Primary 300",
+                        "color": "#5EEAD4"
+                    },
+                    {
+                        "_id": "rm_primary_400",
+                        "title": "Primary 400",
+                        "color": "#2DD4BF"
+                    },
+                    {
+                        "_id": "rm_primary_500",
+                        "title": "Primary 500",
+                        "color": "#14B8A6"
+                    },
+                    {
+                        "_id": "rm_primary_600",
+                        "title": "Primary 600",
+                        "color": "#0D9488"
+                    },
+                    {
+                        "_id": "rm_primary_700",
+                        "title": "Primary 700",
+                        "color": "#0F766E"
+                    },
+                    {
+                        "_id": "rm_primary_800",
+                        "title": "Primary 800",
+                        "color": "#115E59"
+                    },
+                    {
+                        "_id": "rm_secondary_400",
+                        "title": "Secondary 400 (Orange)",
+                        "color": "#FB923C"
+                    },
+                    {
+                        "_id": "rm_secondary_500",
+                        "title": "Secondary 500 (Orange)",
+                        "color": "#F97316"
+                    },
+                    {
+                        "_id": "rm_secondary_600",
+                        "title": "Secondary 600 (Orange)",
+                        "color": "#EA580C"
+                    },
+                    {
+                        "_id": "rm_gold_400",
+                        "title": "Gold 400",
+                        "color": "#FACC15"
+                    },
+                    {
+                        "_id": "rm_gold_500",
+                        "title": "Gold 500",
+                        "color": "#EAB308"
+                    },
+                    {
+                        "_id": "rm_gold_600",
+                        "title": "Gold 600",
+                        "color": "#CA8A04"
+                    },
+                    {
+                        "_id": "rm_success",
+                        "title": "Success",
+                        "color": "#10B981"
+                    },
+                    {
+                        "_id": "rm_success_light",
+                        "title": "Success Light",
+                        "color": "#D1FAE5"
+                    },
+                    {
+                        "_id": "rm_error",
+                        "title": "Error",
+                        "color": "#EF4444"
+                    },
+                    {
+                        "_id": "rm_error_light",
+                        "title": "Error Light",
+                        "color": "#FEE2E2"
+                    },
+                    {
+                        "_id": "rm_warning",
+                        "title": "Warning",
+                        "color": "#F59E0B"
+                    },
+                    {
+                        "_id": "rm_warning_light",
+                        "title": "Warning Light",
+                        "color": "#FEF3C7"
+                    },
+                    {
+                        "_id": "rm_info",
+                        "title": "Info",
+                        "color": "#3B82F6"
+                    },
+                    {
+                        "_id": "rm_info_light",
+                        "title": "Info Light",
+                        "color": "#DBEAFE"
+                    },
+                    {
+                        "_id": "rm_kitesurf",
+                        "title": "Kitesurf Blue",
+                        "color": "#3B82F6"
+                    },
+                    {
+                        "_id": "rm_kitesurf_light",
+                        "title": "Kitesurf Blue Light",
+                        "color": "#DBEAFE"
+                    },
+                    {
+                        "_id": "rm_wingfoil",
+                        "title": "Wingfoil Purple",
+                        "color": "#8B5CF6"
+                    },
+                    {
+                        "_id": "rm_wingfoil_light",
+                        "title": "Wingfoil Purple Light",
+                        "color": "#EDE9FE"
+                    },
+                    {
+                        "_id": "rm_slate_50",
+                        "title": "Slate 50",
+                        "color": "#F8FAFC"
+                    },
+                    {
+                        "_id": "rm_slate_100",
+                        "title": "Slate 100",
+                        "color": "#F1F5F9"
+                    },
+                    {
+                        "_id": "rm_slate_200",
+                        "title": "Slate 200",
+                        "color": "#E2E8F0"
+                    },
+                    {
+                        "_id": "rm_slate_300",
+                        "title": "Slate 300",
+                        "color": "#CBD5E1"
+                    },
+                    {
+                        "_id": "rm_slate_400",
+                        "title": "Slate 400",
+                        "color": "#94A3B8"
+                    },
+                    {
+                        "_id": "rm_slate_500",
+                        "title": "Slate 500",
+                        "color": "#64748B"
+                    },
+                    {
+                        "_id": "rm_slate_600",
+                        "title": "Slate 600",
+                        "color": "#475569"
+                    },
+                    {
+                        "_id": "rm_slate_700",
+                        "title": "Slate 700",
+                        "color": "#334155"
+                    },
+                    {
+                        "_id": "rm_slate_800",
+                        "title": "Slate 800",
+                        "color": "#1E293B"
+                    },
+                    {
+                        "_id": "rm_slate_900",
+                        "title": "Slate 900",
+                        "color": "#0F172A"
+                    }
+                ],
+                "system_typography": [
+                    {
+                        "_id": "primary",
+                        "title": "Headings",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25,
+                            "sizes": []
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        }
+                    },
+                    {
+                        "_id": "secondary",
+                        "title": "Subheadings",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375,
+                            "sizes": []
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        }
+                    },
+                    {
+                        "_id": "text",
+                        "title": "Body Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5,
+                            "sizes": []
+                        }
+                    },
+                    {
+                        "_id": "accent",
+                        "title": "Accent Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14,
+                            "sizes": []
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5,
+                            "sizes": []
+                        }
+                    }
+                ],
+                "custom_typography": [
+                    {
+                        "_id": "rm_display",
+                        "title": "Display (5XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 48
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 36
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": -0.025000000000000001387778780781445675529539585113525390625
+                        }
+                    },
+                    {
+                        "_id": "rm_hero_title",
+                        "title": "Hero Title (4XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 36
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": -0.025000000000000001387778780781445675529539585113525390625
+                        }
+                    },
+                    {
+                        "_id": "rm_page_title",
+                        "title": "Page Title (3XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_section_title",
+                        "title": "Section Title (2XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375
+                        }
+                    },
+                    {
+                        "_id": "rm_card_title",
+                        "title": "Card Title (XL)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.375
+                        }
+                    },
+                    {
+                        "_id": "rm_lead_text",
+                        "title": "Lead Text (LG)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        }
+                    },
+                    {
+                        "_id": "rm_body",
+                        "title": "Body (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_body_medium",
+                        "title": "Body Medium (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_body_semibold",
+                        "title": "Body Semibold (Base)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small",
+                        "title": "Small Text (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small_medium",
+                        "title": "Small Medium (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_small_semibold",
+                        "title": "Small Semibold (SM)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_caption",
+                        "title": "Caption (XS)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_caption_medium",
+                        "title": "Caption Medium (XS)",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_badge",
+                        "title": "Badge Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    },
+                    {
+                        "_id": "rm_button",
+                        "title": "Button Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_button_large",
+                        "title": "Button Text Large",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_button_small",
+                        "title": "Button Text Small",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_label",
+                        "title": "Form Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_input",
+                        "title": "Form Input",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_nav_link",
+                        "title": "Navigation Link",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_price",
+                        "title": "Price Display",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_price_large",
+                        "title": "Price Display Large",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_rating",
+                        "title": "Rating Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_meta",
+                        "title": "Meta Info",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_font_style": "normal"
+                    },
+                    {
+                        "_id": "rm_section_label",
+                        "title": "Section Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 12
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.1000000000000000055511151231257827021181583404541015625
+                        }
+                    },
+                    {
+                        "_id": "rm_eyebrow",
+                        "title": "Eyebrow Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "500",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    },
+                    {
+                        "_id": "rm_stat_value",
+                        "title": "Stat Value",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 30
+                        },
+                        "typography_font_size_tablet": {
+                            "unit": "px",
+                            "size": 24
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 20
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.25
+                        }
+                    },
+                    {
+                        "_id": "rm_stat_label",
+                        "title": "Stat Label",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        }
+                    },
+                    {
+                        "_id": "rm_quote",
+                        "title": "Quote Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 18
+                        },
+                        "typography_font_size_mobile": {
+                            "unit": "px",
+                            "size": 16
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        },
+                        "typography_font_style": "italic"
+                    },
+                    {
+                        "_id": "rm_footer_text",
+                        "title": "Footer Text",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.625
+                        }
+                    },
+                    {
+                        "_id": "rm_footer_title",
+                        "title": "Footer Title",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 14
+                        },
+                        "typography_line_height": {
+                            "unit": "em",
+                            "size": 1.5
+                        },
+                        "typography_text_transform": "uppercase",
+                        "typography_letter_spacing": {
+                            "unit": "em",
+                            "size": 0.05000000000000000277555756156289135105907917022705078125
+                        }
+                    }
+                ]
+            }
+        },
+        "options": {
+            "elementor_disable_color_schemes": "",
+            "elementor_disable_typography_schemes": "",
+            "elementor_cpt_support": [
+                "post",
+                "page",
+                "jet-woo-builder",
+                "product",
+                "jet-engine",
+                "jet-woo-builder"
+            ],
+            "elementor_load_fa4_shim": "",
+            "elementor_experiment-container": "default",
+            "elementor_experiment-additional_custom_breakpoints": "default"
+        },
+        "global_css": [
+            {
+                "label": "elementor_global_css",
+                "path": "/home/customer/www/ridemaster.eu/public_html/wp-content/uploads/elementor/css/global.css",
+                "url": "https://ridemaster.eu/wp-content/uploads/elementor/css/global.css",
+                "exists": false
+            },
+            {
+                "label": "elementor_kit_css",
+                "path": "/home/customer/www/ridemaster.eu/public_html/wp-content/uploads/elementor/css/post-121.css",
+                "url": "https://ridemaster.eu/wp-content/uploads/elementor/css/post-121.css",
+                "exists": true,
+                "size_bytes": 13342,
+                "sha1": "9a1143aaf7b593b51f136cb7d27aee3fb7425e84",
+                "excerpt_first_20000_chars": ".elementor-kit-121{--e-global-color-primary:#0D9488;--e-global-color-secondary:#EAB308;--e-global-color-text:#1E293B;--e-global-color-accent:#F97316;--e-global-color-rm_primary_50:#F0FDFA;--e-global-color-rm_primary_100:#CCFBF1;--e-global-color-rm_primary_200:#99F6E4;--e-global-color-rm_primary_300:#5EEAD4;--e-global-color-rm_primary_400:#2DD4BF;--e-global-color-rm_primary_500:#14B8A6;--e-global-color-rm_primary_600:#0D9488;--e-global-color-rm_primary_700:#0F766E;--e-global-color-rm_primary_800:#115E59;--e-global-color-rm_secondary_400:#FB923C;--e-global-color-rm_secondary_500:#F97316;--e-global-color-rm_secondary_600:#EA580C;--e-global-color-rm_gold_400:#FACC15;--e-global-color-rm_gold_500:#EAB308;--e-global-color-rm_gold_600:#CA8A04;--e-global-color-rm_success:#10B981;--e-global-color-rm_success_light:#D1FAE5;--e-global-color-rm_error:#EF4444;--e-global-color-rm_error_light:#FEE2E2;--e-global-color-rm_warning:#F59E0B;--e-global-color-rm_warning_light:#FEF3C7;--e-global-color-rm_info:#3B82F6;--e-global-color-rm_info_light:#DBEAFE;--e-global-color-rm_kitesurf:#3B82F6;--e-global-color-rm_kitesurf_light:#DBEAFE;--e-global-color-rm_wingfoil:#8B5CF6;--e-global-color-rm_wingfoil_light:#EDE9FE;--e-global-color-rm_slate_50:#F8FAFC;--e-global-color-rm_slate_100:#F1F5F9;--e-global-color-rm_slate_200:#E2E8F0;--e-global-color-rm_slate_300:#CBD5E1;--e-global-color-rm_slate_400:#94A3B8;--e-global-color-rm_slate_500:#64748B;--e-global-color-rm_slate_600:#475569;--e-global-color-rm_slate_700:#334155;--e-global-color-rm_slate_800:#1E293B;--e-global-color-rm_slate_900:#0F172A;--e-global-typography-primary-font-family:\"DM Sans\";--e-global-typography-primary-font-size:30px;--e-global-typography-primary-font-weight:700;--e-global-typography-primary-line-height:1.25em;--e-global-typography-secondary-font-family:\"DM Sans\";--e-global-typography-secondary-font-size:20px;--e-global-typography-secondary-font-weight:600;--e-global-typography-secondary-line-height:1.375em;--e-global-typography-text-font-family:\"DM Sans\";--e-global-typography-text-font-size:16px;--e-global-typography-text-font-weight:400;--e-global-typography-text-line-height:1.5em;--e-global-typography-accent-font-family:\"DM Sans\";--e-global-typography-accent-font-size:14px;--e-global-typography-accent-font-weight:500;--e-global-typography-accent-line-height:1.5em;--e-global-typography-rm_display-font-family:\"DM Sans\";--e-global-typography-rm_display-font-size:48px;--e-global-typography-rm_display-font-weight:700;--e-global-typography-rm_display-line-height:1.25em;--e-global-typography-rm_display-letter-spacing:-0.025em;--e-global-typography-rm_hero_title-font-family:\"DM Sans\";--e-global-typography-rm_hero_title-font-size:36px;--e-global-typography-rm_hero_title-font-weight:700;--e-global-typography-rm_hero_title-line-height:1.25em;--e-global-typography-rm_hero_title-letter-spacing:-0.025em;--e-global-typography-rm_page_title-font-family:\"DM Sans\";--e-global-typography-rm_page_title-font-size:30px;--e-global-typography-rm_page_title-font-weight:700;--e-global-typography-rm_page_title-line-height:1.25em;--e-global-typography-rm_section_title-font-family:\"DM Sans\";--e-global-typography-rm_section_title-font-size:24px;--e-global-typography-rm_section_title-font-weight:700;--e-global-typography-rm_section_title-line-height:1.375em;--e-global-typography-rm_card_title-font-family:\"DM Sans\";--e-global-typography-rm_card_title-font-size:20px;--e-global-typography-rm_card_title-font-weight:600;--e-global-typography-rm_card_title-line-height:1.375em;--e-global-typography-rm_lead_text-font-family:\"DM Sans\";--e-global-typography-rm_lead_text-font-size:18px;--e-global-typography-rm_lead_text-font-weight:400;--e-global-typography-rm_lead_text-line-height:1.625em;--e-global-typography-rm_body-font-family:\"DM Sans\";--e-global-typography-rm_body-font-size:16px;--e-global-typography-rm_body-font-weight:400;--e-global-typography-rm_body-line-height:1.5em;--e-global-typography-rm_body_medium-font-family:\"DM Sans\";--e-global-typography-rm_body_medium-font-size:16px;--e-global-typography-rm_body_medium-font-weight:500;--e-global-typography-rm_body_medium-line-height:1.5em;--e-global-typography-rm_body_semibold-font-family:\"DM Sans\";--e-global-typography-rm_body_semibold-font-size:16px;--e-global-typography-rm_body_semibold-font-weight:600;--e-global-typography-rm_body_semibold-line-height:1.5em;--e-global-typography-rm_small-font-family:\"DM Sans\";--e-global-typography-rm_small-font-size:14px;--e-global-typography-rm_small-font-weight:400;--e-global-typography-rm_small-line-height:1.5em;--e-global-typography-rm_small_medium-font-family:\"DM Sans\";--e-global-typography-rm_small_medium-font-size:14px;--e-global-typography-rm_small_medium-font-weight:500;--e-global-typography-rm_small_medium-line-height:1.5em;--e-global-typography-rm_small_semibold-font-family:\"DM Sans\";--e-global-typography-rm_small_semibold-font-size:14px;--e-global-typography-rm_small_semibold-font-weight:600;--e-global-typography-rm_small_semibold-line-height:1.5em;--e-global-typography-rm_caption-font-family:\"DM Sans\";--e-global-typography-rm_caption-font-size:12px;--e-global-typography-rm_caption-font-weight:400;--e-global-typography-rm_caption-line-height:1.5em;--e-global-typography-rm_caption_medium-font-family:\"DM Sans\";--e-global-typography-rm_caption_medium-font-size:12px;--e-global-typography-rm_caption_medium-font-weight:500;--e-global-typography-rm_caption_medium-line-height:1.5em;--e-global-typography-rm_badge-font-family:\"DM Sans\";--e-global-typography-rm_badge-font-size:12px;--e-global-typography-rm_badge-font-weight:500;--e-global-typography-rm_badge-text-transform:uppercase;--e-global-typography-rm_badge-line-height:1.25em;--e-global-typography-rm_badge-letter-spacing:0.05em;--e-global-typography-rm_button-font-family:\"DM Sans\";--e-global-typography-rm_button-font-size:14px;--e-global-typography-rm_button-font-weight:600;--e-global-typography-rm_button-line-height:1.25em;--e-global-typography-rm_button_large-font-family:\"DM Sans\";--e-global-typography-rm_button_large-font-size:16px;--e-global-typography-rm_button_large-font-weight:600;--e-global-typography-rm_button_large-line-height:1.25em;--e-global-typography-rm_button_small-font-family:\"DM Sans\";--e-global-typography-rm_button_small-font-size:12px;--e-global-typography-rm_button_small-font-weight:600;--e-global-typography-rm_button_small-line-height:1.25em;--e-global-typography-rm_label-font-family:\"DM Sans\";--e-global-typography-rm_label-font-size:14px;--e-global-typography-rm_label-font-weight:500;--e-global-typography-rm_label-line-height:1.5em;--e-global-typography-rm_input-font-family:\"DM Sans\";--e-global-typography-rm_input-font-size:16px;--e-global-typography-rm_input-font-weight:400;--e-global-typography-rm_input-line-height:1.5em;--e-global-typography-rm_nav_link-font-family:\"DM Sans\";--e-global-typography-rm_nav_link-font-size:14px;--e-global-typography-rm_nav_link-font-weight:500;--e-global-typography-rm_nav_link-line-height:1.5em;--e-global-typography-rm_price-font-family:\"DM Sans\";--e-global-typography-rm_price-font-size:18px;--e-global-typography-rm_price-font-weight:700;--e-global-typography-rm_price-line-height:1.25em;--e-global-typography-rm_price_large-font-family:\"DM Sans\";--e-global-typography-rm_price_large-font-size:24px;--e-global-typography-rm_price_large-font-weight:700;--e-global-typography-rm_price_large-line-height:1.25em;--e-global-typography-rm_rating-font-family:\"DM Sans\";--e-global-typography-rm_rating-font-size:14px;--e-global-typography-rm_rating-font-weight:600;--e-global-typography-rm_rating-line-height:1.25em;--e-global-typography-rm_meta-font-family:\"DM Sans\";--e-global-typography-rm_meta-font-size:14px;--e-global-typography-rm_meta-font-weight:400;--e-global-typography-rm_meta-font-style:normal;--e-global-typography-rm_meta-line-height:1.5em;--e-global-typography-rm_section_label-font-family:\"DM Sans\";--e-global-typography-rm_section_label-font-size:12px;--e-global-typography-rm_section_label-font-weight:600;--e-global-typography-rm_section_label-text-transform:uppercase;--e-global-typography-rm_section_label-line-height:1.5em;--e-global-typography-rm_section_label-letter-spacing:0.1em;--e-global-typography-rm_eyebrow-font-family:\"DM Sans\";--e-global-typography-rm_eyebrow-font-size:14px;--e-global-typography-rm_eyebrow-font-weight:500;--e-global-typography-rm_eyebrow-text-transform:uppercase;--e-global-typography-rm_eyebrow-line-height:1.5em;--e-global-typography-rm_eyebrow-letter-spacing:0.05em;--e-global-typography-rm_stat_value-font-family:\"DM Sans\";--e-global-typography-rm_stat_value-font-size:30px;--e-global-typography-rm_stat_value-font-weight:700;--e-global-typography-rm_stat_value-line-height:1.25em;--e-global-typography-rm_stat_label-font-family:\"DM Sans\";--e-global-typography-rm_stat_label-font-size:14px;--e-global-typography-rm_stat_label-font-weight:400;--e-global-typography-rm_stat_label-line-height:1.5em;--e-global-typography-rm_quote-font-family:\"DM Sans\";--e-global-typography-rm_quote-font-size:18px;--e-global-typography-rm_quote-font-weight:400;--e-global-typography-rm_quote-font-style:italic;--e-global-typography-rm_quote-line-height:1.625em;--e-global-typography-rm_footer_text-font-family:\"DM Sans\";--e-global-typography-rm_footer_text-font-size:14px;--e-global-typography-rm_footer_text-font-weight:400;--e-global-typography-rm_footer_text-line-height:1.625em;--e-global-typography-rm_footer_title-font-family:\"DM Sans\";--e-global-typography-rm_footer_title-font-size:14px;--e-global-typography-rm_footer_title-font-weight:600;--e-global-typography-rm_footer_title-text-transform:uppercase;--e-global-typography-rm_footer_title-line-height:1.5em;--e-global-typography-rm_footer_title-letter-spacing:0.05em;}.elementor-section.elementor-section-boxed > .elementor-container{max-width:1140px;}.e-con{--container-max-width:1140px;}.elementor-widget:not(:last-child){--kit-widget-spacing:20px;}.elementor-element{--widgets-spacing:20px 20px;--widgets-spacing-row:20px;--widgets-spacing-column:20px;}{}h1.entry-title{display:var(--page-title-display);}.elementor-kit-121 e-page-transition{background-color:#FFBC7D;}.site-header .site-branding{flex-direction:column;align-items:stretch;}.site-header{padding-inline-end:0px;padding-inline-start:0px;}.site-footer .site-branding{flex-direction:column;align-items:stretch;}@media(max-width:1024px){.elementor-kit-121{--e-global-typography-primary-font-size:24px;--e-global-typography-secondary-font-size:18px;--e-global-typography-rm_display-font-size:36px;--e-global-typography-rm_hero_title-font-size:30px;--e-global-typography-rm_page_title-font-size:24px;--e-global-typography-rm_section_title-font-size:20px;--e-global-typography-rm_card_title-font-size:18px;--e-global-typography-rm_stat_value-font-size:24px;}.elementor-section.elementor-section-boxed > .elementor-container{max-width:1024px;}.e-con{--container-max-width:1024px;}}@media(max-width:767px){.elementor-kit-121{--e-global-typography-primary-font-size:20px;--e-global-typography-secondary-font-size:16px;--e-global-typography-rm_display-font-size:30px;--e-global-typography-rm_hero_title-font-size:24px;--e-global-typography-rm_page_title-font-size:20px;--e-global-typography-rm_section_title-font-size:18px;--e-global-typography-rm_card_title-font-size:16px;--e-global-typography-rm_lead_text-font-size:16px;--e-global-typography-rm_price_large-font-size:20px;--e-global-typography-rm_stat_value-font-size:20px;--e-global-typography-rm_quote-font-size:16px;}.elementor-section.elementor-section-boxed > .elementor-container{max-width:767px;}.e-con{--container-max-width:767px;}}/* Start Custom Fonts CSS */@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: normal;\n\tfont-weight: 400;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-400.woff2') format('woff2');\n}\n@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: italic;\n\tfont-weight: 400;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-400-italic.woff2') format('woff2');\n}\n@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: normal;\n\tfont-weight: 500;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-500.woff2') format('woff2');\n}\n@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: italic;\n\tfont-weight: 500;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-500-italic.woff2') format('woff2');\n}\n@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: normal;\n\tfont-weight: 600;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-600.woff2') format('woff2');\n}\n@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: italic;\n\tfont-weight: 600;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-600-italic.woff2') format('woff2');\n}\n@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: normal;\n\tfont-weight: 700;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-700.woff2') format('woff2');\n}\n@font-face {\n\tfont-family: 'DM Sans';\n\tfont-style: italic;\n\tfont-weight: 700;\n\tfont-display: auto;\n\tsrc: url('https://ridemaster.eu/wp-content/uploads/2026/01/dm-sans-700-italic.woff2') format('woff2');\n}\n/* End Custom Fonts CSS */",
+                "mtime": 1768561288
+            }
+        ]
+    },
+    "jetengine": {
+        "plugin_detected": true,
+        "options_dump": {
+            "jet-engine-maps-places-api-status": "1768419771:legacy",
+            "jet-engine-maps-settings": {
+                "api_key": "",
+                "disable_api_file": false,
+                "enable_preload_meta": false,
+                "use_geocoding_key": false,
+                "geocoding_key": "",
+                "preload_meta": "",
+                "add_offset": false,
+                "map_provider": "leaflet",
+                "geocode_provider": "google"
+            },
+            "jet_engine_modules": [
+                "gallery-grid",
+                "calendar",
+                "profile-builder",
+                "data-stores",
+                "fullwidth-block-editor",
+                "gallery-slider",
+                "booking-forms",
+                "maps-listings",
+                "custom-content-types",
+                "listing-injections",
+                "qr-code",
+                "dynamic-visibility",
+                "rest-api-listings"
+            ],
+            "jet_engine_set_entry_types": "1"
+        },
+        "post_types_detected": [
+            "jet-engine",
+            "jet-engine-booking"
+        ],
+        "listings_templates": {
+            "jet-engine": {
+                "count": 3,
+                "posts": [
+                    {
+                        "ID": 199,
+                        "post_title": "Camp Card",
+                        "post_name": "camp-card",
+                        "post_status": "publish",
+                        "edit_link": "https://ridemaster.eu/wp-admin/post.php?post=199&action=edit",
+                        "meta": {
+                            "_elementor_data": [
+                                {
+                                    "id": "5f4010b",
+                                    "elType": "container",
+                                    "settings": {
+                                        "jet_parallax_layout_list": [],
+                                        "jedv_conditions": [
+                                            {
+                                                "_id": "5c05e0f"
+                                            }
+                                        ]
+                                    },
+                                    "elements": [
+                                        {
+                                            "id": "d024b53",
+                                            "elType": "widget",
+                                            "settings": {
+                                                "shortcode": "[rm_camp_card]",
+                                                "jedv_conditions": [
+                                                    {
+                                                        "_id": "96875ed"
+                                                    }
+                                                ]
+                                            },
+                                            "elements": [],
+                                            "widgetType": "shortcode"
+                                        }
+                                    ],
+                                    "isInner": false
+                                }
+                            ],
+                            "_elementor_page_settings": {
+                                "listing_post_type": "camp",
+                                "listing_tax": "category",
+                                "preview_width": {
+                                    "unit": "px",
+                                    "size": 400,
+                                    "sizes": []
+                                },
+                                "listing_link": "yes",
+                                "listing_link_query_args": "_post_id=%current_id%"
+                            },
+                            "_elementor_template_type": "jet-listing-items",
+                            "_elementor_edit_mode": "builder",
+                            "_listing_type": "elementor"
+                        }
+                    },
+                    {
+                        "ID": 214,
+                        "post_title": "Coach Card",
+                        "post_name": "coach-card",
+                        "post_status": "publish",
+                        "edit_link": "https://ridemaster.eu/wp-admin/post.php?post=214&action=edit",
+                        "meta": {
+                            "_elementor_data": [
+                                {
+                                    "id": "aeb7704",
+                                    "elType": "container",
+                                    "settings": {
+                                        "jet_parallax_layout_list": [],
+                                        "jedv_conditions": [
+                                            {
+                                                "_id": "66b4dc3"
+                                            }
+                                        ]
+                                    },
+                                    "elements": [
+                                        {
+                                            "id": "e61f765",
+                                            "elType": "widget",
+                                            "settings": {
+                                                "shortcode": "[rm_coach_card]",
+                                                "jedv_conditions": [
+                                                    {
+                                                        "_id": "bdf4007"
+                                                    }
+                                                ]
+                                            },
+                                            "elements": [],
+                                            "widgetType": "shortcode"
+                                        }
+                                    ],
+                                    "isInner": false
+                                }
+                            ],
+                            "_elementor_page_settings": {
+                                "listing_post_type": "coach",
+                                "listing_tax": "category",
+                                "preview_width": {
+                                    "unit": "px",
+                                    "size": 500,
+                                    "sizes": []
+                                },
+                                "listing_link_query_args": "_post_id=%current_id%"
+                            },
+                            "_elementor_template_type": "jet-listing-items",
+                            "_elementor_edit_mode": "builder",
+                            "_listing_type": "elementor"
+                        }
+                    },
+                    {
+                        "ID": 217,
+                        "post_title": "Spot Card",
+                        "post_name": "spot-card",
+                        "post_status": "publish",
+                        "edit_link": "https://ridemaster.eu/wp-admin/post.php?post=217&action=edit",
+                        "meta": {
+                            "_elementor_data": [
+                                {
+                                    "id": "f5b2e90",
+                                    "elType": "container",
+                                    "settings": {
+                                        "jet_parallax_layout_list": [],
+                                        "jedv_conditions": [
+                                            {
+                                                "_id": "d604153"
+                                            }
+                                        ]
+                                    },
+                                    "elements": [
+                                        {
+                                            "id": "2329da0",
+                                            "elType": "widget",
+                                            "settings": {
+                                                "shortcode": "[rm_spot_card]",
+                                                "jedv_conditions": [
+                                                    {
+                                                        "_id": "73a28d0"
+                                                    }
+                                                ]
+                                            },
+                                            "elements": [],
+                                            "widgetType": "shortcode"
+                                        }
+                                    ],
+                                    "isInner": false
+                                }
+                            ],
+                            "_elementor_page_settings": {
+                                "listing_post_type": "spot",
+                                "listing_tax": "category",
+                                "listing_link_query_args": "_post_id=%current_id%"
+                            },
+                            "_elementor_template_type": "jet-listing-items",
+                            "_elementor_edit_mode": "builder",
+                            "_listing_type": "elementor"
+                        }
+                    }
+                ]
+            },
+            "jet-engine-booking": {
+                "count": 0,
+                "posts": []
+            }
+        }
+    },
+    "jetsmartfilters": {
+        "plugin_detected": true,
+        "post_types_detected": [
+            "jet-smart-filters",
+            "jet-smart-filters"
+        ],
+        "filters": {
+            "jet-smart-filters": {
+                "count": 8,
+                "posts": [
+                    {
+                        "ID": 144,
+                        "post_title": "Sport",
+                        "post_name": "sport",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    },
+                    {
+                        "ID": 145,
+                        "post_title": "Level",
+                        "post_name": "level",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    },
+                    {
+                        "ID": 146,
+                        "post_title": "Status",
+                        "post_name": "status",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    },
+                    {
+                        "ID": 147,
+                        "post_title": "Destination",
+                        "post_name": "destination",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    },
+                    {
+                        "ID": 148,
+                        "post_title": "Date Range",
+                        "post_name": "date-range",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    },
+                    {
+                        "ID": 149,
+                        "post_title": "Price Range",
+                        "post_name": "price-range",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    },
+                    {
+                        "ID": 150,
+                        "post_title": "Languages",
+                        "post_name": "languages",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    },
+                    {
+                        "ID": 151,
+                        "post_title": "Water Type",
+                        "post_name": "water-type",
+                        "post_status": "publish",
+                        "edit_link": "",
+                        "meta": []
+                    }
+                ]
+            }
+        }
+    },
+    "wp": {
+        "theme": {
+            "stylesheet": "ridemaster-child",
+            "template": "hello-elementor",
+            "name": "RideMaster Child",
+            "version": "1.0.0"
+        },
+        "active_plugins": [
+            "worker/init.php",
+            "elementor-pro/elementor-pro.php",
+            "elementor/elementor.php",
+            "jet-elements/jet-elements.php",
+            "jet-engine/jet-engine.php",
+            "jet-form-builder-hierarchical-select/jet-form-builder-hierarchical-select.php",
+            "jet-smart-filters/jet-smart-filters.php",
+            "jet-woo-builder/jet-woo-builder.php",
+            "jetformbuilder/jet-form-builder.php",
+            "members/members.php",
+            "sg-cachepress/sg-cachepress.php",
+            "sg-security/sg-security.php",
+            "updraftplus/updraftplus.php",
+            "woocommerce/woocommerce.php"
+        ]
+    }
+}

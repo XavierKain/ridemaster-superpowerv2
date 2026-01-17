@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarifa, Spain - Kitesurfing Paradise - RideMaster</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-alt);
+      color: var(--color-text);
+      line-height: var(--line-height-normal);
+    }
+
+    .container {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    /* Header */
+    .header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      height: var(--header-height);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+
+    .nav-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2-5) var(--space-5);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-all);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-outline:hover {
+      background: var(--color-bg-subtle);
+      border-color: var(--color-slate-300);
+    }
+
+    .btn-lg {
+      padding: var(--space-3) var(--space-6);
+      font-size: var(--font-size-base);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      transition: var(--transition-all);
+    }
+
+    .icon-btn:hover {
+      background: var(--color-bg-subtle);
+      color: var(--color-text);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: var(--space-4) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb a {
+      color: var(--color-text-secondary);
+      transition: var(--transition-colors);
+    }
+
+    .breadcrumb a:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb-separator {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Spot Hero */
+    .spot-hero {
+      background: var(--color-surface);
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-card);
+    }
+
+    .spot-hero__gallery {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-2);
+      height: 450px;
+    }
+
+    .spot-hero__main-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spot-hero__main-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .spot-hero__side-images {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    .spot-hero__side-images img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0;
+    }
+
+    .spot-hero__side-images > div:first-child img {
+      border-top-right-radius: var(--radius-2xl);
+    }
+
+    .spot-hero__side-images > div:last-child {
+      position: relative;
+    }
+
+    .spot-hero__view-all {
+      position: absolute;
+      bottom: var(--space-4);
+      right: var(--space-4);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      transition: var(--transition-all);
+    }
+
+    .spot-hero__view-all:hover {
+      background: white;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .spot-hero__content {
+      padding: var(--space-8);
+    }
+
+    .spot-hero__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-6);
+    }
+
+    .spot-hero__info {
+      flex: 1;
+    }
+
+    .spot-hero__badges {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+
+    .spot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-3);
+      background: var(--color-primary-50);
+      color: var(--color-primary);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .spot-badge--secondary {
+      background: var(--color-amber-50);
+      color: var(--color-amber-700);
+    }
+
+    .spot-hero__title {
+      font-size: var(--font-size-4xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+    }
+
+    .spot-hero__location {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-lg);
+      color: var(--color-text-secondary);
+    }
+
+    .spot-hero__actions {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .spot-hero__stats {
+      display: flex;
+      gap: var(--space-8);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .spot-stat {
+      text-align: center;
+    }
+
+    .spot-stat__value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .spot-stat__label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* Main Content */
+    .spot-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-8);
+      margin-bottom: var(--space-12);
+    }
+
+    .spot-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+
+    /* Content Sections */
+    .content-section {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-card);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .section-header i {
+      width: 24px;
+      height: 24px;
+      color: var(--color-primary);
+    }
+
+    .section-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .section-content p {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-4);
+    }
+
+    .section-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Disciplines Grid */
+    .disciplines-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+
+    .discipline-card {
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      text-align: center;
+      transition: var(--transition-all);
+    }
+
+    .discipline-card:hover {
+      background: var(--color-primary-50);
+    }
+
+    .discipline-card__icon {
+      font-size: var(--font-size-3xl);
+      margin-bottom: var(--space-2);
+    }
+
+    .discipline-card__name {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .discipline-card__camps {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* Conditions Grid */
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+
+    .condition-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-lg);
+    }
+
+    .condition-item i {
+      width: 20px;
+      height: 20px;
+      color: var(--color-primary);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .condition-item__content {
+      flex: 1;
+    }
+
+    .condition-item__label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .condition-item__value {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* Best Season */
+    .season-chart {
+      display: flex;
+      gap: var(--space-1);
+      margin-top: var(--space-4);
+    }
+
+    .season-month {
+      flex: 1;
+      text-align: center;
+    }
+
+    .season-month__bar {
+      height: 40px;
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .season-month__bar--excellent {
+      background: var(--color-primary);
+    }
+
+    .season-month__bar--good {
+      background: var(--color-primary-300);
+    }
+
+    .season-month__bar--fair {
+      background: var(--color-slate-200);
+    }
+
+    .season-month__name {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+
+    .season-legend {
+      display: flex;
+      gap: var(--space-6);
+      margin-top: var(--space-4);
+      justify-content: center;
+    }
+
+    .season-legend__item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .season-legend__color {
+      width: 12px;
+      height: 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Sidebar */
+    .spot-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    /* Quick Facts Card */
+    .quick-facts {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-card);
+    }
+
+    .quick-facts__title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+    }
+
+    .quick-facts__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .quick-fact {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .quick-fact i {
+      width: 20px;
+      height: 20px;
+      color: var(--color-primary);
+    }
+
+    .quick-fact__content {
+      flex: 1;
+    }
+
+    .quick-fact__label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .quick-fact__value {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    /* CTA Card */
+    .cta-card {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      color: white;
+      text-align: center;
+    }
+
+    .cta-card__title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-2);
+    }
+
+    .cta-card__subtitle {
+      font-size: var(--font-size-sm);
+      opacity: 0.9;
+      margin-bottom: var(--space-4);
+    }
+
+    .cta-card .btn {
+      background: white;
+      color: var(--color-primary);
+      width: 100%;
+    }
+
+    .cta-card .btn:hover {
+      background: var(--color-slate-100);
+    }
+
+    /* Camps Section */
+    .camps-section {
+      margin-bottom: var(--space-12);
+    }
+
+    .camps-section__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .camps-section__title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .camps-section__link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+    }
+
+    .camps-section__link:hover {
+      text-decoration: underline;
+    }
+
+    .camps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+
+    /* Camp Card */
+    .camp-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-all);
+    }
+
+    .camp-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .camp-card__image {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    .camp-card__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camp-card__badge {
+      position: absolute;
+      top: var(--space-3);
+      left: var(--space-3);
+      background: var(--color-primary);
+      color: white;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .camp-card__content {
+      padding: var(--space-5);
+    }
+
+    .camp-card__sport {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .camp-card__title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: var(--space-3);
+    }
+
+    .camp-card__meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .camp-card__meta-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .camp-card__meta-item i {
+      width: 16px;
+      height: 16px;
+      color: var(--color-text-muted);
+    }
+
+    .camp-card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .camp-card__price {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .camp-card__price span {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-normal);
+      color: var(--color-text-secondary);
+    }
+
+    .camp-card__spots {
+      font-size: var(--font-size-sm);
+      color: var(--color-amber-600);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--color-slate-900);
+      color: var(--color-text-inverse);
+      padding: var(--space-16) 0 var(--space-8);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: var(--space-12);
+      margin-bottom: var(--space-12);
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .footer-description {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--color-slate-800);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-slate-400);
+      transition: var(--transition-all);
+    }
+
+    .footer-social a:hover {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .footer-column h4 {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-4);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .footer-links a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      padding-top: var(--space-8);
+      border-top: 1px solid var(--color-slate-800);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copyright {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-500);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: var(--space-6);
+    }
+
+    .footer-legal a {
+      font-size: var(--font-size-sm);
+      color: var(--color-slate-400);
+      transition: var(--transition-colors);
+    }
+
+    .footer-legal a:hover {
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .spot-content {
+        grid-template-columns: 1fr;
+      }
+
+      .spot-sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .quick-facts,
+      .cta-card {
+        flex: 1;
+        min-width: 280px;
+      }
+
+      .camps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .spot-hero__gallery {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .spot-hero__main-image {
+        height: 300px;
+      }
+
+      .spot-hero__side-images {
+        display: none;
+      }
+
+      .spot-hero__stats {
+        flex-wrap: wrap;
+        gap: var(--space-4);
+      }
+
+      .disciplines-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .conditions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .camps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">
+          <i data-lucide="wind"></i>
+        </div>
+        RideMaster
+      </a>
+      <nav class="nav">
+        <a href="camps.html" class="nav-link">
+          <i data-lucide="compass"></i>
+          Explore Camps
+        </a>
+        <a href="coaches.html" class="nav-link">
+          <i data-lucide="users"></i>
+          Find Coaches
+        </a>
+        <a href="spots.html" class="nav-link active">
+          <i data-lucide="map-pin"></i>
+          Spots
+        </a>
+        <a href="#" class="nav-link">
+          <i data-lucide="calendar"></i>
+          Events
+        </a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn">
+          <i data-lucide="search"></i>
+        </button>
+        <button class="icon-btn">
+          <i data-lucide="heart"></i>
+        </button>
+        <button class="btn btn-ghost">Sign In</button>
+        <button class="btn btn-primary">Get Started</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="index.html">Home</a>
+      <i data-lucide="chevron-right" class="breadcrumb-separator" style="width: 16px; height: 16px;"></i>
+      <a href="spots.html">Spots</a>
+      <i data-lucide="chevron-right" class="breadcrumb-separator" style="width: 16px; height: 16px;"></i>
+      <span class="breadcrumb-current">Tarifa, Spain</span>
+    </nav>
+
+    <!-- Spot Hero -->
+    <section class="spot-hero">
+      <div class="spot-hero__gallery">
+        <div class="spot-hero__main-image">
+          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=600&fit=crop" alt="Tarifa beach with kitesurfers">
+        </div>
+        <div class="spot-hero__side-images">
+          <div>
+            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=600&h=300&fit=crop" alt="Kitesurfing action">
+          </div>
+          <div>
+            <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=600&h=300&fit=crop" alt="Tarifa sunset">
+            <button class="spot-hero__view-all">
+              <i data-lucide="images" style="width: 16px; height: 16px;"></i>
+              View all 24 photos
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-hero__content">
+        <div class="spot-hero__header">
+          <div class="spot-hero__info">
+            <div class="spot-hero__badges">
+              <span class="spot-badge">
+                <i data-lucide="star" style="width: 12px; height: 12px;"></i>
+                Top Rated
+              </span>
+              <span class="spot-badge spot-badge--secondary">
+                <i data-lucide="wind" style="width: 12px; height: 12px;"></i>
+                Year-Round Wind
+              </span>
+            </div>
+            <h1 class="spot-hero__title">Tarifa, Spain</h1>
+            <div class="spot-hero__location">
+              <i data-lucide="map-pin" style="width: 20px; height: 20px;"></i>
+              Andalusia, Southern Spain
+            </div>
+          </div>
+          <div class="spot-hero__actions">
+            <button class="btn btn-outline">
+              <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
+              Save
+            </button>
+            <button class="btn btn-outline">
+              <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <div class="spot-hero__stats">
+          <div class="spot-stat">
+            <div class="spot-stat__value">24</div>
+            <div class="spot-stat__label">Active Camps</div>
+          </div>
+          <div class="spot-stat">
+            <div class="spot-stat__value">18</div>
+            <div class="spot-stat__label">Certified Coaches</div>
+          </div>
+          <div class="spot-stat">
+            <div class="spot-stat__value">4.9</div>
+            <div class="spot-stat__label">Average Rating</div>
+          </div>
+          <div class="spot-stat">
+            <div class="spot-stat__value">300+</div>
+            <div class="spot-stat__label">Wind Days/Year</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Grid -->
+    <div class="spot-content">
+      <div class="spot-main">
+        <!-- About Section -->
+        <section class="content-section">
+          <div class="section-header">
+            <i data-lucide="info"></i>
+            <h2 class="section-title">About Tarifa</h2>
+          </div>
+          <div class="section-content">
+            <p>
+              Known as the wind capital of Europe, Tarifa sits at the southernmost point of continental Europe where the Atlantic Ocean meets the Mediterranean Sea. This unique geographical position creates the legendary Levante and Poniente winds that blow consistently throughout the year, making it one of the world's premier kitesurfing destinations.
+            </p>
+            <p>
+              The town itself is a charming blend of Moorish architecture, whitewashed buildings, and vibrant surf culture. With miles of pristine sandy beaches, crystal-clear waters, and a laid-back atmosphere, Tarifa offers the perfect combination of world-class riding conditions and authentic Spanish charm.
+            </p>
+            <p>
+              Whether you're a complete beginner looking to catch your first winds or an advanced rider seeking to perfect your freestyle moves, Tarifa has something for everyone. The variety of beaches caters to all skill levels, from the flat-water lagoon spots perfect for learning to the wave-riding paradise of Valdevaqueros.
+            </p>
+          </div>
+        </section>
+
+        <!-- Disciplines Section -->
+        <section class="content-section">
+          <div class="section-header">
+            <i data-lucide="activity"></i>
+            <h2 class="section-title">Available Disciplines</h2>
+          </div>
+          <div class="disciplines-grid">
+            <div class="discipline-card">
+              <div class="discipline-card__icon">🪁</div>
+              <div class="discipline-card__name">Kitesurf</div>
+              <div class="discipline-card__camps">18 camps</div>
+            </div>
+            <div class="discipline-card">
+              <div class="discipline-card__icon">🏄</div>
+              <div class="discipline-card__name">Wingfoil</div>
+              <div class="discipline-card__camps">8 camps</div>
+            </div>
+            <div class="discipline-card">
+              <div class="discipline-card__icon">🌊</div>
+              <div class="discipline-card__name">Surf</div>
+              <div class="discipline-card__camps">5 camps</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Conditions Section -->
+        <section class="content-section">
+          <div class="section-header">
+            <i data-lucide="cloud-sun"></i>
+            <h2 class="section-title">Wind & Weather Conditions</h2>
+          </div>
+          <div class="conditions-grid">
+            <div class="condition-item">
+              <i data-lucide="wind"></i>
+              <div class="condition-item__content">
+                <div class="condition-item__label">Wind Speed</div>
+                <div class="condition-item__value">15-35 knots average</div>
+              </div>
+            </div>
+            <div class="condition-item">
+              <i data-lucide="compass"></i>
+              <div class="condition-item__content">
+                <div class="condition-item__label">Wind Direction</div>
+                <div class="condition-item__value">Levante (E) & Poniente (W)</div>
+              </div>
+            </div>
+            <div class="condition-item">
+              <i data-lucide="thermometer"></i>
+              <div class="condition-item__content">
+                <div class="condition-item__label">Water Temperature</div>
+                <div class="condition-item__value">16-22°C (61-72°F)</div>
+              </div>
+            </div>
+            <div class="condition-item">
+              <i data-lucide="waves"></i>
+              <div class="condition-item__content">
+                <div class="condition-item__label">Wave Height</div>
+                <div class="condition-item__value">0.5-2m depending on beach</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Best Season Section -->
+        <section class="content-section">
+          <div class="section-header">
+            <i data-lucide="calendar-days"></i>
+            <h2 class="section-title">Best Time to Visit</h2>
+          </div>
+          <div class="section-content">
+            <p>
+              Tarifa enjoys consistent wind year-round, but the peak season runs from April to October when the Levante wind is most reliable. Summer months (June-August) offer the strongest and most consistent conditions, ideal for experienced riders. Spring and autumn provide excellent conditions with fewer crowds, perfect for beginners and intermediate riders.
+            </p>
+          </div>
+          <div class="season-chart">
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--good"></div>
+              <div class="season-month__name">Jan</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--good"></div>
+              <div class="season-month__name">Feb</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--good"></div>
+              <div class="season-month__name">Mar</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--excellent"></div>
+              <div class="season-month__name">Apr</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--excellent"></div>
+              <div class="season-month__name">May</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--excellent"></div>
+              <div class="season-month__name">Jun</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--excellent"></div>
+              <div class="season-month__name">Jul</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--excellent"></div>
+              <div class="season-month__name">Aug</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--excellent"></div>
+              <div class="season-month__name">Sep</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--good"></div>
+              <div class="season-month__name">Oct</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--fair"></div>
+              <div class="season-month__name">Nov</div>
+            </div>
+            <div class="season-month">
+              <div class="season-month__bar season-month__bar--fair"></div>
+              <div class="season-month__name">Dec</div>
+            </div>
+          </div>
+          <div class="season-legend">
+            <div class="season-legend__item">
+              <div class="season-legend__color" style="background: var(--color-primary);"></div>
+              Excellent
+            </div>
+            <div class="season-legend__item">
+              <div class="season-legend__color" style="background: var(--color-primary-300);"></div>
+              Good
+            </div>
+            <div class="season-legend__item">
+              <div class="season-legend__color" style="background: var(--color-slate-200);"></div>
+              Fair
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="spot-sidebar">
+        <!-- Quick Facts -->
+        <div class="quick-facts">
+          <h3 class="quick-facts__title">Quick Facts</h3>
+          <div class="quick-facts__list">
+            <div class="quick-fact">
+              <i data-lucide="plane"></i>
+              <div class="quick-fact__content">
+                <div class="quick-fact__label">Nearest Airport</div>
+                <div class="quick-fact__value">Gibraltar (GIB) - 45 min</div>
+              </div>
+            </div>
+            <div class="quick-fact">
+              <i data-lucide="clock"></i>
+              <div class="quick-fact__content">
+                <div class="quick-fact__label">Time Zone</div>
+                <div class="quick-fact__value">CET (UTC+1)</div>
+              </div>
+            </div>
+            <div class="quick-fact">
+              <i data-lucide="banknote"></i>
+              <div class="quick-fact__content">
+                <div class="quick-fact__label">Currency</div>
+                <div class="quick-fact__value">Euro (EUR)</div>
+              </div>
+            </div>
+            <div class="quick-fact">
+              <i data-lucide="languages"></i>
+              <div class="quick-fact__content">
+                <div class="quick-fact__label">Language</div>
+                <div class="quick-fact__value">Spanish (English widely spoken)</div>
+              </div>
+            </div>
+            <div class="quick-fact">
+              <i data-lucide="shirt"></i>
+              <div class="quick-fact__content">
+                <div class="quick-fact__label">Wetsuit</div>
+                <div class="quick-fact__value">3/2mm summer, 4/3mm winter</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Card -->
+        <div class="cta-card">
+          <h3 class="cta-card__title">Ready to Ride?</h3>
+          <p class="cta-card__subtitle">Browse available camps and book your next adventure in Tarifa</p>
+          <button class="btn btn-lg">
+            <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+            Find Camps in Tarifa
+          </button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Camps Section -->
+    <section class="camps-section">
+      <div class="camps-section__header">
+        <h2 class="camps-section__title">Available Camps in Tarifa</h2>
+        <a href="camps.html?location=tarifa" class="camps-section__link">
+          View All 24 Camps
+          <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+        </a>
+      </div>
+      <div class="camps-grid">
+        <!-- Camp Card 1 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card__image">
+            <img src="https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=600&h=400&fit=crop" alt="Beginner Kitesurf Camp">
+            <span class="camp-card__badge">Early Bird</span>
+          </div>
+          <div class="camp-card__content">
+            <div class="camp-card__sport">Kitesurf</div>
+            <h3 class="camp-card__title">Beginner Kitesurf Week</h3>
+            <div class="camp-card__meta">
+              <div class="camp-card__meta-item">
+                <i data-lucide="calendar"></i>
+                Mar 15-22, 2026
+              </div>
+              <div class="camp-card__meta-item">
+                <i data-lucide="users"></i>
+                Max 6 students
+              </div>
+            </div>
+            <div class="camp-card__footer">
+              <div class="camp-card__price">€1,290 <span>/person</span></div>
+              <div class="camp-card__spots">4 spots left</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 2 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card__image">
+            <img src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=600&h=400&fit=crop" alt="Wingfoil Camp">
+          </div>
+          <div class="camp-card__content">
+            <div class="camp-card__sport">Wingfoil</div>
+            <h3 class="camp-card__title">Wingfoil Progression Weekend</h3>
+            <div class="camp-card__meta">
+              <div class="camp-card__meta-item">
+                <i data-lucide="calendar"></i>
+                Apr 5-7, 2026
+              </div>
+              <div class="camp-card__meta-item">
+                <i data-lucide="users"></i>
+                Max 4 students
+              </div>
+            </div>
+            <div class="camp-card__footer">
+              <div class="camp-card__price">€590 <span>/person</span></div>
+              <div class="camp-card__spots">2 spots left</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Camp Card 3 -->
+        <a href="camp-detail.html" class="camp-card">
+          <div class="camp-card__image">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop" alt="Advanced Freestyle Camp">
+          </div>
+          <div class="camp-card__content">
+            <div class="camp-card__sport">Kitesurf</div>
+            <h3 class="camp-card__title">Freestyle Masterclass Week</h3>
+            <div class="camp-card__meta">
+              <div class="camp-card__meta-item">
+                <i data-lucide="calendar"></i>
+                May 10-17, 2026
+              </div>
+              <div class="camp-card__meta-item">
+                <i data-lucide="users"></i>
+                Max 8 students
+              </div>
+            </div>
+            <div class="camp-card__footer">
+              <div class="camp-card__price">€1,490 <span>/person</span></div>
+              <div class="camp-card__spots">6 spots left</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <i data-lucide="wind" style="width: 24px; height: 24px;"></i>
+            RideMaster
+          </div>
+          <p class="footer-description">
+            Your gateway to kitesurfing, wingfoil, and water sports adventures worldwide. Connect with certified coaches and find your perfect camp.
+          </p>
+          <div class="footer-social">
+            <a href="#"><i data-lucide="instagram"></i></a>
+            <a href="#"><i data-lucide="facebook"></i></a>
+            <a href="#"><i data-lucide="youtube"></i></a>
+            <a href="#"><i data-lucide="twitter"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Explore</h4>
+          <div class="footer-links">
+            <a href="camps.html">Browse Camps</a>
+            <a href="coaches.html">Find Coaches</a>
+            <a href="spots.html">Discover Spots</a>
+            <a href="#">Events Calendar</a>
+            <a href="#">Gift Cards</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>For Coaches</h4>
+          <div class="footer-links">
+            <a href="#">List Your Camp</a>
+            <a href="dashboard-coach.html">Coach Dashboard</a>
+            <a href="dashboard-rider.html">Rider Dashboard</a>
+            <a href="#">Resources</a>
+            <a href="#">Certification</a>
+            <a href="#">Success Stories</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Support</h4>
+          <div class="footer-links">
+            <a href="#">Help Center</a>
+            <a href="#">Contact Us</a>
+            <a href="#">Safety Guidelines</a>
+            <a href="#">Cancellation Policy</a>
+            <a href="#">Insurance Info</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 RideMaster. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
