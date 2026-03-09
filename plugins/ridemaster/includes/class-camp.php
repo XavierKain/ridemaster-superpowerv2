@@ -16,7 +16,7 @@ class RM_Camp {
      */
     private static function log( $message ) {
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            self::log( $message );
+            error_log( $message );
         }
     }
 

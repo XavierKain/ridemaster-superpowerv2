@@ -34,7 +34,7 @@ class RM_Auth {
 		add_action( 'wp_footer', array( $this, 'guest_upload_js' ) );
 
 		// Associate uploaded photos after JetFormBuilder post insert.
-		add_action( 'jet-form-builder/action/after-post-insert', array( $this, 'associate_guest_photos' ), 999 );
+		add_action( 'jet-form-builder/action/after-post-insert', array( $this, 'associate_guest_photos' ), 999, 2 );
 
 		// Bypass the "Are you sure?" logout confirmation screen.
 		add_action( 'init', array( $this, 'bypass_logout_confirmation' ) );
@@ -558,11 +558,23 @@ class RM_Auth {
 	/**
 	 * 9. Link uploaded attachments to the newly created coach post.
 	 *
-	 * @param mixed $handler JetFormBuilder action handler.
+	 * @param mixed $action  JetFormBuilder Insert Post action instance.
+	 * @param mixed $handler JetFormBuilder form action handler.
 	 */
-	public function associate_guest_photos( $handler ) {
+	public function associate_guest_photos( $action, $handler ) {
 
-		$post_id = isset( $handler->inserted_post_id ) ? (int) $handler->inserted_post_id : 0;
+		$post_id = null;
+
+		if ( method_exists( $handler, 'get_inserted_post_id' ) ) {
+			$post_id = $handler->get_inserted_post_id();
+		}
+
+		if ( ! $post_id && method_exists( $handler, 'get_response_args' ) ) {
+			$args    = $handler->get_response_args();
+			$post_id = isset( $args['inserted_post_id'] ) ? $args['inserted_post_id'] : null;
+		}
+
+		$post_id = (int) $post_id;
 
 		if ( ! $post_id || 'coach' !== get_post_type( $post_id ) ) {
 			return;
@@ -576,6 +588,8 @@ class RM_Auth {
 
 			if ( $profile_photo_id ) {
 				set_post_thumbnail( $post_id, $profile_photo_id );
+				// Also store in coach_profile_photo meta so JFB preset finds it on the edit form
+				update_post_meta( $post_id, 'coach_profile_photo', $profile_photo_id );
 				wp_update_post( array(
 					'ID'          => $profile_photo_id,
 					'post_parent' => $post_id,

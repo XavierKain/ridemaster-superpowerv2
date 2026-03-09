@@ -180,15 +180,22 @@ class RM_Admin {
 					select.style.display    = 'none';
 					badge.style.display     = 'inline-block';
 
-					var xhr = new XMLHttpRequest();
-					xhr.open('POST', ajaxurl, true);
-					xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-					xhr.send(
-						'action=rm_update_coach_status' +
-						'&nonce=<?php echo esc_js( $nonce ); ?>' +
-						'&post_id=' + encodeURIComponent(postId) +
-						'&status='  + encodeURIComponent(status)
-					);
+					var data = new FormData();
+					data.append('action', 'rm_update_coach_status');
+					data.append('nonce', '<?php echo esc_js( $nonce ); ?>');
+					data.append('post_id', postId);
+					data.append('status', status);
+
+					fetch(ajaxurl, { method: 'POST', body: data })
+						.then(function(r) { return r.json(); })
+						.then(function(res) {
+							if (res.success) {
+								location.reload();
+							} else {
+								alert('Error: ' + (res.data || 'Unknown error'));
+								location.reload();
+							}
+						});
 				});
 			});
 		})();

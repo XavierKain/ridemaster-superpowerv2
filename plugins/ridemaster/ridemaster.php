@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RideMaster
  * Description: Core business logic for RideMaster — coach management, camp creation, authentication, admin tools, data integrity, and frontend inline editing.
- * Version: 1.0.0
+ * Version: 1.0.5
  * Author: RideMaster
  * Text Domain: ridemaster
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Constants
-define( 'RM_VERSION', '1.0.0' );
+define( 'RM_VERSION', '1.0.5' );
 define( 'RM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 

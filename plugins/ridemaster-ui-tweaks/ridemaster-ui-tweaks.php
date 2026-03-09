@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RideMaster UI Tweaks
  * Description: WooCommerce UI customizations and JetFormBuilder form styling for RideMaster.
- * Version: 1.0.1
+ * Version: 1.0.6
  * Author: RideMaster
  * Text Domain: ridemaster-ui-tweaks
  */
@@ -810,6 +810,19 @@ add_action( 'wp_head', function() {
 		line-height: 1.4 !important;
 	}
 
+	/* --- HIDE JFB PAPERCLIP ICON WHEN OUR IMAGE FIX IS ACTIVE --- */
+	.jet-form-builder-file-upload[data-rm-fixed] .jet-form-builder-file-upload__file {
+		background: none !important;
+		border: none !important;
+		padding: 0 !important;
+	}
+
+	.jet-form-builder-file-upload[data-rm-fixed] .jet-form-builder-file-upload__file::before,
+	.jet-form-builder-file-upload[data-rm-fixed] .jet-form-builder-file-upload__file::after,
+	.jet-form-builder-file-upload[data-rm-fixed] .jet-form-builder-file-upload__file svg {
+		display: none !important;
+	}
+
 	/* --- FILE UPLOAD EMPTY STATE --- */
 	.jet-form-builder-file-upload__content {
 		min-height: 0 !important;
@@ -902,57 +915,210 @@ add_action( 'wp_footer', function() {
 	?>
 	<script>
 	(function() {
-		document.querySelectorAll('.jet-form-builder-file-upload').forEach(function(wrapper) {
-			var input = wrapper.querySelector('input[type="file"]');
-			if (!input) return;
+		function log() {}
 
-			var previewContainer = wrapper.querySelector('.jet-form-builder-file-upload__content');
-			var savedPreviewHTML = '';
+		/* --- Fix 1: Preserve preview when user cancels file dialog --- */
+		function initCancelProtection() {
+			document.querySelectorAll('.jet-form-builder-file-upload').forEach(function(wrapper) {
+				if (wrapper.dataset.rmCancelFix) return;
+				wrapper.dataset.rmCancelFix = '1';
 
-			input.addEventListener('click', function() {
-				if (previewContainer) {
-					savedPreviewHTML = previewContainer.innerHTML;
-				}
-			});
+				var input = wrapper.querySelector('input[type="file"]');
+				if (!input) return;
 
-			input.addEventListener('change', function() {
-				if (!input.files || input.files.length === 0) {
-					if (previewContainer && savedPreviewHTML) {
-						previewContainer.innerHTML = savedPreviewHTML;
-						previewContainer.style.display = '';
+				var previewContainer = wrapper.querySelector('.jet-form-builder-file-upload__content');
+				var savedPreviewHTML = '';
+
+				input.addEventListener('click', function() {
+					if (previewContainer) {
+						savedPreviewHTML = previewContainer.innerHTML;
 					}
-				}
+				});
+
+				input.addEventListener('change', function() {
+					if (!input.files || input.files.length === 0) {
+						if (previewContainer && savedPreviewHTML) {
+							previewContainer.innerHTML = savedPreviewHTML;
+							previewContainer.style.display = '';
+						}
+					}
+				});
 			});
-		});
+		}
 
-		document.querySelectorAll('.jet-form-builder-file-upload__files .jet-form-builder-file-upload__file').forEach(function(fileEl) {
-			var img = fileEl.querySelector('img');
-			if (!img) return;
+		/**
+		 * Fix 2: Replace generic file icons (SVG paperclip) with real image thumbnails.
+		 *
+		 * JFB file upload preset stores value as JSON: {"url":false,"id":"https://...jpg"}
+		 * and renders an SVG icon instead of an <img>. We parse the JSON, extract the
+		 * image URL, and create a real <img> element to replace the icon.
+		 */
+		function fixGenericIcons() {
+			var uploaders = document.querySelectorAll('.jet-form-builder-file-upload');
+			log('Found', uploaders.length, 'file upload wrappers');
 
-			var src = img.src || '';
-			if (src.indexOf('media-default') !== -1 || src.indexOf('generic') !== -1 || img.naturalWidth < 50) {
-				var wrapper = fileEl.closest('.jet-form-builder-file-upload');
-				if (!wrapper) return;
+			uploaders.forEach(function(wrapper, idx) {
+				if (wrapper.dataset.rmFixed) return;
+
+				var fileEls = wrapper.querySelectorAll('.jet-form-builder-file-upload__file');
 				var hiddenInput = wrapper.querySelector('input[type="hidden"]');
-				if (!hiddenInput || !hiddenInput.value) return;
+				var hiddenVal = hiddenInput ? hiddenInput.value : '';
 
-				var attachId = parseInt(hiddenInput.value);
-				if (!attachId) return;
+				log('Wrapper #' + idx + ': fileElements=' + fileEls.length + ', hidden=' + hiddenVal.substring(0, 120));
 
-				fetch('/wp-json/wp/v2/media/' + attachId)
-					.then(function(r) { return r.json(); })
-					.then(function(data) {
-						if (data && data.media_details && data.media_details.sizes) {
-							var thumb = data.media_details.sizes.thumbnail || data.media_details.sizes.medium;
-							if (thumb) {
-								img.src = thumb.source_url;
-								img.style.objectFit = 'cover';
+				/* Extract image URL from hidden input value */
+				var imageUrl = null;
+
+				/*
+				 * Profile photo fix: JFB doesn't preset the file upload field for
+				 * Post Thumbnail mapping. The RideMaster plugin injects the URL as
+				 * window.rmCoachProfilePhotoUrl. Use it for the first empty wrapper.
+				 */
+				if (!hiddenVal && fileEls.length === 0 && window.rmCoachProfilePhotoUrl && idx === 0) {
+					imageUrl = window.rmCoachProfilePhotoUrl;
+					log('  Using injected profile photo URL:', imageUrl);
+
+					/* Create the file element structure that JFB would normally render */
+					var content = wrapper.querySelector('.jet-form-builder-file-upload__content');
+					if (!content) {
+						content = wrapper.querySelector('.jet-form-builder-file-upload__fields');
+					}
+					if (content) {
+						wrapper.dataset.rmFixed = '1';
+						var fileDiv = document.createElement('div');
+						fileDiv.className = 'jet-form-builder-file-upload__file';
+						var img = document.createElement('img');
+						img.src = imageUrl;
+						img.style.width = '100%';
+						img.style.height = '80px';
+						img.style.objectFit = 'cover';
+						img.style.borderRadius = '6px';
+						img.style.display = 'block';
+						fileDiv.appendChild(img);
+						content.insertBefore(fileDiv, content.firstChild);
+						log('  Injected profile photo image into wrapper #' + idx);
+					}
+					return;
+				}
+
+				if (hiddenVal) {
+					/* Try parsing as JSON first (JFB format: {"url":...,"id":"https://..."}) */
+					try {
+						var parsed = JSON.parse(hiddenVal);
+						log('  Parsed JSON:', parsed);
+						if (parsed) {
+							/* JFB stores URL in "id" field (confusing but true) */
+							if (typeof parsed.id === 'string' && parsed.id.indexOf('http') === 0) {
+								imageUrl = parsed.id;
+							} else if (typeof parsed.url === 'string' && parsed.url.indexOf('http') === 0) {
+								imageUrl = parsed.url;
+							} else if (typeof parsed === 'string' && parsed.indexOf('http') === 0) {
+								imageUrl = parsed;
 							}
 						}
-					})
-					.catch(function() {});
-			}
+					} catch(e) {
+						/* Not JSON — try as plain value */
+						var val = hiddenVal.trim();
+						var numId = parseInt(val);
+						if (numId && !isNaN(numId)) {
+							/* Numeric attachment ID — fetch from REST */
+							log('  Numeric ID detected:', numId);
+							(function(w, fEls, aId) {
+								fetch('/wp-json/wp/v2/media/' + aId)
+									.then(function(r) { return r.json(); })
+									.then(function(data) {
+										if (!data) return;
+										var thumbUrl = data.source_url || '';
+										if (data.media_details && data.media_details.sizes) {
+											var sz = data.media_details.sizes;
+											var pick = sz.medium || sz.thumbnail || sz.full;
+											if (pick) thumbUrl = pick.source_url;
+										}
+										if (thumbUrl) {
+											log('  REST resolved URL:', thumbUrl);
+											replaceWithImage(w, fEls, thumbUrl);
+										}
+									})
+									.catch(function(err) { log('  Fetch error:', err); });
+							})(wrapper, fileEls, numId);
+							return;
+						} else if (val.indexOf('http') === 0) {
+							imageUrl = val;
+						}
+					}
+				}
+
+				if (!imageUrl) {
+					log('  No image URL found for wrapper #' + idx);
+					return;
+				}
+
+				log('  Image URL:', imageUrl);
+				replaceWithImage(wrapper, fileEls, imageUrl);
+			});
+		}
+
+		/**
+		 * Replace the file element content (SVG icon) with a real <img>.
+		 */
+		function replaceWithImage(wrapper, fileEls, imageUrl) {
+			if (wrapper.dataset.rmFixed) return;
+			wrapper.dataset.rmFixed = '1';
+
+			fileEls.forEach(function(fileEl) {
+				/* Check if there's already a working <img> */
+				var existingImg = fileEl.querySelector('img');
+				if (existingImg && existingImg.naturalWidth > 50) return;
+
+				log('  Replacing file element content with image');
+
+				/* Clear the file element (remove SVG/paperclip icon) */
+				fileEl.innerHTML = '';
+
+				/* Create and insert a real <img> */
+				var img = document.createElement('img');
+				img.src = imageUrl;
+				img.style.width = '100%';
+				img.style.height = '80px';
+				img.style.objectFit = 'cover';
+				img.style.borderRadius = '6px';
+				img.style.display = 'block';
+				fileEl.appendChild(img);
+			});
+		}
+
+		function runAllFixes() {
+			log('runAllFixes called');
+			initCancelProtection();
+			fixGenericIcons();
+		}
+
+		/* Run immediately */
+		runAllFixes();
+
+		/* Run again on DOMContentLoaded */
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', function() {
+				log('DOMContentLoaded fired');
+				runAllFixes();
+			});
+		}
+
+		/* Run with delays for late-rendering JS widgets */
+		setTimeout(function() { log('setTimeout 500ms'); runAllFixes(); }, 500);
+		setTimeout(function() { log('setTimeout 1500ms'); runAllFixes(); }, 1500);
+		setTimeout(function() { log('setTimeout 3000ms'); runAllFixes(); }, 3000);
+
+		/* MutationObserver */
+		var debounceTimer = null;
+		var observer = new MutationObserver(function() {
+			clearTimeout(debounceTimer);
+			debounceTimer = setTimeout(runAllFixes, 200);
 		});
+		var target = document.body || document.documentElement;
+		if (target) {
+			observer.observe(target, { childList: true, subtree: true });
+		}
 	})();
 	</script>
 	<?php

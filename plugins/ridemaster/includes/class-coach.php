@@ -35,6 +35,9 @@ class RM_Coach {
 		// Sidebar styles.
 		add_action( 'wp_head', [ $this, 'sidebar_css' ] );
 
+		// Inject profile photo URL for JS fix on profile edit page.
+		add_action( 'wp_footer', [ $this, 'inject_profile_photo_url' ] );
+
 		// Shortcodes.
 		add_shortcode( 'rm_coach_avatar', [ $this, 'shortcode_avatar' ] );
 		add_shortcode( 'rm_coach_name', [ $this, 'shortcode_name' ] );
@@ -200,6 +203,15 @@ class RM_Coach {
 
 		if ( $coach_post_id ) {
 			$_REQUEST['coach_post_id'] = $coach_post_id;
+
+			// Sync featured image → coach_profile_photo meta so JFB preset shows the photo.
+			$thumb_id = (int) get_post_thumbnail_id( $coach_post_id );
+			if ( $thumb_id ) {
+				$current = get_post_meta( $coach_post_id, 'coach_profile_photo', true );
+				if ( ! $current || (int) $current !== $thumb_id ) {
+					update_post_meta( $coach_post_id, 'coach_profile_photo', $thumb_id );
+				}
+			}
 		}
 	}
 
@@ -345,5 +357,62 @@ class RM_Coach {
 		}
 
 		return esc_url( get_permalink( $coach_post_id ) );
+	}
+
+	/* ------------------------------------------------------------------
+	 * 8. Inject profile photo URL for the JS upload-preview fix.
+	 * ----------------------------------------------------------------*/
+
+	/**
+	 * On the profile edit page, output the coach's profile photo URL
+	 * as a JS variable so the UI tweaks plugin can display it even
+	 * when JFB doesn't preset the file upload field.
+	 */
+	public function inject_profile_photo_url() {
+
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
+		$request_uri = trim( wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
+
+		if ( 'coach-dashboard/profile' !== $request_uri ) {
+			return;
+		}
+
+		$coach_post_id = (int) get_user_meta( get_current_user_id(), 'coach_post_id', true );
+
+		if ( ! $coach_post_id ) {
+			return;
+		}
+
+		$photo_url = '';
+
+		// Try featured image first.
+		$thumb_url = get_the_post_thumbnail_url( $coach_post_id, 'medium' );
+		if ( $thumb_url ) {
+			$photo_url = $thumb_url;
+		}
+
+		// Fallback to coach_profile_photo meta.
+		if ( ! $photo_url ) {
+			$att_id = (int) get_post_meta( $coach_post_id, 'coach_profile_photo', true );
+			if ( $att_id ) {
+				$att_url = wp_get_attachment_image_url( $att_id, 'medium' );
+				if ( $att_url ) {
+					$photo_url = $att_url;
+				}
+			}
+		}
+
+		if ( ! $photo_url ) {
+			return;
+		}
+
+		?>
+		<script>
+		window.rmCoachProfilePhotoUrl = <?php echo wp_json_encode( $photo_url ); ?>;
+		</script>
+		<?php
 	}
 }
