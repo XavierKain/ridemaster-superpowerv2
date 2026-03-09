@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RideMaster UI Tweaks
  * Description: WooCommerce UI customizations and JetFormBuilder form styling for RideMaster.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: RideMaster
  * Text Domain: ridemaster-ui-tweaks
  */
