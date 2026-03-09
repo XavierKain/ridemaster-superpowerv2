@@ -373,11 +373,11 @@ add_action( 'wp_footer', function() {
 // =========================================================================
 
 add_filter( 'woocommerce_product_single_add_to_cart_text', function( $text ) {
-	return "\u26A1 Book Now";
+	return '⚡ Book Now';
 } );
 
 add_filter( 'woocommerce_product_add_to_cart_text', function( $text ) {
-	return "\u26A1 Book Now";
+	return '⚡ Book Now';
 } );
 
 // =========================================================================
