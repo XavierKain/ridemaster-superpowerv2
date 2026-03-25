@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RideMaster UI Tweaks
  * Description: WooCommerce UI customizations and JetFormBuilder form styling for RideMaster.
- * Version: 1.0.6
+ * Version: 1.2.4
  * Author: RideMaster
  * Text Domain: ridemaster-ui-tweaks
  */
@@ -407,6 +407,7 @@ add_action( 'wp_head', function() {
 	/* --- FILE UPLOAD --- */
 	#coach_cover_photo.jet-form-builder-file-upload__input,
 	#coach_profile_photo.jet-form-builder-file-upload__input,
+	#certifications-documents.jet-form-builder-file-upload__input,
 	#camp_thumbnail.jet-form-builder-file-upload__input,
 	#camp_gallery.jet-form-builder-file-upload__input {
 		position: absolute !important;
@@ -835,6 +836,90 @@ add_action( 'wp_head', function() {
 		overflow: hidden !important;
 	}
 
+	/* --- DOCUMENT FIELD: hide JFB broken image preview, show our preview instead --- */
+	.jet-form-builder-file-upload[data-rm-doc-field] .jet-form-builder-file-upload__file,
+	.jet-form-builder-file-upload[data-rm-doc-field] .jet-form-builder-file-upload__file img,
+	.jet-form-builder-file-upload[data-rm-doc-field] .jet-form-builder-file-upload__content .jet-form-builder-file-upload__file {
+		display: none !important;
+		width: 0 !important;
+		height: 0 !important;
+		overflow: hidden !important;
+	}
+
+	.rm-doc-preview {
+		display: flex !important;
+		align-items: center !important;
+		gap: 10px !important;
+		padding: 10px 14px !important;
+		background: #f8fafc !important;
+		border: 1px solid #e2e8f0 !important;
+		border-radius: 8px !important;
+		margin-bottom: 8px !important;
+	}
+
+	.rm-doc-preview__icon {
+		flex-shrink: 0;
+	}
+
+	.rm-doc-preview__info {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.rm-doc-preview__name {
+		font-size: 13px !important;
+		font-weight: 500 !important;
+		color: #334155 !important;
+		white-space: nowrap !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+	}
+
+	.rm-doc-preview__badge {
+		display: inline-block !important;
+		font-size: 10px !important;
+		font-weight: 600 !important;
+		color: #0D9488 !important;
+		background: #CCFBF1 !important;
+		padding: 1px 6px !important;
+		border-radius: 4px !important;
+		margin-top: 2px !important;
+	}
+
+	.rm-doc-preview__link {
+		font-size: 12px !important;
+		font-weight: 600 !important;
+		color: #0D9488 !important;
+		text-decoration: none !important;
+		padding: 4px 10px !important;
+		border: 1px solid #0D9488 !important;
+		border-radius: 6px !important;
+		white-space: nowrap !important;
+		transition: all 0.2s ease !important;
+	}
+
+	.rm-doc-preview__link:hover {
+		background: #0D9488 !important;
+		color: #fff !important;
+	}
+
+	.rm-doc-preview__delete {
+		background: none !important;
+		border: 1px solid #EF4444 !important;
+		color: #EF4444 !important;
+		border-radius: 4px !important;
+		padding: 2px 8px !important;
+		cursor: pointer !important;
+		font-size: 16px !important;
+		line-height: 1 !important;
+		flex-shrink: 0 !important;
+	}
+
+	.rm-doc-preview__delete:hover {
+		background: #EF4444 !important;
+		color: #fff !important;
+	}
+
 	/* --- WYSIWYG --- */
 	.mce-tinymce.mce-container {
 		background: #F8FAFC !important;
@@ -859,6 +944,14 @@ add_action( 'wp_head', function() {
 
 	.wp-editor-container {
 		border: 0 !important;
+	}
+
+	/* --- PRICE FONT FIX (coach dashboard / My Camps) --- */
+	.woocommerce-Price-amount,
+	.woocommerce-Price-amount .woocommerce-Price-currencySymbol,
+	.amount {
+		font-family: 'DM Sans', sans-serif !important;
+		font-weight: 700 !important;
 	}
 	</style>
 	<?php
@@ -904,7 +997,170 @@ add_action( 'wp_enqueue_scripts', function() {
 } );
 
 // =========================================================================
-// 6. JFB FILE UPLOAD PREVIEW FIX
+// 6. JFB MEDIA FIELD CRASH FIX
+// =========================================================================
+
+// =========================================================================
+// 6b. JFB CHECKBOX REQUIRED FIX
+// =========================================================================
+
+/**
+ * JFB sets required on EACH checkbox in a group. HTML spec says each required
+ * checkbox must be individually checked, so unchecked ones fail validation
+ * even when others in the same group ARE checked.
+ *
+ * Fix: before form submission, remove required from unchecked checkboxes
+ * when at least one in the same group is checked.
+ */
+add_action( 'wp_footer', function() {
+	if ( ! is_page( 'coach-register' )
+		&& strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
+		return;
+	}
+	?>
+	<script>
+	(function() {
+		function fixCheckboxRequired() {
+			var groups = {};
+			/* Group checkboxes by name */
+			document.querySelectorAll('input[type="checkbox"][required]').forEach(function(cb) {
+				var name = cb.name || cb.getAttribute('name');
+				if (!name) return;
+				if (!groups[name]) groups[name] = [];
+				groups[name].push(cb);
+			});
+			/* For each group: if any is checked, remove required from unchecked ones */
+			Object.keys(groups).forEach(function(name) {
+				var cbs = groups[name];
+				var anyChecked = cbs.some(function(cb) { return cb.checked; });
+				if (anyChecked) {
+					cbs.forEach(function(cb) {
+						if (!cb.checked) {
+							cb.removeAttribute('required');
+						}
+					});
+				}
+			});
+		}
+
+		/* Run on every checkbox change and before submit */
+		document.addEventListener('change', function(e) {
+			if (e.target && e.target.type === 'checkbox') {
+				fixCheckboxRequired();
+			}
+		});
+
+		/* Also fix right before any form submission */
+		document.addEventListener('submit', function() {
+			fixCheckboxRequired();
+		}, true);
+
+		/* Fix on page load too */
+		setTimeout(fixCheckboxRequired, 2000);
+	})();
+	</script>
+	<?php
+} );
+
+// =========================================================================
+// 6c. JFB MEDIA FIELD CRASH FIX
+// =========================================================================
+
+/**
+ * JFB's media.field.js crashes with "Cannot read properties of null (reading 'addEventListener')"
+ * when rendering a non-image file (PDF/DOC). This breaks the form's save mechanism.
+ * We patch the error by adding a safety wrapper that catches the crash.
+ */
+add_action( 'wp_head', function() {
+	if ( strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
+		return;
+	}
+	?>
+	<script>
+	/*
+	 * FIX: JFB media.field.js crashes on non-image files (PDF/DOC) in
+	 * addRemoveHandler(). MutationObserver can't prevent it (too late).
+	 *
+	 * Solution: On DOMContentLoaded (which fires BEFORE JFB's setTimeout-deferred
+	 * initialization), REMOVE the .jet-form-builder-file-upload element from the
+	 * certifications row. JFB never sees a media field → no crash → Save works.
+	 *
+	 * Our footer code (fixCertificationDocPreview) shows the document preview.
+	 */
+	/*
+	 * ROOT CAUSE FIX: JFB's media.field.js calls addRemoveHandler() which does
+	 * querySelector(".jet-form-builder-file-upload__file-remove") on file preview
+	 * elements. This returns null (the remove button doesn't exist in the preset
+	 * rendering) → crash on addEventListener(null).
+	 *
+	 * The crash happens in the PROFILE PHOTO field (not certifications!).
+	 *
+	 * Fix: Patch querySelector to auto-create the missing remove button when JFB
+	 * looks for it. This is synchronous — works even inside JFB's init chain.
+	 */
+	(function() {
+		var origQS = Element.prototype.querySelector;
+		Element.prototype.querySelector = function(selector) {
+			var result = origQS.call(this, selector);
+			if (!result && selector === '.jet-form-builder-file-upload__file-remove' &&
+				this.classList && this.classList.contains('jet-form-builder-file-upload__file')) {
+				/* Create the missing remove button on the fly */
+				var dummy = document.createElement('div');
+				dummy.className = 'jet-form-builder-file-upload__file-remove';
+				dummy.style.display = 'none';
+				this.appendChild(dummy);
+				return dummy;
+			}
+			return result;
+		};
+		/* Restore original after JFB has fully initialized (10s safety) */
+		setTimeout(function() { Element.prototype.querySelector = origQS; }, 10000);
+	})();
+
+	/*
+	 * Hide the certifications upload widget — we manage docs independently.
+	 */
+	document.addEventListener('DOMContentLoaded', function() {
+		var rows = document.querySelectorAll('.jet-form-builder-row');
+		for (var i = 0; i < rows.length; i++) {
+			var upload = rows[i].querySelector('.jet-form-builder-file-upload');
+			if (!upload) continue;
+			var lbl = rows[i].querySelector('.jet-form-builder__label');
+			if (!lbl) continue;
+			var txt = lbl.textContent.toLowerCase();
+			if (txt.indexOf('certif') !== -1 && (txt.indexOf('upload') !== -1 || txt.indexOf('document') !== -1)) {
+				upload.style.display = 'none';
+				break;
+			}
+		}
+	});
+
+	/* Safety net: catch any remaining JFB errors */
+	window.addEventListener('error', function(e) {
+		if (e && e.filename && (
+			e.filename.indexOf('media.field.js') !== -1 ||
+			e.filename.indexOf('wysiwyg.js') !== -1
+		)) {
+			console.warn('[RM] Caught JFB error:', e.message);
+			e.preventDefault();
+			return true;
+		}
+	});
+	window.addEventListener('unhandledrejection', function(e) {
+		var msg = e && e.reason ? (e.reason.message || String(e.reason)) : '';
+		if (msg.indexOf('validityState') !== -1 ||
+			msg.indexOf('lock') !== -1 ||
+			msg.indexOf('addEventListener') !== -1) {
+			console.warn('[RM] Caught JFB promise rejection:', msg);
+			e.preventDefault();
+		}
+	});
+	</script>
+	<?php
+} );
+
+// =========================================================================
+// 7. JFB FILE UPLOAD PREVIEW FIX
 // =========================================================================
 
 add_action( 'wp_footer', function() {
@@ -947,82 +1203,100 @@ add_action( 'wp_footer', function() {
 		}
 
 		/**
-		 * Fix 2: Replace generic file icons (SVG paperclip) with real image thumbnails.
+		 * Detect the field name of a .jet-form-builder-file-upload wrapper.
+		 */
+		function getUploadFieldName(wrapper) {
+			var fn = wrapper.getAttribute('data-field-name');
+			if (fn) return fn;
+
+			var hidden = wrapper.querySelector('input[type="hidden"]');
+			if (hidden && hidden.name) return hidden.name;
+
+			var fileInput = wrapper.querySelector('input[type="file"]');
+			if (fileInput && fileInput.id) return fileInput.id;
+
+			var row = wrapper.closest('.jet-form-builder-row');
+			if (row) {
+				var lbl = row.querySelector('.jet-form-builder__label');
+				if (lbl) {
+					var t = lbl.textContent.toLowerCase();
+					if (t.indexOf('profile') !== -1) return 'coach_profile_photo';
+					if (t.indexOf('cover') !== -1) return 'coach_cover_photo';
+					if (t.indexOf('certif') !== -1) return 'certifications-documents';
+				}
+			}
+			return '';
+		}
+
+		var DOC_FIELDS = ['certifications-documents', 'certifications_documents'];
+
+		/**
+		 * Fix 2: Handle file upload previews.
 		 *
-		 * JFB file upload preset stores value as JSON: {"url":false,"id":"https://...jpg"}
-		 * and renders an SVG icon instead of an <img>. We parse the JSON, extract the
-		 * image URL, and create a real <img> element to replace the icon.
+		 * - For IMAGE fields: replace generic JFB icons with real thumbnails.
+		 * - For DOCUMENT fields: hide JFB's broken image, show a styled document
+		 *   preview OUTSIDE the JFB wrapper (to avoid breaking form save).
 		 */
 		function fixGenericIcons() {
 			var uploaders = document.querySelectorAll('.jet-form-builder-file-upload');
-			log('Found', uploaders.length, 'file upload wrappers');
 
 			uploaders.forEach(function(wrapper, idx) {
 				if (wrapper.dataset.rmFixed) return;
 
+				var fieldName = getUploadFieldName(wrapper);
 				var fileEls = wrapper.querySelectorAll('.jet-form-builder-file-upload__file');
 				var hiddenInput = wrapper.querySelector('input[type="hidden"]');
 				var hiddenVal = hiddenInput ? hiddenInput.value : '';
 
-				log('Wrapper #' + idx + ': fileElements=' + fileEls.length + ', hidden=' + hiddenVal.substring(0, 120));
+				/* --- DOCUMENT FIELDS --- */
+				if (DOC_FIELDS.indexOf(fieldName) !== -1) {
+					wrapper.dataset.rmFixed = '1';
+					/* Mark wrapper so CSS hides JFB's broken image preview */
+					wrapper.setAttribute('data-rm-doc-field', '1');
 
-				/* Extract image URL from hidden input value */
+					/* Use server-injected data (no REST fetch needed) */
+					var docInfo = window.rmCertificationDoc;
+					if (docInfo && docInfo.url) {
+						addDocPreviewElement(wrapper, docInfo);
+					}
+					/* If no doc info, just leave the clean upload area */
+					return;
+				}
+
+				/* --- IMAGE FIELDS --- */
+
 				var imageUrl = null;
 
-				/*
-				 * Profile photo fix: JFB doesn't preset the file upload field for
-				 * Post Thumbnail mapping. The RideMaster plugin injects the URL as
-				 * window.rmCoachProfilePhotoUrl. Use it for the first empty wrapper.
-				 */
-				if (!hiddenVal && fileEls.length === 0 && window.rmCoachProfilePhotoUrl && idx === 0) {
+				/* Profile photo: use server-injected URL */
+				if (fieldName === 'coach_profile_photo' && !hiddenVal && fileEls.length === 0 && window.rmCoachProfilePhotoUrl) {
 					imageUrl = window.rmCoachProfilePhotoUrl;
-					log('  Using injected profile photo URL:', imageUrl);
 
-					/* Create the file element structure that JFB would normally render */
 					var content = wrapper.querySelector('.jet-form-builder-file-upload__content');
-					if (!content) {
-						content = wrapper.querySelector('.jet-form-builder-file-upload__fields');
-					}
+					if (!content) content = wrapper.querySelector('.jet-form-builder-file-upload__fields');
 					if (content) {
 						wrapper.dataset.rmFixed = '1';
 						var fileDiv = document.createElement('div');
 						fileDiv.className = 'jet-form-builder-file-upload__file';
 						var img = document.createElement('img');
 						img.src = imageUrl;
-						img.style.width = '100%';
-						img.style.height = '80px';
-						img.style.objectFit = 'cover';
-						img.style.borderRadius = '6px';
-						img.style.display = 'block';
+						img.style.cssText = 'width:100%;height:80px;object-fit:cover;border-radius:6px;display:block;';
 						fileDiv.appendChild(img);
 						content.insertBefore(fileDiv, content.firstChild);
-						log('  Injected profile photo image into wrapper #' + idx);
 					}
 					return;
 				}
 
 				if (hiddenVal) {
-					/* Try parsing as JSON first (JFB format: {"url":...,"id":"https://..."}) */
 					try {
 						var parsed = JSON.parse(hiddenVal);
-						log('  Parsed JSON:', parsed);
 						if (parsed) {
-							/* JFB stores URL in "id" field (confusing but true) */
-							if (typeof parsed.id === 'string' && parsed.id.indexOf('http') === 0) {
-								imageUrl = parsed.id;
-							} else if (typeof parsed.url === 'string' && parsed.url.indexOf('http') === 0) {
-								imageUrl = parsed.url;
-							} else if (typeof parsed === 'string' && parsed.indexOf('http') === 0) {
-								imageUrl = parsed;
-							}
+							if (typeof parsed.id === 'string' && parsed.id.indexOf('http') === 0) imageUrl = parsed.id;
+							else if (typeof parsed.url === 'string' && parsed.url.indexOf('http') === 0) imageUrl = parsed.url;
 						}
 					} catch(e) {
-						/* Not JSON — try as plain value */
 						var val = hiddenVal.trim();
 						var numId = parseInt(val);
 						if (numId && !isNaN(numId)) {
-							/* Numeric attachment ID — fetch from REST */
-							log('  Numeric ID detected:', numId);
 							(function(w, fEls, aId) {
 								fetch('/wp-json/wp/v2/media/' + aId)
 									.then(function(r) { return r.json(); })
@@ -1034,12 +1308,9 @@ add_action( 'wp_footer', function() {
 											var pick = sz.medium || sz.thumbnail || sz.full;
 											if (pick) thumbUrl = pick.source_url;
 										}
-										if (thumbUrl) {
-											log('  REST resolved URL:', thumbUrl);
-											replaceWithImage(w, fEls, thumbUrl);
-										}
+										if (thumbUrl) replaceWithImage(w, fEls, thumbUrl);
 									})
-									.catch(function(err) { log('  Fetch error:', err); });
+									.catch(function() {});
 							})(wrapper, fileEls, numId);
 							return;
 						} else if (val.indexOf('http') === 0) {
@@ -1048,49 +1319,221 @@ add_action( 'wp_footer', function() {
 					}
 				}
 
-				if (!imageUrl) {
-					log('  No image URL found for wrapper #' + idx);
-					return;
-				}
-
-				log('  Image URL:', imageUrl);
+				if (!imageUrl) return;
 				replaceWithImage(wrapper, fileEls, imageUrl);
 			});
 		}
 
-		/**
-		 * Replace the file element content (SVG icon) with a real <img>.
-		 */
 		function replaceWithImage(wrapper, fileEls, imageUrl) {
 			if (wrapper.dataset.rmFixed) return;
 			wrapper.dataset.rmFixed = '1';
-
 			fileEls.forEach(function(fileEl) {
-				/* Check if there's already a working <img> */
 				var existingImg = fileEl.querySelector('img');
 				if (existingImg && existingImg.naturalWidth > 50) return;
-
-				log('  Replacing file element content with image');
-
-				/* Clear the file element (remove SVG/paperclip icon) */
 				fileEl.innerHTML = '';
-
-				/* Create and insert a real <img> */
 				var img = document.createElement('img');
 				img.src = imageUrl;
-				img.style.width = '100%';
-				img.style.height = '80px';
-				img.style.objectFit = 'cover';
-				img.style.borderRadius = '6px';
-				img.style.display = 'block';
+				img.style.cssText = 'width:100%;height:80px;object-fit:cover;border-radius:6px;display:block;';
 				fileEl.appendChild(img);
 			});
+		}
+
+		/**
+		 * Add a document preview element BEFORE the wrapper (not inside it)
+		 * so we don't break JFB's internal DOM structure or save mechanism.
+		 */
+		function addDocPreviewElement(wrapper, docInfo) {
+			/* Remove any existing preview */
+			var existing = wrapper.parentNode.querySelector('.rm-doc-preview');
+			if (existing) existing.remove();
+
+			var preview = document.createElement('div');
+			preview.className = 'rm-doc-preview';
+
+			/* SVG document icon */
+			var iconHtml = '<svg class="rm-doc-preview__icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>';
+
+			var isImage = docInfo.is_image;
+			var thumbHtml = '';
+
+			if (isImage && (docInfo.thumb_url || docInfo.url)) {
+				thumbHtml = '<img src="' + (docInfo.thumb_url || docInfo.url) + '" style="width:60px;height:60px;object-fit:cover;border-radius:6px;flex-shrink:0;" />';
+			}
+
+			preview.innerHTML =
+				(isImage ? thumbHtml : iconHtml) +
+				'<div class="rm-doc-preview__info">' +
+					'<div class="rm-doc-preview__name">' + docInfo.name + '</div>' +
+					(docInfo.ext ? '<span class="rm-doc-preview__badge">' + docInfo.ext + '</span>' : '') +
+				'</div>' +
+				'<a class="rm-doc-preview__link" href="' + docInfo.url + '" target="_blank" rel="noopener">View</a>';
+
+			/* Insert BEFORE the wrapper, not inside it */
+			wrapper.parentNode.insertBefore(preview, wrapper);
+		}
+
+		/**
+		 * Fix 3: Certification document preview — independent from JFB widget state.
+		 *
+		 * JFB's media.field.js crashes when trying to render a non-image file preview,
+		 * leaving a broken image. Instead of relying on JFB's DOM, we find the
+		 * certification row by its label text and add our preview + hide the broken element.
+		 */
+		function fixCertificationDocPreview() {
+			if (document.querySelector('.rm-doc-list')) return;
+			/* Only run on profile page where we injected the data */
+			if (typeof window.rmCertNonce === 'undefined') return;
+
+			/* Find the certifications upload row (upload widget hidden in wp_head) */
+			var rows = document.querySelectorAll('.jet-form-builder-row');
+			var certRow = null;
+			for (var i = 0; i < rows.length; i++) {
+				var lbl = rows[i].querySelector('.jet-form-builder__label');
+				if (!lbl) continue;
+				var txt = lbl.textContent.toLowerCase();
+				if (txt.indexOf('certif') !== -1 && (txt.indexOf('upload') !== -1 || txt.indexOf('document') !== -1)) {
+					certRow = rows[i];
+					break;
+				}
+			}
+
+			var docs = window.rmCertificationDocs || [];
+			console.log('[RM Debug] fixCertificationDocPreview: docs=', docs.length, 'certRow=', !!certRow);
+
+			if (!certRow) return;
+
+			/* Track current doc IDs for AJAX save */
+			var currentIds = docs.map(function(d) { return String(d.id); });
+
+			/* Build the container — append AFTER the field-wrap, not inside it (upload widget is hidden) */
+			var fieldWrap = certRow.querySelector('.jet-form-builder__field-wrap') || certRow;
+			var listEl = document.createElement('div');
+			listEl.className = 'rm-doc-list';
+
+			function addDocEntry(doc) {
+				var entry = document.createElement('div');
+				entry.className = 'rm-doc-preview';
+				entry.dataset.rmDocId = doc.id;
+
+				var iconHtml = '<svg class="rm-doc-preview__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>';
+
+				entry.innerHTML =
+					iconHtml +
+					'<div class="rm-doc-preview__info">' +
+						'<div class="rm-doc-preview__name">' + doc.name + '</div>' +
+						'<span class="rm-doc-preview__badge">' + doc.ext + '</span>' +
+					'</div>' +
+					'<a class="rm-doc-preview__link" href="' + doc.url + '" target="_blank" rel="noopener">View</a>' +
+					'<button type="button" class="rm-doc-preview__delete" title="Remove">&times;</button>';
+
+				entry.querySelector('.rm-doc-preview__delete').addEventListener('click', function() {
+					var docId = String(doc.id);
+					currentIds = currentIds.filter(function(id) { return id !== docId; });
+					entry.remove();
+					saveDocIds();
+				});
+
+				return entry;
+			}
+
+			docs.forEach(function(doc) {
+				listEl.appendChild(addDocEntry(doc));
+			});
+
+			/* Upload new document via REST (same endpoint as registration) */
+			var addArea = document.createElement('div');
+			addArea.style.cssText = 'margin-top:8px;';
+			addArea.innerHTML =
+				'<label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px dashed #0D9488;color:#0D9488;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;">' +
+					'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>' +
+					'Add document' +
+					'<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple style="display:none;" />' +
+				'</label>' +
+				'<span class="rm-doc-upload-status" style="display:block;margin-top:4px;font-size:13px;"></span>';
+
+			var addInput = addArea.querySelector('input[type="file"]');
+			var addStatus = addArea.querySelector('.rm-doc-upload-status');
+
+			addInput.addEventListener('change', function() {
+				if (!addInput.files || !addInput.files.length) return;
+				for (var fi = 0; fi < addInput.files.length; fi++) {
+					uploadDocFile(addInput.files[fi]);
+				}
+				addInput.value = '';
+			});
+
+			function uploadDocFile(file) {
+				var msg = document.createElement('div');
+				msg.textContent = 'Uploading ' + file.name + '...';
+				msg.style.color = '#64748b';
+				addStatus.appendChild(msg);
+
+				var formData = new FormData();
+				formData.append('file', file);
+				formData.append('field_type', 'document');
+
+				fetch(window.rmRestUploadUrl || '/wp-json/ridemaster/v1/guest-upload', {
+					method: 'POST',
+					headers: { 'X-WP-Nonce': window.rmRestNonce || '' },
+					body: formData
+				})
+				.then(function(r) { return r.json(); })
+				.then(function(data) {
+					msg.remove();
+					if (data && data.success) {
+						var newId = String(data.attachment_id);
+						currentIds.push(newId);
+						var ext = file.name.split('.').pop().toUpperCase();
+						var newDoc = { id: data.attachment_id, url: data.url, name: file.name, ext: ext, is_image: false };
+						listEl.insertBefore(addDocEntry(newDoc), addArea);
+						saveDocIds();
+					} else {
+						msg.textContent = 'Failed: ' + (data && data.message ? data.message : 'Unknown error');
+						msg.style.color = '#EF4444';
+						addStatus.appendChild(msg);
+					}
+				})
+				.catch(function() {
+					msg.textContent = 'Upload failed for ' + file.name;
+					msg.style.color = '#EF4444';
+				});
+			}
+
+			listEl.appendChild(addArea);
+			/* Insert AFTER fieldWrap as a sibling (not inside — upload widget may be hidden) */
+			if (fieldWrap.nextSibling) {
+				fieldWrap.parentNode.insertBefore(listEl, fieldWrap.nextSibling);
+			} else {
+				fieldWrap.parentNode.appendChild(listEl);
+			}
+
+			/* Save doc IDs to post meta via AJAX (independent of JFB) */
+			function saveDocIds() {
+				var coachPostId = '';
+				var cpInput = document.querySelector('input[name="coach_post_id"]');
+				if (cpInput) coachPostId = cpInput.value;
+				if (!coachPostId) return;
+
+				var formData = new FormData();
+				formData.append('action', 'rm_save_cert_docs');
+				formData.append('post_id', coachPostId);
+				formData.append('doc_ids', currentIds.join(','));
+				formData.append('nonce', (window.rmCertNonce || ''));
+
+				fetch((window.ajaxurl || '/wp-admin/admin-ajax.php'), {
+					method: 'POST',
+					body: formData
+				}).then(function(r) { return r.json(); }).then(function(res) {
+					console.log('[RM] Cert docs saved:', res);
+				});
+			}
 		}
 
 		function runAllFixes() {
 			log('runAllFixes called');
 			initCancelProtection();
 			fixGenericIcons();
+			fixCertificationDocPreview();
 		}
 
 		/* Run immediately */
@@ -1119,6 +1562,74 @@ add_action( 'wp_footer', function() {
 		if (target) {
 			observer.observe(target, { childList: true, subtree: true });
 		}
+
+		/* ============================================================
+		 * DIAGNOSTIC LOGS — helps debug Save My Profile issues.
+		 * Open browser console (F12) to see these logs.
+		 * ============================================================ */
+		setTimeout(function() {
+			console.log('=== [RM Debug] Form Diagnostics ===');
+
+			var form = document.querySelector('form.jet-form-builder');
+			if (!form) {
+				var allForms = document.querySelectorAll('form');
+				allForms.forEach(function(f) {
+					if (f.querySelector('.jet-form-builder__submit') || f.querySelector('.jet-form-builder-row')) {
+						form = f;
+					}
+				});
+			}
+			console.log('[RM Debug] JFB form:', form ? 'FOUND (' + form.id + ')' : 'NOT FOUND');
+
+			var submitBtn = document.querySelector('.jet-form-builder__submit, button[type="submit"]');
+			console.log('[RM Debug] Submit button:', submitBtn ? '"' + submitBtn.textContent.trim() + '"' : 'NOT FOUND');
+
+			var uploads = document.querySelectorAll('.jet-form-builder-file-upload');
+			console.log('[RM Debug] Upload fields: ' + uploads.length);
+			uploads.forEach(function(u, idx) {
+				var hidden = u.querySelector('input[type="hidden"]');
+				var files = u.querySelectorAll('.jet-form-builder-file-upload__file');
+				var row = u.closest('.jet-form-builder-row');
+				var lbl = row ? row.querySelector('.jet-form-builder__label') : null;
+				console.log('[RM Debug]   #' + idx + ': "' + (lbl ? lbl.textContent.trim() : '?') + '"',
+					'name=' + (hidden ? hidden.name : '-'),
+					'val=' + (hidden ? hidden.value.substring(0, 40) : '-'),
+					'files=' + files.length,
+					'rmDoc=' + (u.getAttribute('data-rm-doc-field') || 'no'));
+			});
+
+			console.log('[RM Debug] rmCertificationDocs:', window.rmCertificationDocs ? window.rmCertificationDocs.length + ' docs' : 'NOT SET');
+
+			/* Intercept submit button click to log what happens */
+			if (submitBtn) {
+				submitBtn.addEventListener('click', function() {
+					console.log('[RM Debug] >>> Submit button clicked <<<');
+
+					/* Log all hidden inputs in the form */
+					if (form) {
+						var hiddens = form.querySelectorAll('input[type="hidden"]');
+						hiddens.forEach(function(h) {
+							if (h.name && h.value) {
+								console.log('[RM Debug] Hidden: ' + h.name + ' = ' + h.value.substring(0, 60));
+							}
+						});
+					}
+
+					/* Check for required fields with validation issues */
+					var allFields = document.querySelectorAll('input, select, textarea');
+					var invalidCount = 0;
+					allFields.forEach(function(f) {
+						if (f.validity && !f.validity.valid && f.name) {
+							console.warn('[RM Debug] INVALID field: "' + f.name + '" - ' + f.validationMessage);
+							invalidCount++;
+						}
+					});
+					console.log('[RM Debug] Invalid fields: ' + invalidCount);
+				}, true);
+			}
+
+			console.log('=== [RM Debug] End Diagnostics ===');
+		}, 4000);
 	})();
 	</script>
 	<?php

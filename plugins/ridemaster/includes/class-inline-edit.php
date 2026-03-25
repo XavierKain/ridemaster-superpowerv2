@@ -49,6 +49,7 @@ class RM_Inline_Edit {
 		'camp_not_included'  => [ 'type' => 'repeater', 'label' => 'Not Included', 'sub_field' => 'not_included_in_the_camp', 'placeholder' => 'What is not included' ],
 		'camp_sport'         => [ 'type' => 'taxonomy', 'taxonomy' => 'sport', 'label' => 'Sport', 'placeholder' => 'Select the sport' ],
 		'camp_level'         => [ 'type' => 'taxonomy', 'taxonomy' => 'level', 'label' => 'Level', 'placeholder' => 'Select the level' ],
+		'camp_language'      => [ 'type' => 'taxonomy', 'taxonomy' => 'language', 'label' => 'Language', 'placeholder' => 'Select the language' ],
 	];
 
 	public function __construct() {
@@ -671,6 +672,9 @@ class RM_Inline_Edit {
 	 */
 	public function ajax_save() {
 		check_ajax_referer( 'rm_inline_edit', 'nonce' );
+
+		// Bypass RM_Coach meta protection — inline edit is an intentional write.
+		RM_Coach::bypass_meta_protection( true );
 
 		$user_id = get_current_user_id();
 		if ( ! $user_id ) {

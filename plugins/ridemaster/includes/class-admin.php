@@ -20,6 +20,13 @@ class RM_Admin {
 
 		// Media library restriction.
 		add_filter( 'ajax_query_attachments_args', array( $this, 'restrict_media_library' ) );
+
+		// Certification document meta box on coach edit screen.
+		add_action( 'add_meta_boxes', array( $this, 'add_certification_meta_box' ) );
+
+		// Certification column on All Coaches list.
+		add_filter( 'manage_coach_posts_columns', array( $this, 'add_certification_column' ) );
+		add_action( 'manage_coach_posts_custom_column', array( $this, 'render_certification_column' ), 10, 2 );
 	}
 
 	/* -------------------------------------------------------------------------
@@ -38,6 +45,61 @@ class RM_Admin {
 			}
 		}
 		return $new;
+	}
+
+	/**
+	 * Insert certification column before coach_status (after title).
+	 */
+	public function add_certification_column( $columns ) {
+		$new = array();
+		foreach ( $columns as $key => $label ) {
+			if ( 'coach_status' === $key ) {
+				$new['certification_doc'] = __( 'Certification', 'ridemaster' );
+			}
+			$new[ $key ] = $label;
+		}
+		return $new;
+	}
+
+	/**
+	 * Render the certification column: download link or dash.
+	 */
+	public function render_certification_column( $column, $post_id ) {
+		if ( 'certification_doc' !== $column ) {
+			return;
+		}
+
+		$meta_val = get_post_meta( $post_id, 'certifications_documents', true );
+		if ( ! $meta_val ) {
+			echo '<span style="color:#cbd5e1;">&mdash;</span>';
+			return;
+		}
+
+		$att_ids = array_filter( array_map( 'absint', explode( ',', $meta_val ) ) );
+		if ( empty( $att_ids ) ) {
+			echo '<span style="color:#cbd5e1;">&mdash;</span>';
+			return;
+		}
+
+		foreach ( $att_ids as $att_id ) {
+			$file_url = wp_get_attachment_url( $att_id );
+			if ( ! $file_url ) {
+				continue;
+			}
+
+			$file_name = basename( get_attached_file( $att_id ) );
+			$file_ext  = strtoupper( pathinfo( $file_name, PATHINFO_EXTENSION ) );
+
+			printf(
+				'<a href="%s" target="_blank" rel="noopener" title="%s" style="display:inline-flex;align-items:center;gap:4px;color:#0D9488;font-weight:500;text-decoration:none;margin-bottom:2px;">' .
+					'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>' .
+					'<span>%s</span>' .
+				'</a><br>',
+				esc_url( $file_url ),
+				esc_attr( $file_name ),
+				esc_html( $file_ext )
+			);
+		}
 	}
 
 	/**
@@ -277,6 +339,84 @@ class RM_Admin {
 			$query['author'] = get_current_user_id();
 		}
 		return $query;
+	}
+
+	/* -------------------------------------------------------------------------
+	 * 4. Certification Document Meta Box
+	 * ---------------------------------------------------------------------- */
+
+	/**
+	 * Register the certification document meta box on coach edit screen.
+	 */
+	public function add_certification_meta_box() {
+		add_meta_box(
+			'rm_certification_doc',
+			__( 'Certification Document', 'ridemaster' ),
+			array( $this, 'render_certification_meta_box' ),
+			'coach',
+			'side',
+			'high'
+		);
+	}
+
+	/**
+	 * Render the certification document meta box content.
+	 */
+	public function render_certification_meta_box( $post ) {
+		$meta_val = get_post_meta( $post->ID, 'certifications_documents', true );
+
+		if ( ! $meta_val ) {
+			echo '<p style="color:#94a3b8;font-style:italic;">' . esc_html__( 'No document uploaded.', 'ridemaster' ) . '</p>';
+			return;
+		}
+
+		$att_ids = array_filter( array_map( 'absint', explode( ',', $meta_val ) ) );
+
+		if ( empty( $att_ids ) ) {
+			echo '<p style="color:#94a3b8;font-style:italic;">' . esc_html__( 'No document uploaded.', 'ridemaster' ) . '</p>';
+			return;
+		}
+
+		foreach ( $att_ids as $attachment_id ) :
+			$attachment = get_post( $attachment_id );
+			if ( ! $attachment || 'attachment' !== $attachment->post_type ) {
+				continue;
+			}
+
+			$file_url  = wp_get_attachment_url( $attachment_id );
+			$file_name = basename( get_attached_file( $attachment_id ) );
+			$file_type = strtoupper( pathinfo( $file_name, PATHINFO_EXTENSION ) );
+			$file_path = get_attached_file( $attachment_id );
+			$file_size = $file_path && file_exists( $file_path ) ? size_format( filesize( $file_path ), 1 ) : '';
+			$is_image  = wp_attachment_is_image( $attachment_id );
+		?>
+			<div style="margin-bottom:12px;padding:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+				<?php if ( $is_image ) : ?>
+					<img src="<?php echo esc_url( $file_url ); ?>" alt="<?php echo esc_attr( $file_name ); ?>"
+						style="max-width:100%;height:auto;border-radius:4px;margin-bottom:6px;" />
+				<?php else : ?>
+					<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.5" style="flex-shrink:0;">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+						</svg>
+						<div style="min-width:0;">
+							<div style="font-size:12px;font-weight:500;color:#334155;word-break:break-all;"><?php echo esc_html( $file_name ); ?></div>
+							<span style="font-size:10px;font-weight:600;color:#0D9488;background:#CCFBF1;padding:1px 5px;border-radius:3px;"><?php echo esc_html( $file_type ); ?></span>
+							<?php if ( $file_size ) : ?>
+								<span style="font-size:10px;color:#94a3b8;margin-left:3px;"><?php echo esc_html( $file_size ); ?></span>
+							<?php endif; ?>
+						</div>
+					</div>
+				<?php endif; ?>
+				<a href="<?php echo esc_url( $file_url ); ?>" target="_blank" rel="noopener"
+					style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#0D9488;color:#fff;border-radius:4px;font-size:11px;font-weight:600;text-decoration:none;">
+					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+					</svg>
+					View / Download
+				</a>
+			</div>
+		<?php endforeach;
 	}
 
 	/* -------------------------------------------------------------------------

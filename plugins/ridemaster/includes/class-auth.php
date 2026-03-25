@@ -357,7 +357,14 @@ class RM_Auth {
 
 		$referer = $request->get_header( 'referer' );
 
-		if ( ! $referer || false === strpos( $referer, 'coach-register' ) ) {
+		// Allow uploads from registration page AND coach profile page.
+		$allowed = $referer && (
+			false !== strpos( $referer, 'coach-register' ) ||
+			false !== strpos( $referer, 'coach-dashboard' ) ||
+			is_user_logged_in()
+		);
+
+		if ( ! $allowed ) {
 			return new WP_Error( 'forbidden', __( 'Invalid referer.', 'ridemaster' ), array( 'status' => 403 ) );
 		}
 
@@ -373,17 +380,42 @@ class RM_Auth {
 			return new WP_Error( 'upload_error', __( 'File upload error.', 'ridemaster' ), array( 'status' => 400 ) );
 		}
 
-		$allowed_mimes = array( 'image/jpeg', 'image/png', 'image/webp' );
-		$mime          = mime_content_type( $file['tmp_name'] );
+		$field_type = sanitize_text_field( $request->get_param( 'field_type' ) );
+		$mime       = mime_content_type( $file['tmp_name'] );
+		$ext        = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
 
-		if ( ! in_array( $mime, $allowed_mimes, true ) ) {
-			return new WP_Error( 'invalid_type', __( 'Invalid file type. Only JPEG, PNG, and WebP are allowed.', 'ridemaster' ), array( 'status' => 400 ) );
+		if ( 'document' === $field_type ) {
+			// Certification documents: PDF, DOC, DOCX, JPG, PNG — 10 MB limit.
+			$allowed_mimes = array(
+				'image/jpeg',
+				'image/png',
+				'application/pdf',
+				'application/msword',
+				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+				'application/octet-stream', // Some browsers send this for .doc/.docx.
+			);
+			$allowed_exts = array( 'pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png' );
+			$max_size  = 10 * 1024 * 1024; // 10 MB.
+			$error_msg = __( 'Invalid file type. Only PDF, DOC, JPG, and PNG are allowed.', 'ridemaster' );
+
+			// Validate by extension OR MIME (extension fallback for unreliable MIME detection).
+			$valid_type = in_array( $mime, $allowed_mimes, true ) || in_array( $ext, $allowed_exts, true );
+		} else {
+			// Photos: JPEG, PNG, WebP — 5 MB limit.
+			$allowed_mimes = array( 'image/jpeg', 'image/png', 'image/webp' );
+			$max_size  = 5 * 1024 * 1024; // 5 MB.
+			$error_msg = __( 'Invalid file type. Only JPEG, PNG, and WebP are allowed.', 'ridemaster' );
+
+			$valid_type = in_array( $mime, $allowed_mimes, true );
 		}
 
-		$max_size = 5 * 1024 * 1024; // 5 MB.
+		if ( ! $valid_type ) {
+			return new WP_Error( 'invalid_type', $error_msg, array( 'status' => 400 ) );
+		}
 
 		if ( $file['size'] > $max_size ) {
-			return new WP_Error( 'too_large', __( 'File exceeds the 5 MB size limit.', 'ridemaster' ), array( 'status' => 400 ) );
+			$limit_label = ( 'document' === $field_type ) ? '10 MB' : '5 MB';
+			return new WP_Error( 'too_large', sprintf( __( 'File exceeds the %s size limit.', 'ridemaster' ), $limit_label ), array( 'status' => 400 ) );
 		}
 
 		$upload_dir = wp_upload_dir();
@@ -444,108 +476,242 @@ class RM_Auth {
 			var NONCE    = '<?php echo $nonce; ?>';
 
 			var FILE_FIELDS = {
-				'coach_profile_photo': '_rm_profile_photo_id',
-				'coach_cover_photo':   '_rm_cover_photo_id'
+				'coach_profile_photo':      '_rm_profile_photo_id',
+				'coach_cover_photo':        '_rm_cover_photo_id',
+				'certifications-documents': '_rm_certifications_doc_id'
 			};
 
+			var IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+			var DOC_EXTS   = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+
+			function getFileExtension( filename ) {
+				return ( filename || '' ).split('.').pop().toLowerCase();
+			}
+
 			function detectFieldName( container ) {
-				// 1. data-field-name attribute.
-				var fieldName = container.getAttribute( 'data-field-name' );
-				if ( fieldName ) {
-					return fieldName;
+				// 1. data-field-name on wrapper.
+				var fn = container.getAttribute( 'data-field-name' );
+				if ( fn && FILE_FIELDS[ fn ] ) return fn;
+
+				// 2. Hidden input name.
+				var hidden = container.querySelector( 'input[type="hidden"]' );
+				if ( hidden && hidden.name && FILE_FIELDS[ hidden.name ] ) return hidden.name;
+
+				// 3. File input name or id.
+				var fileIn = container.querySelector( 'input[type="file"]' );
+				if ( fileIn ) {
+					if ( fileIn.name && FILE_FIELDS[ fileIn.name ] ) return fileIn.name;
+					if ( fileIn.id && FILE_FIELDS[ fileIn.id ] ) return fileIn.id;
 				}
 
-				// 2. Input name attribute.
-				var input = container.querySelector( 'input[type="file"]' );
-				if ( input && input.name ) {
-					return input.name;
+				// 4. Label text — inside container AND in parent row.
+				var row = container.closest( '.jet-form-builder-row' );
+				var labels = [];
+				var innerLabel = container.querySelector( 'label' );
+				if ( innerLabel ) labels.push( innerLabel );
+				if ( row ) {
+					var rowLabels = row.querySelectorAll( '.jet-form-builder__label, label' );
+					for ( var i = 0; i < rowLabels.length; i++ ) {
+						labels.push( rowLabels[i] );
+					}
 				}
 
-				// 3. Label text containing "profile" or "cover".
-				var label = container.querySelector( 'label' );
-				if ( label ) {
-					var text = label.textContent.toLowerCase();
-					if ( text.indexOf( 'profile' ) !== -1 ) {
-						return 'coach_profile_photo';
-					}
-					if ( text.indexOf( 'cover' ) !== -1 ) {
-						return 'coach_cover_photo';
-					}
+				for ( var j = 0; j < labels.length; j++ ) {
+					var text = labels[j].textContent.toLowerCase();
+					if ( text.indexOf( 'certif' ) !== -1 ) return 'certifications-documents';
+					if ( text.indexOf( 'profile' ) !== -1 ) return 'coach_profile_photo';
+					if ( text.indexOf( 'cover' ) !== -1 )   return 'coach_cover_photo';
 				}
 
 				return null;
 			}
 
-			var containers = document.querySelectorAll( '.jet-form-builder-file-upload' );
+			function initUploadHandlers() {
+				var containers = document.querySelectorAll( '.jet-form-builder-file-upload' );
+				if ( ! containers.length ) return;
 
-			containers.forEach( function( container ) {
-				var fieldName = detectFieldName( container );
-				if ( ! fieldName || ! FILE_FIELDS[ fieldName ] ) {
-					return;
-				}
+				/* Find the parent form to attach hidden inputs safely */
+				var form = containers[0].closest( 'form' );
 
-				var hiddenName  = FILE_FIELDS[ fieldName ];
-				var hiddenInput = document.createElement( 'input' );
-				hiddenInput.type  = 'hidden';
-				hiddenInput.name  = hiddenName;
-				hiddenInput.value = '';
-				container.appendChild( hiddenInput );
+				containers.forEach( function( container ) {
+					if ( container.dataset.rmGuestUpload ) return;
+					container.dataset.rmGuestUpload = '1';
 
-				var fileInput = container.querySelector( 'input[type="file"]' );
-				if ( ! fileInput ) {
-					return;
-				}
+					var fieldName = detectFieldName( container );
+					if ( ! fieldName || ! FILE_FIELDS[ fieldName ] ) return;
 
-				var status = document.createElement( 'span' );
-				status.className = 'rm-upload-status';
-				container.appendChild( status );
+					var hiddenName  = FILE_FIELDS[ fieldName ];
+					var isDocument  = ( fieldName === 'certifications-documents' );
 
-				fileInput.addEventListener( 'change', function() {
-					var file = fileInput.files[0];
-					if ( ! file ) {
-						return;
+					/* Create hidden input — attach to form, not container (safer) */
+					var hiddenInput = document.createElement( 'input' );
+					hiddenInput.type  = 'hidden';
+					hiddenInput.name  = hiddenName;
+					hiddenInput.value = '';
+					if ( form ) {
+						form.appendChild( hiddenInput );
+					} else {
+						container.appendChild( hiddenInput );
 					}
 
-					var allowedTypes = [ 'image/jpeg', 'image/png', 'image/webp' ];
-					if ( allowedTypes.indexOf( file.type ) === -1 ) {
-						status.textContent = 'Invalid file type. Use JPEG, PNG, or WebP.';
-						return;
+					/* Status message */
+					var status = document.createElement( 'span' );
+					status.className = 'rm-upload-status';
+					status.style.cssText = 'display:block;margin-top:6px;font-size:13px;color:#64748b;';
+					container.parentNode.insertBefore( status, container.nextSibling );
+
+					var fileInput = container.querySelector( 'input[type="file"]' );
+					if ( ! fileInput ) return;
+
+					/* Allow multi-select for document fields */
+					if ( isDocument ) {
+						fileInput.setAttribute( 'multiple', 'multiple' );
 					}
 
-					var maxSize = 2 * 1024 * 1024; // 2 MB client-side limit.
-					if ( file.size > maxSize ) {
-						status.textContent = 'File is too large. Maximum 2 MB.';
-						return;
-					}
+					function uploadSingleFile( file ) {
+						var ext = getFileExtension( file.name );
 
-					status.textContent = 'Uploading\u2026';
-
-					var formData = new FormData();
-					formData.append( 'file', file );
-
-					fetch( REST_URL, {
-						method: 'POST',
-						headers: {
-							'X-WP-Nonce': NONCE
-						},
-						body: formData
-					})
-					.then( function( response ) {
-						return response.json();
-					})
-					.then( function( data ) {
-						if ( data && data.success ) {
-							hiddenInput.value  = data.attachment_id;
-							status.textContent = 'Upload complete.';
+						if ( isDocument ) {
+							if ( DOC_EXTS.indexOf( ext ) === -1 ) {
+								var errDiv = document.createElement( 'div' );
+								errDiv.textContent = '\u274c ' + file.name + ' — invalid type. Use PDF, DOC, JPG, or PNG.';
+								errDiv.style.cssText = 'color:#EF4444;margin-top:4px;font-size:13px;';
+								status.appendChild( errDiv );
+								return;
+							}
+							if ( file.size > 10 * 1024 * 1024 ) {
+								var errDiv2 = document.createElement( 'div' );
+								errDiv2.textContent = '\u274c ' + file.name + ' — too large. Maximum 10 MB.';
+								errDiv2.style.cssText = 'color:#EF4444;margin-top:4px;font-size:13px;';
+								status.appendChild( errDiv2 );
+								return;
+							}
 						} else {
-							status.textContent = ( data && data.message ) ? data.message : 'Upload failed.';
+							if ( IMAGE_EXTS.indexOf( ext ) === -1 ) {
+								status.textContent = 'Invalid file type. Use JPEG, PNG, or WebP.';
+								status.style.color = '#EF4444';
+								return;
+							}
+							if ( file.size > 2 * 1024 * 1024 ) {
+								status.textContent = 'File is too large. Maximum 2 MB.';
+								status.style.color = '#EF4444';
+								return;
+							}
 						}
-					})
-					.catch( function() {
-						status.textContent = 'Upload failed.';
+
+						/* Show uploading indicator */
+						var uploadingMsg = null;
+						if ( isDocument ) {
+							uploadingMsg = document.createElement( 'div' );
+							uploadingMsg.textContent = 'Uploading ' + file.name + '\u2026';
+							uploadingMsg.style.cssText = 'color:#64748b;margin-top:4px;font-size:13px;';
+							status.appendChild( uploadingMsg );
+						} else {
+							status.style.color = '#64748b';
+							status.textContent = 'Uploading\u2026';
+						}
+
+						var formData = new FormData();
+						formData.append( 'file', file );
+						if ( isDocument ) {
+							formData.append( 'field_type', 'document' );
+						}
+
+						fetch( REST_URL, {
+							method: 'POST',
+							headers: { 'X-WP-Nonce': NONCE },
+							body: formData
+						})
+						.then( function( r ) { return r.json(); } )
+						.then( function( data ) {
+							if ( uploadingMsg ) uploadingMsg.remove();
+							if ( data && data.success ) {
+								var newId = String( data.attachment_id );
+
+								if ( isDocument ) {
+									/* Multi-doc: accumulate IDs as comma-separated list */
+									var ids = hiddenInput.value ? hiddenInput.value.split(',') : [];
+									ids.push( newId );
+									hiddenInput.value = ids.join(',');
+
+									/* Add file entry to the list */
+									var entry = document.createElement( 'div' );
+									entry.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:4px;';
+									entry.dataset.rmDocId = newId;
+
+									var entryTxt = document.createElement( 'span' );
+									entryTxt.textContent = '\u2705 ' + file.name;
+									entryTxt.style.color = '#10B981';
+									entry.appendChild( entryTxt );
+
+									var entryDel = document.createElement( 'button' );
+									entryDel.type = 'button';
+									entryDel.textContent = '\u2715';
+									entryDel.style.cssText = 'background:none;border:1px solid #EF4444;color:#EF4444;border-radius:4px;padding:1px 6px;cursor:pointer;font-size:12px;';
+									entryDel.addEventListener( 'click', function() {
+										var curIds = hiddenInput.value.split(',');
+										curIds = curIds.filter(function(id) { return id !== newId; });
+										hiddenInput.value = curIds.join(',');
+										entry.remove();
+									});
+									entry.appendChild( entryDel );
+									status.appendChild( entry );
+								} else {
+									/* Photo: single ID */
+									hiddenInput.value  = newId;
+									status.style.color = '#10B981';
+									status.innerHTML   = '';
+
+									var txt = document.createElement( 'span' );
+									txt.textContent = '\u2705 ' + file.name;
+									status.appendChild( txt );
+
+									var del = document.createElement( 'button' );
+									del.type = 'button';
+									del.textContent = '\u2715';
+									del.style.cssText = 'margin-left:8px;background:none;border:1px solid #EF4444;color:#EF4444;border-radius:4px;padding:1px 6px;cursor:pointer;font-size:12px;';
+									del.addEventListener( 'click', function() {
+										hiddenInput.value = '';
+										fileInput.value   = '';
+										status.innerHTML  = '';
+										status.textContent = 'File removed.';
+										status.style.color = '#64748b';
+									});
+									status.appendChild( del );
+								}
+							} else {
+								var msg = ( data && data.message ) ? data.message : 'Upload failed.';
+								status.textContent = '\u274c ' + msg;
+								status.style.color = '#EF4444';
+							}
+						})
+						.catch( function() {
+							if ( uploadingMsg ) uploadingMsg.remove();
+							var errCatch = document.createElement( 'div' );
+							errCatch.textContent = '\u274c Upload failed for ' + file.name;
+							errCatch.style.cssText = 'color:#EF4444;margin-top:4px;font-size:13px;';
+							status.appendChild( errCatch );
+						});
+					}
+
+					fileInput.addEventListener( 'change', function() {
+						if ( ! fileInput.files || ! fileInput.files.length ) return;
+
+						/* Upload all selected files */
+						for ( var fi = 0; fi < fileInput.files.length; fi++ ) {
+							uploadSingleFile( fileInput.files[fi] );
+						}
 					});
 				});
-			});
+			}
+
+			/* Run immediately and with delays for late-rendering JFB widgets */
+			initUploadHandlers();
+			setTimeout( initUploadHandlers, 500 );
+			setTimeout( initUploadHandlers, 1500 );
+			if ( document.readyState === 'loading' ) {
+				document.addEventListener( 'DOMContentLoaded', initUploadHandlers );
+			}
 		})();
 		</script>
 		<?php
@@ -580,15 +746,20 @@ class RM_Auth {
 			return;
 		}
 
-		$profile_photo_id = isset( $_POST['_rm_profile_photo_id'] ) ? absint( $_POST['_rm_profile_photo_id'] ) : 0;
-		$cover_photo_id   = isset( $_POST['_rm_cover_photo_id'] )   ? absint( $_POST['_rm_cover_photo_id'] )   : 0;
-		$post_author      = (int) get_post_field( 'post_author', $post_id );
+		$profile_photo_id     = isset( $_POST['_rm_profile_photo_id'] )      ? absint( $_POST['_rm_profile_photo_id'] )      : 0;
+		$cover_photo_id       = isset( $_POST['_rm_cover_photo_id'] )        ? absint( $_POST['_rm_cover_photo_id'] )        : 0;
+		// Certification docs can be comma-separated IDs (multiple files).
+		$cert_doc_raw  = isset( $_POST['_rm_certifications_doc_id'] ) ? sanitize_text_field( $_POST['_rm_certifications_doc_id'] ) : '';
+		$cert_doc_ids  = array_filter( array_map( 'absint', explode( ',', $cert_doc_raw ) ) );
+		$post_author   = (int) get_post_field( 'post_author', $post_id );
 
-		add_action( 'shutdown', function() use ( $post_id, $profile_photo_id, $cover_photo_id, $post_author ) {
+		add_action( 'shutdown', function() use ( $post_id, $profile_photo_id, $cover_photo_id, $cert_doc_ids, $post_author ) {
+
+			// Bypass meta protection — this is an intentional registration write.
+			RM_Coach::bypass_meta_protection( true );
 
 			if ( $profile_photo_id ) {
 				set_post_thumbnail( $post_id, $profile_photo_id );
-				// Also store in coach_profile_photo meta so JFB preset finds it on the edit form
 				update_post_meta( $post_id, 'coach_profile_photo', $profile_photo_id );
 				wp_update_post( array(
 					'ID'          => $profile_photo_id,
@@ -604,6 +775,18 @@ class RM_Auth {
 					'post_parent' => $post_id,
 					'post_author' => $post_author,
 				) );
+			}
+
+			if ( ! empty( $cert_doc_ids ) ) {
+				// Store as comma-separated string.
+				update_post_meta( $post_id, 'certifications_documents', implode( ',', $cert_doc_ids ) );
+				foreach ( $cert_doc_ids as $att_id ) {
+					wp_update_post( array(
+						'ID'          => $att_id,
+						'post_parent' => $post_id,
+						'post_author' => $post_author,
+					) );
+				}
 			}
 		});
 	}

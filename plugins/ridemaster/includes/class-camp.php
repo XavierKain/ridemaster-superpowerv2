@@ -117,7 +117,8 @@ class RM_Camp {
         //     JFB WooCommerce module runs after save_post and may
         //     overwrite stock data, so we set it last.
         // ---------------------------------------------------------------
-        $stock_qty = isset( $_REQUEST['camp_stock'] ) ? intval( $_REQUEST['camp_stock'] ) : 0;
+        // JetFormBuilder field is named "camp_max_spots"; fall back to legacy "camp_stock".
+        $stock_qty = isset( $_REQUEST['camp_max_spots'] ) ? intval( $_REQUEST['camp_max_spots'] ) : ( isset( $_REQUEST['camp_stock'] ) ? intval( $_REQUEST['camp_stock'] ) : 0 );
         add_action( 'shutdown', function () use ( $post_id, $stock_qty ) {
             update_post_meta( $post_id, '_stock', $stock_qty );
             update_post_meta( $post_id, '_manage_stock', 'yes' );

@@ -35,8 +35,16 @@ class RM_Coach {
 		// Sidebar styles.
 		add_action( 'wp_head', [ $this, 'sidebar_css' ] );
 
-		// Inject profile photo URL for JS fix on profile edit page.
+		// Inject profile photo URL and certification doc info for JS fix on profile edit page.
 		add_action( 'wp_footer', [ $this, 'inject_profile_photo_url' ] );
+		add_action( 'wp_footer', [ $this, 'inject_certification_doc_info' ] );
+
+		// AJAX handler for saving certification documents independently of JFB.
+		add_action( 'wp_ajax_rm_save_cert_docs', [ $this, 'ajax_save_cert_docs' ] );
+
+		// Prevent JFB from overwriting managed meta fields with empty values on profile save.
+		add_filter( 'update_post_metadata', [ $this, 'protect_managed_meta' ], 10, 5 );
+		add_filter( 'delete_post_metadata', [ $this, 'protect_managed_meta_delete' ], 10, 5 );
 
 		// Shortcodes.
 		add_shortcode( 'rm_coach_avatar', [ $this, 'shortcode_avatar' ] );
@@ -414,5 +422,192 @@ class RM_Coach {
 		window.rmCoachProfilePhotoUrl = <?php echo wp_json_encode( $photo_url ); ?>;
 		</script>
 		<?php
+	}
+
+	/* ------------------------------------------------------------------
+	 * 9. Inject certification document info for the JS preview fix.
+	 * ----------------------------------------------------------------*/
+
+	/**
+	 * On the profile edit page, output the certification document data
+	 * as a JS variable so the UI tweaks plugin can display a proper preview.
+	 */
+	public function inject_certification_doc_info() {
+
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
+		$request_uri = trim( wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
+
+		if ( 'coach-dashboard/profile' !== $request_uri ) {
+			return;
+		}
+
+		$coach_post_id = (int) get_user_meta( get_current_user_id(), 'coach_post_id', true );
+
+		if ( ! $coach_post_id ) {
+			return;
+		}
+
+		$meta_val = get_post_meta( $coach_post_id, 'certifications_documents', true );
+		$att_ids  = $meta_val ? array_filter( array_map( 'absint', explode( ',', $meta_val ) ) ) : [];
+
+		$docs = [];
+		foreach ( $att_ids as $att_id ) {
+			$fpath = get_attached_file( $att_id );
+			if ( ! $fpath || ! file_exists( $fpath ) ) {
+				continue;
+			}
+
+			$furl    = wp_get_attachment_url( $att_id );
+			$fname   = basename( $fpath );
+			$fext    = strtoupper( pathinfo( $fname, PATHINFO_EXTENSION ) );
+			$is_img  = in_array( $fext, [ 'JPG', 'JPEG', 'PNG', 'WEBP', 'GIF' ], true );
+
+			$doc = [
+				'id'       => $att_id,
+				'url'      => $furl,
+				'name'     => $fname,
+				'ext'      => $fext,
+				'is_image' => $is_img,
+			];
+
+			if ( $is_img ) {
+				$thumb = wp_get_attachment_image_url( $att_id, 'medium' );
+				if ( $thumb ) {
+					$doc['thumb_url'] = $thumb;
+				}
+			}
+
+			$docs[] = $doc;
+		}
+
+		$cert_nonce = wp_create_nonce( 'rm_cert_docs' );
+
+		?>
+		<script>
+		window.rmCertificationDocs = <?php echo wp_json_encode( ! empty( $docs ) ? $docs : [] ); ?>;
+		window.rmCertNonce = <?php echo wp_json_encode( $cert_nonce ); ?>;
+		window.rmRestNonce = <?php echo wp_json_encode( wp_create_nonce( 'wp_rest' ) ); ?>;
+		window.rmRestUploadUrl = <?php echo wp_json_encode( esc_url( rest_url( 'ridemaster/v1/guest-upload' ) ) ); ?>;
+		window.ajaxurl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
+		</script>
+		<?php
+	}
+
+	/**
+	 * Meta keys managed by our own code. JFB must not overwrite them with empty values.
+	 *
+	 * JFB's Coach Profile Form saves ALL fields on submit. Fields that JFB didn't
+	 * correctly load from preset (due to the media.field.js crash workaround) get
+	 * written as empty, erasing the real values.
+	 *
+	 * Protected keys:
+	 * - certifications_documents: managed by our AJAX handler
+	 * - _thumbnail_id: profile photo (featured image) — JFB may write 0/empty
+	 * - coach_profile_photo: profile photo meta — JFB may write empty
+	 * - cover_image: cover photo meta — JFB may write empty
+	 */
+	private static $rm_bypass_meta_protection = false;
+
+	/**
+	 * Allow other RM modules to bypass meta protection for intentional writes.
+	 */
+	public static function bypass_meta_protection( $bypass ) {
+		self::$rm_bypass_meta_protection = (bool) $bypass;
+	}
+
+	private static $protected_meta_keys = [
+		'certifications_documents',
+		'_thumbnail_id',
+		'coach_profile_photo',
+		'cover_image',
+	];
+
+	/**
+	 * Block empty writes to protected meta keys (update).
+	 */
+	public function protect_managed_meta( $check, $object_id, $meta_key, $meta_value, $prev_value ) {
+		if ( self::$rm_bypass_meta_protection ) {
+			return $check;
+		}
+
+		if ( ! in_array( $meta_key, self::$protected_meta_keys, true ) ) {
+			return $check;
+		}
+
+		// Only protect coach posts.
+		if ( 'coach' !== get_post_type( $object_id ) ) {
+			return $check;
+		}
+
+		// Block if new value is empty/zero and current value exists.
+		if ( empty( $meta_value ) || '0' === (string) $meta_value ) {
+			$current = get_post_meta( $object_id, $meta_key, true );
+			if ( ! empty( $current ) ) {
+				return false;
+			}
+		}
+
+		return $check;
+	}
+
+	/**
+	 * Block deletion of protected meta keys.
+	 */
+	public function protect_managed_meta_delete( $check, $object_id, $meta_key, $meta_value, $delete_all ) {
+		if ( self::$rm_bypass_meta_protection ) {
+			return $check;
+		}
+
+		if ( ! in_array( $meta_key, self::$protected_meta_keys, true ) ) {
+			return $check;
+		}
+
+		if ( 'coach' !== get_post_type( $object_id ) ) {
+			return $check;
+		}
+
+		// Block deletion if value exists.
+		$current = get_post_meta( $object_id, $meta_key, true );
+		if ( ! empty( $current ) ) {
+			return false;
+		}
+
+		return $check;
+	}
+
+	/**
+	 * AJAX: Save certification document IDs independently of JFB.
+	 */
+	public function ajax_save_cert_docs() {
+		if ( ! check_ajax_referer( 'rm_cert_docs', 'nonce', false ) ) {
+			wp_send_json_error( 'Invalid nonce' );
+		}
+
+		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$doc_ids = isset( $_POST['doc_ids'] ) ? sanitize_text_field( $_POST['doc_ids'] ) : '';
+
+		if ( ! $post_id || 'coach' !== get_post_type( $post_id ) ) {
+			wp_send_json_error( 'Invalid post' );
+		}
+
+		// Verify the current user owns this coach post.
+		$post_author = (int) get_post_field( 'post_author', $post_id );
+		if ( $post_author !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized' );
+		}
+
+		// Validate IDs.
+		$ids = array_filter( array_map( 'absint', explode( ',', $doc_ids ) ) );
+		$value = ! empty( $ids ) ? implode( ',', $ids ) : '';
+
+		// Temporarily disable protection for this intentional write.
+		self::$rm_bypass_meta_protection = true;
+		update_post_meta( $post_id, 'certifications_documents', $value );
+		self::$rm_bypass_meta_protection = false;
+
+		wp_send_json_success( [ 'saved' => $value ] );
 	}
 }
