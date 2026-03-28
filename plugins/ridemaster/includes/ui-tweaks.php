@@ -1,10 +1,8 @@
 <?php
 /**
- * Plugin Name: RideMaster UI Tweaks
- * Description: WooCommerce UI customizations and JetFormBuilder form styling for RideMaster.
- * Version: 1.2.5
- * Author: RideMaster
- * Text Domain: ridemaster-ui-tweaks
+ * RideMaster UI Tweaks
+ * WooCommerce UI customizations, JetFormBuilder form styling, and camp card menus.
+ * Merged into main RideMaster plugin as of v2.0.0.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -409,7 +407,9 @@ add_action( 'wp_head', function() {
 	#coach_profile_photo.jet-form-builder-file-upload__input,
 	#certifications-documents.jet-form-builder-file-upload__input,
 	#camp_thumbnail.jet-form-builder-file-upload__input,
-	#camp_gallery.jet-form-builder-file-upload__input {
+	#camp_gallery.jet-form-builder-file-upload__input,
+	#spot_image.jet-form-builder-file-upload__input,
+	#spot_gallery.jet-form-builder-file-upload__input {
 		position: absolute !important;
 		width: 100% !important;
 		height: 100% !important;
@@ -1660,6 +1660,7 @@ add_action( 'wp_footer', function() {
 		return;
 	}
 
+	// --- Camp data ---
 	$camp_ids = get_posts( [
 		'post_type'      => 'product',
 		'posts_per_page' => -1,
@@ -1670,28 +1671,48 @@ add_action( 'wp_footer', function() {
 		],
 	] );
 
-	if ( empty( $camp_ids ) ) {
-		return;
+	$camp_data = [];
+	if ( ! empty( $camp_ids ) ) {
+		global $wpdb;
+		$oim_table = $wpdb->prefix . 'woocommerce_order_itemmeta';
+		$oi_table  = $wpdb->prefix . 'woocommerce_order_items';
+
+		$placeholders = implode( ',', array_fill( 0, count( $camp_ids ), '%d' ) );
+		$camps_with_orders = $wpdb->get_col( $wpdb->prepare(
+			"SELECT DISTINCT oim.meta_value FROM {$oim_table} oim
+			 INNER JOIN {$oi_table} oi ON oi.order_item_id = oim.order_item_id
+			 WHERE oim.meta_key = '_product_id' AND oim.meta_value IN ({$placeholders})",
+			...$camp_ids
+		) );
+		$camps_with_orders = array_map( 'intval', $camps_with_orders );
+
+		foreach ( $camp_ids as $cid ) {
+			$camp_data[ $cid ] = ! in_array( intval( $cid ), $camps_with_orders, true );
+		}
 	}
 
-	// Check orders for each camp.
-	global $wpdb;
-	$oim_table = $wpdb->prefix . 'woocommerce_order_itemmeta';
-	$oi_table  = $wpdb->prefix . 'woocommerce_order_items';
+	// --- Spot data ---
+	$spot_ids = get_posts( [
+		'post_type'      => 'spot',
+		'posts_per_page' => -1,
+		'post_status'    => 'publish',
+		'fields'         => 'ids',
+		'meta_query'     => [
+			[ 'key' => '_coach_post_id', 'value' => $coach_post_id ],
+		],
+	] );
 
-	$placeholders = implode( ',', array_fill( 0, count( $camp_ids ), '%d' ) );
-	$camps_with_orders = $wpdb->get_col( $wpdb->prepare(
-		"SELECT DISTINCT oim.meta_value FROM {$oim_table} oim
-		 INNER JOIN {$oi_table} oi ON oi.order_item_id = oim.order_item_id
-		 WHERE oim.meta_key = '_product_id' AND oim.meta_value IN ({$placeholders})",
-		...$camp_ids
-	) );
-	$camps_with_orders = array_map( 'intval', $camps_with_orders );
+	$spot_data = [];
+	if ( ! empty( $spot_ids ) ) {
+		$inline_edit = new RM_Inline_Edit();
+		foreach ( $spot_ids as $sid ) {
+			// Deletable only if no linked camps.
+			$spot_data[ $sid ] = ! $inline_edit->spot_has_camps( $sid );
+		}
+	}
 
-	// Build JS data: camp_id => deletable.
-	$camp_data = [];
-	foreach ( $camp_ids as $cid ) {
-		$camp_data[ $cid ] = ! in_array( intval( $cid ), $camps_with_orders, true );
+	if ( empty( $camp_data ) && empty( $spot_data ) ) {
+		return;
 	}
 
 	$nonce = wp_create_nonce( 'rm_inline_edit' );
@@ -1699,8 +1720,8 @@ add_action( 'wp_footer', function() {
 	<style>
 	.rm-camp-menu-wrap {
 		position: absolute;
-		top: 14px;
-		right: 14px;
+		top: 20px;
+		right: 20px;
 		z-index: 10;
 	}
 	.rm-camp-menu-btn {
@@ -1762,94 +1783,81 @@ add_action( 'wp_footer', function() {
 	<script>
 	(function() {
 		var campData = <?php echo wp_json_encode( $camp_data ); ?>;
+		var spotData = <?php echo wp_json_encode( $spot_data ); ?>;
 		var nonce = <?php echo wp_json_encode( $nonce ); ?>;
 		var ajaxUrl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
 
 		function init() {
-			// Find all camp cards in the listing grid.
-			// JetEngine listing items have class "jet-listing-grid__item" and contain a link to the product.
 			var items = document.querySelectorAll('.jet-listing-grid__item');
 			if ( ! items.length ) return;
 
 			items.forEach(function(item) {
-				// Find the product link to extract the camp ID.
-				var link = item.querySelector('a[href*="/product/"], a[href*="/?p="]');
-				if ( ! link ) {
-					// Try data attribute approach.
+				var id = item.getAttribute('data-post-id') || item.getAttribute('data-object-id');
+				if ( ! id ) {
 					var postIdEl = item.querySelector('[data-post-id]');
-					if ( postIdEl ) {
-						addMenu( item, parseInt( postIdEl.dataset.postId, 10 ) );
-						return;
-					}
-					// Try the item's own data-post-id.
-					if ( item.dataset && item.dataset.postId ) {
-						addMenu( item, parseInt( item.dataset.postId, 10 ) );
-						return;
-					}
-					return;
+					if ( postIdEl ) id = postIdEl.dataset.postId;
 				}
-				// Extract post ID from the jet-listing-grid__item container.
-				// JetEngine typically puts the post ID in a data attribute on the item or inner element.
-				var inner = item.querySelector('.jet-listing-grid__item-inner, .elementor-element');
-				if ( inner ) {
-					// Look for data-id on Elementor elements.
-					var allEls = inner.querySelectorAll('[data-id]');
-					// Not reliable. Try URL-based approach.
+				if ( id ) {
+					var numId = parseInt( id, 10 );
+					if ( campData.hasOwnProperty( numId ) ) {
+						addMenu( item, numId, 'camp' );
+					} else if ( spotData.hasOwnProperty( numId ) ) {
+						addMenu( item, numId, 'spot' );
+					}
 				}
-				// Just pass the link for now — the menu click will extract the URL.
-				addMenuByUrl( item, link.href );
 			});
 		}
 
-		function addMenu( item, campId ) {
-			if ( ! campData.hasOwnProperty( campId ) ) return;
-			if ( ! campData[ campId ] ) return; // Has orders — no delete.
-			if ( item.querySelector('.rm-camp-menu-wrap') ) return; // Already added.
+		function addMenu( item, postId, type ) {
+			var data = type === 'spot' ? spotData : campData;
+			if ( ! data[ postId ] ) return; // Not deletable.
+			if ( item.querySelector('.rm-camp-menu-wrap') ) return;
 
-			// Make the first positioned parent relative for absolute positioning.
 			var posParent = item.querySelector('.jet-listing-grid__item-inner') || item;
 			if ( getComputedStyle( posParent ).position === 'static' ) {
 				posParent.style.position = 'relative';
 			}
+
+			var label = type === 'spot' ? 'Delete Spot' : 'Delete Camp';
+			var action = type === 'spot' ? 'rm_delete_spot' : 'rm_delete_camp';
+			var confirmMsg = type === 'spot'
+				? 'Are you sure you want to delete this spot? This action cannot be undone.'
+				: 'Are you sure you want to delete this camp? This action cannot be undone.';
 
 			var wrap = document.createElement('div');
 			wrap.className = 'rm-camp-menu-wrap';
 			wrap.innerHTML =
 				'<button type="button" class="rm-camp-menu-btn" title="Options">&#8942;</button>' +
 				'<div class="rm-camp-menu-dropdown">' +
-					'<button type="button" class="rm-camp-menu-item" data-camp-id="' + campId + '">' +
+					'<button type="button" class="rm-camp-menu-item" data-post-id="' + postId + '" data-action="' + action + '" data-confirm="' + confirmMsg + '">' +
 						'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
-						'Delete Camp' +
+						label +
 					'</button>' +
 				'</div>';
 
 			posParent.appendChild( wrap );
 
-			// Toggle dropdown.
 			var btn = wrap.querySelector('.rm-camp-menu-btn');
 			var dropdown = wrap.querySelector('.rm-camp-menu-dropdown');
 			btn.addEventListener('click', function(e) {
 				e.preventDefault();
 				e.stopPropagation();
-				// Close other open menus.
 				document.querySelectorAll('.rm-camp-menu-dropdown.rm-open').forEach(function(d) {
 					if ( d !== dropdown ) d.classList.remove('rm-open');
 				});
 				dropdown.classList.toggle('rm-open');
 			});
 
-			// Delete action.
 			var delItem = wrap.querySelector('.rm-camp-menu-item');
 			delItem.addEventListener('click', function(e) {
 				e.preventDefault();
 				e.stopPropagation();
-				var id = this.dataset.campId;
-				if ( ! confirm('Are you sure you want to delete this camp? This action cannot be undone.') ) return;
+				if ( ! confirm( this.dataset.confirm ) ) return;
 
 				var fd = new FormData();
-				fd.append('action', 'rm_delete_camp');
+				fd.append('action', this.dataset.action);
 				fd.append('nonce', nonce);
-				fd.append('post_id', id);
+				fd.append('post_id', this.dataset.postId);
 
 				fetch(ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
 					.then(function(r) { return r.json(); })
@@ -1859,7 +1867,7 @@ add_action( 'wp_footer', function() {
 							item.style.opacity = '0';
 							setTimeout(function() { item.remove(); }, 350);
 						} else {
-							var msg = (resp.data && typeof resp.data === 'string') ? resp.data : 'Failed to delete camp.';
+							var msg = (resp.data && typeof resp.data === 'string') ? resp.data : 'Failed to delete.';
 							alert(msg);
 						}
 					})
@@ -1867,19 +1875,6 @@ add_action( 'wp_footer', function() {
 						alert('Network error. Please try again.');
 					});
 			});
-		}
-
-		function addMenuByUrl( item, url ) {
-			// Try to find camp ID from URL by looking up campData keys.
-			// This is a fallback — we'll try post ID from the listing item attributes.
-			var id = item.getAttribute('data-post-id');
-			if ( ! id ) {
-				// JetEngine sometimes uses data-object-id.
-				id = item.getAttribute('data-object-id');
-			}
-			if ( id ) {
-				addMenu( item, parseInt( id, 10 ) );
-			}
 		}
 
 		// Close menus on outside click.

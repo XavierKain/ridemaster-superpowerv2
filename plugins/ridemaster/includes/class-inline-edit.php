@@ -32,6 +32,29 @@ class RM_Inline_Edit {
 	];
 
 	/**
+	 * Spot field configuration (9 fields).
+	 */
+	private $spot_field_config = [
+		'spot_title'             => [ 'type' => 'text', 'required' => true, 'label' => 'Spot Name', 'placeholder' => 'Spot name', 'storage' => 'post_field', 'post_field' => 'post_title' ],
+		'spot_description'       => [ 'type' => 'wysiwyg', 'label' => 'Description', 'placeholder' => 'Describe this spot...', 'storage' => 'post_field', 'post_field' => 'post_content' ],
+		'spot_thumbnail'         => [ 'type' => 'featured_image', 'label' => 'Spot Photo', 'placeholder' => 'Main spot image' ],
+		'spot_gallery'           => [ 'type' => 'gallery', 'label' => 'Gallery', 'placeholder' => 'Add spot photos', 'meta_key' => 'spot_gallery' ],
+		'spot_country'           => [ 'type' => 'text', 'label' => 'Country', 'placeholder' => 'e.g. Spain' ],
+		'spot_region'            => [ 'type' => 'text', 'label' => 'Region', 'placeholder' => 'e.g. Andalusia' ],
+		'spot_wind_direction'    => [ 'type' => 'text', 'label' => 'Wind Direction', 'placeholder' => 'e.g. North-East' ],
+		'spot_best_season'       => [ 'type' => 'text', 'label' => 'Best Season', 'placeholder' => 'e.g. May - September' ],
+		'spot_airport'           => [ 'type' => 'text', 'label' => 'Nearest Airport', 'meta_key' => 'airport', 'placeholder' => 'e.g. Malaga (AGP)' ],
+		'spot_timezone'          => [ 'type' => 'text', 'label' => 'Timezone', 'meta_key' => 'time_zone', 'placeholder' => 'e.g. UTC+1' ],
+		'spot_currency'          => [ 'type' => 'text', 'label' => 'Currency', 'meta_key' => 'currency', 'placeholder' => 'e.g. EUR' ],
+		'spot_language'          => [ 'type' => 'text', 'label' => 'Local Language', 'meta_key' => 'language', 'placeholder' => 'e.g. Spanish' ],
+		'spot_wetsuit'           => [ 'type' => 'text', 'label' => 'Wetsuit', 'meta_key' => 'wetsuit', 'placeholder' => 'e.g. 3/2mm in winter' ],
+		'spot_water_temperature' => [ 'type' => 'text', 'label' => 'Water Temperature', 'meta_key' => 'water_temperature', 'placeholder' => 'e.g. 18-24°C' ],
+		'spot_sport'             => [ 'type' => 'taxonomy', 'taxonomy' => 'sport', 'label' => 'Sports', 'placeholder' => 'Select sports' ],
+		'spot_level'             => [ 'type' => 'taxonomy', 'taxonomy' => 'level', 'label' => 'Level', 'placeholder' => 'Select level' ],
+		'spot_water_type'        => [ 'type' => 'taxonomy', 'taxonomy' => 'water-type', 'label' => 'Water Type', 'placeholder' => 'Select water type' ],
+	];
+
+	/**
 	 * Camp field configuration (13 fields).
 	 * Extra properties: storage, post_field, woo_sync, woo_stock, date_pair.
 	 */
@@ -56,6 +79,9 @@ class RM_Inline_Edit {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'wp_ajax_rm_inline_save', [ $this, 'ajax_save' ] );
 		add_action( 'wp_ajax_rm_inline_repair', [ $this, 'ajax_repair' ] );
+		add_action( 'wp_ajax_rm_delete_camp', [ $this, 'ajax_delete_camp' ] );
+		add_action( 'wp_ajax_rm_delete_spot', [ $this, 'ajax_delete_spot' ] );
+		add_action( 'save_post_spot', [ $this, 'stamp_spot_coach' ], 10, 3 );
 		add_action( 'template_redirect', [ $this, 'nocache_profile_page' ], 1 );
 		add_filter( 'get_post_metadata', [ $this, 'filter_repeater_meta_for_public' ], 10, 4 );
 		add_filter( 'get_post_metadata', [ $this, 'filter_wysiwyg_meta_for_dashboard' ], 20, 4 );
@@ -67,7 +93,7 @@ class RM_Inline_Edit {
 
 	/**
 	 * Detect the current editing context.
-	 * Returns 'coach', 'camp', or false.
+	 * Returns 'coach', 'camp', 'spot', or false.
 	 *
 	 * WARNING: This method calls get_post_meta / get_user_meta (via is_camp_page).
 	 * NEVER call it from a get_post_metadata filter — it will cause infinite recursion.
@@ -79,6 +105,9 @@ class RM_Inline_Edit {
 		}
 		if ( $this->is_camp_page() ) {
 			return 'camp';
+		}
+		if ( $this->is_spot_page() ) {
+			return 'spot';
 		}
 		return false;
 	}
@@ -94,6 +123,9 @@ class RM_Inline_Edit {
 			return true;
 		}
 		if ( function_exists( 'is_product' ) && is_product() ) {
+			return true;
+		}
+		if ( is_singular( 'spot' ) ) {
 			return true;
 		}
 		return false;
@@ -206,6 +238,51 @@ class RM_Inline_Edit {
 			$camp_coach_id ?: '(empty)',
 			$post ? $post->post_author : '(no post)'
 		) );
+
+		return false;
+	}
+
+	/**
+	 * Check if we're on a single spot page owned by the current coach.
+	 */
+	private function is_spot_page() {
+		if ( ! is_singular( 'spot' ) ) {
+			return false;
+		}
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			return false;
+		}
+
+		$user = get_userdata( $user_id );
+		if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+			return false;
+		}
+
+		$spot_id = get_the_ID();
+		return $this->coach_owns_spot( $user_id, $spot_id );
+	}
+
+	/**
+	 * Check if a coach user owns a spot.
+	 * 1. _coach_post_id meta on spot
+	 * 2. Post author match (fallback)
+	 */
+	private function coach_owns_spot( $user_id, $spot_id ) {
+		$user_coach_id = get_user_meta( $user_id, 'coach_post_id', true );
+
+		// Method 1: Direct meta _coach_post_id on spot
+		$spot_coach_id = get_post_meta( $spot_id, '_coach_post_id', true );
+		if ( $spot_coach_id && $user_coach_id && intval( $spot_coach_id ) === intval( $user_coach_id ) ) {
+			return true;
+		}
+
+		// Method 2: Post author match (fallback)
+		$post = get_post( $spot_id );
+		if ( $post && intval( $post->post_author ) === $user_id ) {
+			return true;
+		}
 
 		return false;
 	}
@@ -372,14 +449,17 @@ class RM_Inline_Edit {
 		if ( $context === 'camp' ) {
 			return $this->camp_field_config;
 		}
+		if ( $context === 'spot' ) {
+			return $this->spot_field_config;
+		}
 		return $this->coach_field_config;
 	}
 
 	/**
-	 * Get all field configs merged (for filters that need to check both).
+	 * Get all field configs merged (for filters that need to check all).
 	 */
 	private function get_all_field_configs() {
-		return array_merge( $this->coach_field_config, $this->camp_field_config );
+		return array_merge( $this->coach_field_config, $this->camp_field_config, $this->spot_field_config );
 	}
 
 	// =========================================================================
@@ -626,8 +706,9 @@ class RM_Inline_Edit {
 		}
 
 		// i18n — context-aware labels
+		$edit_labels = [ 'coach' => 'Edit Profile', 'camp' => 'Edit Camp', 'spot' => 'Edit Spot' ];
 		$i18n = [
-			'editProfile'    => $context === 'camp' ? 'Edit Camp' : 'Edit Profile',
+			'editProfile'    => isset( $edit_labels[ $context ] ) ? $edit_labels[ $context ] : 'Edit',
 			'save'           => 'Save Changes',
 			'cancel'         => 'Cancel',
 			'saving'         => 'Saving...',
@@ -644,7 +725,25 @@ class RM_Inline_Edit {
 			'unsavedChanges' => 'You have unsaved changes. Save or cancel before leaving.',
 			'welcomeTitle'   => 'Welcome! Complete your coach profile',
 			'welcomeText'    => 'Click on each field to fill it in. Don\'t forget to save your changes.',
+			'deleteCamp'     => $context === 'spot' ? 'Delete Spot' : 'Delete Camp',
+			'confirmDelete'  => $context === 'spot'
+				? 'Are you sure you want to delete this spot? This action cannot be undone.'
+				: 'Are you sure you want to delete this camp? This action cannot be undone.',
+			'deleting'       => 'Deleting...',
+			'deleted'        => $context === 'spot' ? 'Spot deleted!' : 'Camp deleted!',
 		];
+
+		// Camp-specific data: check if camp has orders (to show/hide delete button).
+		// Spots can always be deleted (no order check needed) unless linked to active camps.
+		$has_orders = false;
+		if ( $context === 'camp' ) {
+			$has_orders = $this->camp_has_orders( $post_id );
+		}
+		// For spots: check if spot has any linked camps.
+		$can_delete = true;
+		if ( $context === 'spot' ) {
+			$can_delete = ! $this->spot_has_camps( $post_id );
+		}
 
 		wp_localize_script( 'rm-inline-edit', 'rmInlineEdit', [
 			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
@@ -659,6 +758,8 @@ class RM_Inline_Edit {
 			'dates'          => $dates_data,
 			'repeaters'      => $repeater_data,
 			'isProfileEmpty' => $is_profile_empty,
+			'hasOrders'      => $has_orders,
+			'canDelete'      => $can_delete,
 			'i18n'           => $i18n,
 		] );
 	}
@@ -702,6 +803,14 @@ class RM_Inline_Edit {
 			}
 			if ( ! $this->coach_owns_camp( $user_id, $post_id ) ) {
 				wp_send_json_error( 'Unauthorized — not your camp.' );
+			}
+		} elseif ( $context === 'spot' ) {
+			$post = get_post( $post_id );
+			if ( ! $post || $post->post_type !== 'spot' ) {
+				wp_send_json_error( 'Invalid spot.' );
+			}
+			if ( ! $this->coach_owns_spot( $user_id, $post_id ) ) {
+				wp_send_json_error( 'Unauthorized — not your spot.' );
 			}
 		} else {
 			// Coach context
@@ -987,6 +1096,179 @@ class RM_Inline_Edit {
 			'updated' => $updated,
 			'errors'  => $errors,
 		] );
+	}
+
+	// =========================================================================
+	// AJAX DELETE CAMP
+	// =========================================================================
+
+	/**
+	 * AJAX handler: trash a camp (product) owned by the current coach.
+	 * Blocks deletion if the product has any WooCommerce orders.
+	 */
+	public function ajax_delete_camp() {
+		check_ajax_referer( 'rm_inline_edit', 'nonce' );
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			wp_send_json_error( 'Not logged in.' );
+		}
+
+		$user = get_userdata( $user_id );
+		if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+			wp_send_json_error( 'Not authorized.' );
+		}
+
+		$post_id = intval( $_POST['post_id'] ?? 0 );
+		if ( ! $post_id ) {
+			wp_send_json_error( 'Invalid post.' );
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post || $post->post_type !== 'product' ) {
+			wp_send_json_error( 'Invalid product.' );
+		}
+
+		if ( ! $this->coach_owns_camp( $user_id, $post_id ) ) {
+			wp_send_json_error( 'Unauthorized — not your camp.' );
+		}
+
+		// Block deletion if any WooCommerce orders exist for this product.
+		if ( $this->camp_has_orders( $post_id ) ) {
+			wp_send_json_error( 'This camp cannot be deleted because it has existing bookings.' );
+		}
+
+		$result = wp_trash_post( $post_id );
+		if ( ! $result ) {
+			wp_send_json_error( 'Failed to delete the camp.' );
+		}
+
+		wp_send_json_success( [ 'message' => 'Camp deleted successfully.' ] );
+	}
+
+	/**
+	 * Check if a product (camp) has any WooCommerce orders.
+	 */
+	public function camp_has_orders( $product_id ) {
+		if ( ! function_exists( 'wc_get_orders' ) ) {
+			return false;
+		}
+
+		// Use HPOS-compatible query via wc_get_orders.
+		$orders = wc_get_orders( [
+			'limit'  => 1,
+			'return' => 'ids',
+			'status' => array_keys( wc_get_order_statuses() ),
+		] );
+
+		// wc_get_orders doesn't support product_id filter directly.
+		// Use the order item table for an efficient check.
+		global $wpdb;
+		$order_item_table = $wpdb->prefix . 'woocommerce_order_itemmeta';
+		$order_items_table = $wpdb->prefix . 'woocommerce_order_items';
+
+		$count = $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(*) FROM {$order_item_table} oim
+			 INNER JOIN {$order_items_table} oi ON oi.order_item_id = oim.order_item_id
+			 WHERE oim.meta_key = '_product_id' AND oim.meta_value = %d
+			 LIMIT 1",
+			$product_id
+		) );
+
+		return intval( $count ) > 0;
+	}
+
+	// =========================================================================
+	// SPOT: STAMP COACH, DELETE, HAS CAMPS
+	// =========================================================================
+
+	/**
+	 * Stamp _coach_post_id on newly created spots.
+	 * Fires on save_post_spot.
+	 */
+	public function stamp_spot_coach( $post_id, $post, $update ) {
+		if ( $update ) {
+			return;
+		}
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			return;
+		}
+
+		$coach_post_id = get_user_meta( $user_id, 'coach_post_id', true );
+		if ( $coach_post_id ) {
+			update_post_meta( $post_id, '_coach_post_id', $coach_post_id );
+		}
+	}
+
+	/**
+	 * AJAX handler: trash a spot owned by the current coach.
+	 * Blocks deletion if the spot has linked camps.
+	 */
+	public function ajax_delete_spot() {
+		check_ajax_referer( 'rm_inline_edit', 'nonce' );
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			wp_send_json_error( 'Not logged in.' );
+		}
+
+		$user = get_userdata( $user_id );
+		if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+			wp_send_json_error( 'Not authorized.' );
+		}
+
+		$post_id = intval( $_POST['post_id'] ?? 0 );
+		if ( ! $post_id ) {
+			wp_send_json_error( 'Invalid post.' );
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post || $post->post_type !== 'spot' ) {
+			wp_send_json_error( 'Invalid spot.' );
+		}
+
+		if ( ! $this->coach_owns_spot( $user_id, $post_id ) ) {
+			wp_send_json_error( 'Unauthorized — not your spot.' );
+		}
+
+		if ( $this->spot_has_camps( $post_id ) ) {
+			wp_send_json_error( 'This spot cannot be deleted because it has linked camps. Remove the camps first.' );
+		}
+
+		$result = wp_trash_post( $post_id );
+		if ( ! $result ) {
+			wp_send_json_error( 'Failed to delete the spot.' );
+		}
+
+		wp_send_json_success( [ 'message' => 'Spot deleted successfully.' ] );
+	}
+
+	/**
+	 * Check if a spot has any linked camps (via JetEngine relation 18: Spot to Camps).
+	 */
+	public function spot_has_camps( $spot_id ) {
+		if ( ! function_exists( 'jet_engine' ) || ! isset( jet_engine()->relations ) ) {
+			return false;
+		}
+
+		$relation = RM_Camp::find_relation( 'Spot to Camps' );
+		if ( ! $relation ) {
+			return false;
+		}
+
+		if ( method_exists( $relation, 'get_children' ) ) {
+			$children = $relation->get_children( $spot_id, 'ids' );
+			if ( is_array( $children ) && ! empty( $children ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// =========================================================================

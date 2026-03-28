@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: RideMaster
- * Description: Core business logic for RideMaster — coach management, camp creation, authentication, admin tools, data integrity, and frontend inline editing.
- * Version: 1.2.7
+ * Description: All-in-one RideMaster plugin — coach management, camp creation, authentication, admin tools, data integrity, frontend inline editing, and UI customizations.
+ * Version: 2.0.8
  * Author: RideMaster
  * Text Domain: ridemaster
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Constants
-define( 'RM_VERSION', '1.2.7' );
+define( 'RM_VERSION', '2.0.8' );
 define( 'RM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -23,6 +23,7 @@ require_once RM_PLUGIN_DIR . 'includes/class-auth.php';
 require_once RM_PLUGIN_DIR . 'includes/class-admin.php';
 require_once RM_PLUGIN_DIR . 'includes/class-cleanup.php';
 require_once RM_PLUGIN_DIR . 'includes/class-inline-edit.php';
+require_once RM_PLUGIN_DIR . 'includes/ui-tweaks.php';
 
 // Instantiate modules
 new RM_Coach();
@@ -31,3 +32,13 @@ new RM_Auth();
 new RM_Admin();
 new RM_Cleanup();
 new RM_Inline_Edit();
+
+// Deactivate the old standalone UI Tweaks plugin if still active.
+add_action( 'admin_init', function() {
+	if ( is_plugin_active( 'ridemaster-ui-tweaks/ridemaster-ui-tweaks.php' ) ) {
+		deactivate_plugins( 'ridemaster-ui-tweaks/ridemaster-ui-tweaks.php' );
+		add_action( 'admin_notices', function() {
+			echo '<div class="notice notice-info is-dismissible"><p><strong>RideMaster:</strong> The standalone "RideMaster UI Tweaks" plugin has been deactivated — its functionality is now built into RideMaster v2.0.0.</p></div>';
+		} );
+	}
+} );

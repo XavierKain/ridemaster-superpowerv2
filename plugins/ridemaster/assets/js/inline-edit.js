@@ -289,8 +289,11 @@
 		// Place FAB inside a visual container:
 		// - Coach context: single FAB inside cover photo
 		// - Camp context: two FABs — one in gallery (top-left) + one sticky (bottom-right, content-aligned)
+		// - Spot context: FAB in thumbnail (top-left) + sticky (bottom-right)
 		var coverContainer = document.querySelector('.rm-edit-coach_cover_photo');
 		var galleryContainer = document.querySelector('.rm-edit-camp_gallery');
+		var spotThumb = document.querySelector('.rm-edit-spot_thumbnail');
+		var spotGallery = document.querySelector('.rm-edit-spot_gallery');
 		if (coverContainer) {
 			coverContainer.style.position = 'relative';
 			coverContainer.appendChild(fab);
@@ -307,6 +310,18 @@
 			// Sticky FAB (bottom-right, aligned with content container)
 			fab.classList.add('rm-edit-fab--sticky');
 			document.body.appendChild(fab);
+		} else if (spotThumb || spotGallery) {
+			// Spot: FAB in thumbnail or gallery
+			var spotContainer = spotThumb || spotGallery;
+			var spotFab = document.createElement('button');
+			spotFab.className = 'rm-edit-fab rm-edit-fab--in-gallery';
+			spotFab.innerHTML = fab.innerHTML;
+			spotFab.addEventListener('click', enterEditMode);
+			spotContainer.style.position = 'relative';
+			spotContainer.appendChild(spotFab);
+
+			fab.classList.add('rm-edit-fab--sticky');
+			document.body.appendChild(fab);
 		} else {
 			document.body.appendChild(fab);
 		}
@@ -315,10 +330,23 @@
 		const toolbar = document.createElement('div');
 		toolbar.id = 'rm-edit-toolbar';
 		toolbar.className = 'rm-edit-toolbar rm-hidden';
+		var showDelete = ( config.context === 'camp' && ! config.hasOrders )
+			|| ( config.context === 'spot' && config.canDelete );
+		var deleteBtn = '';
+		if ( showDelete ) {
+			deleteBtn = `<button type="button" class="rm-btn rm-btn-delete" id="rm-btn-delete">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+				</svg>
+				${config.i18n.deleteCamp || 'Delete'}
+			</button>`;
+		}
+
 		toolbar.innerHTML = `
 			<div class="rm-toolbar-inner">
 				<div class="rm-toolbar-status" id="rm-toolbar-status"></div>
 				<div class="rm-toolbar-actions">
+					${deleteBtn}
 					<button type="button" class="rm-btn rm-btn-cancel" id="rm-btn-cancel">
 						${config.i18n.cancel}
 					</button>
@@ -332,6 +360,11 @@
 
 		document.getElementById('rm-btn-save').addEventListener('click', saveChanges);
 		document.getElementById('rm-btn-cancel').addEventListener('click', cancelChanges);
+
+		var delBtn = document.getElementById('rm-btn-delete');
+		if ( delBtn ) {
+			delBtn.addEventListener('click', deleteCamp);
+		}
 	}
 
 	// =========================================================================
@@ -441,7 +474,67 @@
 			}
 		});
 
+		// Spot context: if no dedicated spot_thumbnail element exists,
+		// inject a featured image edit overlay on the first image of the gallery.
+		if (config.context === 'spot' && !document.querySelector('[data-rm-field="spot_thumbnail"]')) {
+			injectSpotThumbnailOverlay();
+		}
+
 		setStatus('');
+	}
+
+	/**
+	 * For spots: overlay a "Change main photo" button on the first image
+	 * of the gallery widget, allowing featured image editing without a separate element.
+	 */
+	function injectSpotThumbnailOverlay() {
+		var galleryEl = document.querySelector('[data-rm-field="spot_gallery"]');
+		if (!galleryEl) return;
+
+		// Find the first image in the gallery (for visual update after change).
+		var firstImg = galleryEl.querySelector('img');
+
+		// Place the button at the top-left of the gallery container (next to Edit Gallery).
+		if (getComputedStyle(galleryEl).position === 'static') {
+			galleryEl.style.position = 'relative';
+		}
+
+		var overlay = document.createElement('button');
+		overlay.type = 'button';
+		overlay.className = 'rm-spot-thumb-overlay';
+		overlay.innerHTML =
+			'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+				'<rect x="3" y="3" width="18" height="18" rx="2"/>' +
+				'<circle cx="8.5" cy="8.5" r="1.5"/>' +
+				'<path d="m21 15-5-5L5 21"/>' +
+			'</svg>' +
+			'<span>Change main photo</span>';
+
+		overlay.addEventListener('click', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			if (typeof wp !== 'undefined' && wp.media) {
+				var frame = wp.media({
+					title: 'Select Main Spot Photo',
+					multiple: false,
+					library: { type: 'image' }
+				});
+				frame.on('select', function() {
+					var attachment = frame.state().get('selection').first().toJSON();
+					changedFields['spot_thumbnail'] = attachment.id;
+					markChanged('spot_thumbnail');
+					if (firstImg) {
+						firstImg.src = attachment.sizes && attachment.sizes.large
+							? attachment.sizes.large.url
+							: attachment.url;
+					}
+					overlay.querySelector('span').textContent = 'Photo changed!';
+				});
+				frame.open();
+			}
+		});
+
+		galleryEl.appendChild(overlay);
 	}
 
 	function exitEditMode() {
@@ -449,6 +542,10 @@
 		hasChanges = false;
 		changedFields = {};
 		document.body.classList.remove('rm-edit-mode');
+
+		// Remove spot thumbnail overlay if present
+		var thumbOverlay = document.querySelector('.rm-spot-thumb-overlay');
+		if (thumbOverlay) thumbOverlay.remove();
 
 		// Show FAB(s), hide toolbar
 		document.getElementById('rm-edit-fab').classList.remove('rm-hidden');
@@ -1634,10 +1731,8 @@
 			</div>
 		`;
 
-		el.appendChild(popup);
-
-		// Reposition if popup goes off-screen
-		adjustPopupViewport(popup);
+		document.body.appendChild(popup);
+		positionPopupNear(popup, el);
 
 		// Close button
 		popup.querySelector('.rm-tax-popup-close').addEventListener('click', function () {
@@ -1674,19 +1769,59 @@
 	}
 
 	function updateTaxonomyDisplay(el, fieldName, names) {
-		// Try to find the text content element
-		const textEl = findTextNode(el);
-		if (textEl) {
-			// Remove placeholder if present
-			var ph = el.querySelector('.rm-placeholder');
-			if (ph) ph.remove();
+		// Remove placeholder if present
+		var ph = el.querySelector('.rm-placeholder');
+		if (ph) ph.remove();
 
-			if (names.length > 0) {
+		if (names.length === 0) {
+			var textEl = findTextNode(el);
+			if (textEl) textEl.textContent = '';
+			el.classList.add('rm-empty-field');
+			return;
+		}
+
+		el.classList.remove('rm-empty-field');
+
+		// Try to match the existing tag/badge style from the Elementor template.
+		// Look for existing tag elements (spans, links) to clone their classes.
+		var existingTags = el.querySelectorAll('a, span.jet-listing-dynamic-terms__link, span');
+		var tagClass = '';
+		var tagStyle = '';
+		if (existingTags.length > 0) {
+			var sample = existingTags[0];
+			tagClass = sample.className || '';
+			tagStyle = sample.getAttribute('style') || '';
+		}
+
+		if (tagClass) {
+			// Recreate as styled tags matching the existing template.
+			// Find the container that holds the tags.
+			var container = existingTags[0].parentElement || el;
+			// Clear existing tags.
+			var toRemove = container.querySelectorAll('a, span.jet-listing-dynamic-terms__link');
+			if (toRemove.length > 0) {
+				toRemove.forEach(function(t) { t.remove(); });
+			}
+			// Remove separators (text nodes like ", " between tags).
+			container.childNodes.forEach(function(n) {
+				if (n.nodeType === 3 && n.textContent.trim() === ',') n.remove();
+			});
+
+			names.forEach(function(name, i) {
+				if (i > 0) {
+					container.appendChild(document.createTextNode(' '));
+				}
+				var tag = document.createElement('span');
+				tag.className = tagClass;
+				if (tagStyle) tag.setAttribute('style', tagStyle);
+				tag.textContent = name;
+				container.appendChild(tag);
+			});
+		} else {
+			// Fallback: plain text.
+			var textEl = findTextNode(el);
+			if (textEl) {
 				textEl.textContent = names.join(', ');
-				el.classList.remove('rm-empty-field');
-			} else {
-				textEl.textContent = '';
-				el.classList.add('rm-empty-field');
 			}
 		}
 	}
@@ -1760,10 +1895,8 @@
 				'<button type="button" class="rm-btn rm-btn-done">' + config.i18n.done + '</button>' +
 			'</div>';
 
-		el.appendChild(popup);
-
-		// Reposition if popup goes off-screen
-		adjustPopupViewport(popup);
+		document.body.appendChild(popup);
+		positionPopupNear(popup, el);
 
 		// Close button
 		popup.querySelector('.rm-tax-popup-close').addEventListener('click', function () {
@@ -1812,6 +1945,60 @@
 
 	// =========================================================================
 	// SAVE / CANCEL
+	// =========================================================================
+
+	// =========================================================================
+	// DELETE CAMP
+	// =========================================================================
+
+	function deleteCamp() {
+		if ( config.context !== 'camp' && config.context !== 'spot' ) return;
+
+		var msg = config.i18n.confirmDelete || 'Are you sure you want to delete this camp? This action cannot be undone.';
+		if ( ! confirm( msg ) ) return;
+
+		var statusEl = document.getElementById('rm-toolbar-status');
+		if ( statusEl ) {
+			statusEl.textContent = config.i18n.deleting || 'Deleting...';
+			statusEl.className = 'rm-toolbar-status';
+		}
+
+		var fd = new FormData();
+		fd.append( 'action', config.context === 'spot' ? 'rm_delete_spot' : 'rm_delete_camp' );
+		fd.append( 'nonce', config.nonce );
+		fd.append( 'post_id', config.postId );
+
+		fetch( config.ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' } )
+			.then( function( r ) { return r.json(); } )
+			.then( function( resp ) {
+				if ( resp.success ) {
+					if ( statusEl ) {
+						statusEl.textContent = config.i18n.deleted || 'Camp deleted!';
+						statusEl.className = 'rm-toolbar-status rm-status-success';
+					}
+					// Redirect to My Camps dashboard after 1 second.
+					setTimeout( function() {
+						var dashUrl = window.location.origin + '/coach-dashboard/';
+						window.location.href = dashUrl;
+					}, 1000 );
+				} else {
+					var errMsg = ( resp.data && typeof resp.data === 'string' ) ? resp.data : 'Failed to delete camp.';
+					if ( statusEl ) {
+						statusEl.textContent = errMsg;
+						statusEl.className = 'rm-toolbar-status rm-status-error';
+					}
+				}
+			} )
+			.catch( function() {
+				if ( statusEl ) {
+					statusEl.textContent = 'Network error. Please try again.';
+					statusEl.className = 'rm-toolbar-status rm-status-error';
+				}
+			} );
+	}
+
+	// =========================================================================
+	// SAVE CHANGES
 	// =========================================================================
 
 	function saveChanges() {
@@ -1912,6 +2099,14 @@
 				}
 			}
 		});
+
+		// Include any changedFields that don't have a data-rm-field element
+		// (e.g. spot_thumbnail injected by overlay).
+		for (var cfKey in changedFields) {
+			if (changedFields.hasOwnProperty(cfKey) && fieldsToSave[cfKey] === undefined) {
+				fieldsToSave[cfKey] = changedFields[cfKey];
+			}
+		}
 
 		if (Object.keys(fieldsToSave).length === 0) {
 			saveBtn.disabled = false;
@@ -2208,6 +2403,46 @@
 	 * Reposition a popup if it goes off-screen.
 	 * Switches to fixed positioning anchored near the parent element (trigger context).
 	 */
+	/**
+	 * Position a popup (appended to body) near an anchor element using fixed positioning.
+	 */
+	function positionPopupNear(popup, anchor) {
+		var rect = anchor.getBoundingClientRect();
+		var vw = window.innerWidth;
+		var vh = window.innerHeight;
+		var margin = 12;
+		var toolbarH = 70;
+
+		popup.style.position = 'fixed';
+		popup.style.zIndex = '10002';
+
+		// Vertical: below anchor
+		var top = rect.bottom + 4;
+		popup.style.top = top + 'px';
+		popup.style.bottom = 'auto';
+
+		// Horizontal: align left with anchor
+		var left = rect.left;
+		popup.style.left = left + 'px';
+		popup.style.right = 'auto';
+
+		// Adjust after render
+		requestAnimationFrame(function() {
+			if (!popup.parentElement) return;
+			var pRect = popup.getBoundingClientRect();
+
+			// If off right edge
+			if (pRect.right > vw - margin) {
+				popup.style.left = 'auto';
+				popup.style.right = margin + 'px';
+			}
+			// If off bottom
+			if (pRect.bottom > vh - toolbarH) {
+				popup.style.top = Math.max(margin, rect.top - pRect.height - 4) + 'px';
+			}
+		});
+	}
+
 	function adjustPopupViewport(popup) {
 		requestAnimationFrame(function () {
 			if (!popup.parentElement) return;

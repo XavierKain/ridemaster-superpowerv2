@@ -209,6 +209,51 @@
 	background: var(--rm-slate-200);
 }
 
+.rm-btn-delete {
+	background: #fee2e2;
+	color: #dc2626;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-right: auto;
+}
+
+.rm-btn-delete:hover {
+	background: #fecaca;
+	color: #b91c1c;
+}
+
+/* Spot featured image overlay */
+.rm-spot-thumb-overlay {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: rgba(255,255,255,0.92);
+	border: 2px solid var(--rm-primary, #0d9488);
+	border-radius: 8px;
+	padding: 8px 14px;
+	cursor: pointer;
+	color: var(--rm-primary, #0d9488);
+	font-size: 13px;
+	font-weight: 600;
+	font-family: 'DM Sans', sans-serif;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+	transition: all 0.2s;
+	z-index: 5;
+}
+
+.rm-spot-thumb-overlay:hover {
+	background: var(--rm-primary, #0d9488);
+	color: #fff;
+}
+
+.rm-spot-thumb-overlay:hover svg {
+	stroke: #fff;
+}
+
 .rm-btn-done {
 	background: var(--rm-primary);
 	color: #fff;
