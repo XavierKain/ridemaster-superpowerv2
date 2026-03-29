@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RideMaster
  * Description: All-in-one RideMaster plugin — coach management, camp creation, authentication, admin tools, data integrity, frontend inline editing, and UI customizations.
- * Version: 2.0.8
+ * Version: 2.1.0
  * Author: RideMaster
  * Text Domain: ridemaster
  */
@@ -11,8 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Composer autoload (Stripe SDK).
+$rm_autoload = plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+if ( file_exists( $rm_autoload ) ) {
+	require_once $rm_autoload;
+}
+
 // Constants
-define( 'RM_VERSION', '2.0.8' );
+define( 'RM_VERSION', '2.1.0' );
 define( 'RM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -23,6 +29,7 @@ require_once RM_PLUGIN_DIR . 'includes/class-auth.php';
 require_once RM_PLUGIN_DIR . 'includes/class-admin.php';
 require_once RM_PLUGIN_DIR . 'includes/class-cleanup.php';
 require_once RM_PLUGIN_DIR . 'includes/class-inline-edit.php';
+require_once RM_PLUGIN_DIR . 'includes/class-payments.php';
 require_once RM_PLUGIN_DIR . 'includes/ui-tweaks.php';
 
 // Instantiate modules
@@ -32,6 +39,7 @@ new RM_Auth();
 new RM_Admin();
 new RM_Cleanup();
 new RM_Inline_Edit();
+new RM_Payments();
 
 // Deactivate the old standalone UI Tweaks plugin if still active.
 add_action( 'admin_init', function() {

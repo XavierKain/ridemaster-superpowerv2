@@ -27,6 +27,10 @@ class RM_Admin {
 		// Certification column on All Coaches list.
 		add_filter( 'manage_coach_posts_columns', array( $this, 'add_certification_column' ) );
 		add_action( 'manage_coach_posts_custom_column', array( $this, 'render_certification_column' ), 10, 2 );
+
+		// Stripe status column on All Coaches list.
+		add_filter( 'manage_coach_posts_columns', array( $this, 'add_stripe_column' ), 20 );
+		add_action( 'manage_coach_posts_custom_column', array( $this, 'render_stripe_column' ), 10, 2 );
 	}
 
 	/* -------------------------------------------------------------------------
@@ -445,5 +449,58 @@ class RM_Admin {
 		$message .= 'The Ridemaster Team';
 
 		wp_mail( $email, $subject, $message );
+	}
+
+	/* -------------------------------------------------------------------------
+	 * 5. Stripe Status Column
+	 * ---------------------------------------------------------------------- */
+
+	/**
+	 * Add Stripe status column to coaches list.
+	 */
+	public function add_stripe_column( $columns ) {
+		$new = array();
+		foreach ( $columns as $key => $label ) {
+			$new[ $key ] = $label;
+			if ( $key === 'rm_certification' ) {
+				$new['rm_stripe'] = 'Stripe';
+			}
+		}
+		if ( ! isset( $new['rm_stripe'] ) ) {
+			$new['rm_stripe'] = 'Stripe';
+		}
+		return $new;
+	}
+
+	/**
+	 * Render the Stripe status column content.
+	 */
+	public function render_stripe_column( $column, $post_id ) {
+		if ( $column !== 'rm_stripe' ) {
+			return;
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			echo '—';
+			return;
+		}
+
+		$user_id = $post->post_author;
+		if ( ! $user_id ) {
+			echo '—';
+			return;
+		}
+
+		$stripe_id   = get_user_meta( $user_id, 'stripe_account_id', true );
+		$stripe_done = get_user_meta( $user_id, 'stripe_onboarding_complete', true ) === '1';
+
+		if ( ! $stripe_id ) {
+			echo '<span style="color:#9ca3af;">Not connected</span>';
+		} elseif ( $stripe_done ) {
+			echo '<span style="color:#065f46;font-weight:600;">&#10003; Connected</span>';
+		} else {
+			echo '<span style="color:#92400e;">&#9888; Pending</span>';
+		}
 	}
 }

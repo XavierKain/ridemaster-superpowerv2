@@ -958,8 +958,39 @@ add_action( 'wp_head', function() {
 } );
 
 // =========================================================================
-// 5. FLATPICKR ON CREATE-CAMP PAGE
+// 5. FLATPICKR ON CREATE-CAMP PAGE + STRIPE WARNING
 // =========================================================================
+
+// Show warning if coach hasn't connected Stripe on create-camp page.
+add_action( 'wp_footer', function() {
+	if ( ! is_page( 'create-camp' ) && strpos( $_SERVER['REQUEST_URI'], 'create-camp' ) === false ) {
+		return;
+	}
+	$user_id = get_current_user_id();
+	if ( ! $user_id ) {
+		return;
+	}
+	$stripe_complete = get_user_meta( $user_id, 'stripe_onboarding_complete', true );
+	if ( $stripe_complete === '1' ) {
+		return;
+	}
+	?>
+	<script>
+	(function() {
+		function init() {
+			var form = document.querySelector('.jet-form-builder');
+			if ( ! form ) return;
+			var warning = document.createElement('div');
+			warning.style.cssText = 'background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:16px;margin-bottom:20px;font-size:14px;color:#92400e;';
+			warning.innerHTML = '<strong>&#9888; Stripe not connected</strong> — You need to connect your Stripe account before you can publish a camp. <a href="/coach-dashboard/" style="color:#92400e;font-weight:600;">Go to Dashboard to connect Stripe</a>';
+			form.parentNode.insertBefore(warning, form);
+		}
+		if ( document.readyState === 'complete' ) { setTimeout(init, 300); }
+		else { window.addEventListener('load', function() { setTimeout(init, 300); }); }
+	})();
+	</script>
+	<?php
+} );
 
 add_action( 'wp_enqueue_scripts', function() {
 	if ( ! is_page( 'create-camp' ) && strpos( $_SERVER['REQUEST_URI'], 'create-camp' ) === false ) {
@@ -1891,6 +1922,193 @@ add_action( 'wp_footer', function() {
 			window.addEventListener('load', function() {
 				setTimeout( init, 500 );
 			});
+		}
+	})();
+	</script>
+	<?php
+} );
+
+// =========================================================================
+// 10. COACH DASHBOARD — STRIPE CONNECT WIDGET
+// =========================================================================
+
+add_action( 'wp_footer', function() {
+	// Only on coach dashboard homepage (not sub-pages).
+	if ( strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
+		return;
+	}
+	if ( strpos( $_SERVER['REQUEST_URI'], '/profile' ) !== false
+		|| strpos( $_SERVER['REQUEST_URI'], '/create-' ) !== false ) {
+		return;
+	}
+
+	$user_id = get_current_user_id();
+	if ( ! $user_id ) {
+		return;
+	}
+	$user = get_userdata( $user_id );
+	if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+		return;
+	}
+
+	$stripe_account_id = get_user_meta( $user_id, 'stripe_account_id', true );
+	$stripe_complete   = get_user_meta( $user_id, 'stripe_onboarding_complete', true ) === '1';
+	$nonce             = wp_create_nonce( 'rm_stripe_connect' );
+	$ajax_url          = admin_url( 'admin-ajax.php' );
+	?>
+	<style>
+	.rm-stripe-widget {
+		background: #fff;
+		border-radius: 12px;
+		padding: 20px 24px;
+		box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+		margin-bottom: 24px;
+		border: 1px solid #e5e7eb;
+	}
+	.rm-stripe-widget h3 {
+		margin: 0 0 12px;
+		font-size: 16px;
+		font-weight: 600;
+		color: #1f2937;
+	}
+	.rm-stripe-status {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 14px;
+		border-radius: 20px;
+		font-size: 13px;
+		font-weight: 600;
+	}
+	.rm-stripe-status--active {
+		background: #d1fae5;
+		color: #065f46;
+	}
+	.rm-stripe-status--pending {
+		background: #fef3c7;
+		color: #92400e;
+	}
+	.rm-stripe-status--disconnected {
+		background: #f3f4f6;
+		color: #6b7280;
+	}
+	.rm-stripe-connect-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		margin-top: 12px;
+		padding: 10px 20px;
+		background: #635bff;
+		color: #fff;
+		border: none;
+		border-radius: 8px;
+		font-size: 14px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+	.rm-stripe-connect-btn:hover {
+		background: #5147e5;
+	}
+	.rm-stripe-disconnect {
+		display: inline-block;
+		margin-top: 8px;
+		font-size: 12px;
+		color: #9ca3af;
+		cursor: pointer;
+		border: none;
+		background: none;
+		text-decoration: underline;
+	}
+	.rm-stripe-disconnect:hover {
+		color: #ef4444;
+	}
+	</style>
+	<script>
+	(function() {
+		var nonce = <?php echo wp_json_encode( $nonce ); ?>;
+		var ajaxUrl = <?php echo wp_json_encode( $ajax_url ); ?>;
+		var isConnected = <?php echo $stripe_account_id ? 'true' : 'false'; ?>;
+		var isComplete = <?php echo $stripe_complete ? 'true' : 'false'; ?>;
+
+		function init() {
+			var container = document.querySelector('.elementor-widget-wrap') ||
+							document.querySelector('.e-con-inner') ||
+							document.querySelector('main') ||
+							document.querySelector('.site-main');
+			if ( ! container ) return;
+			if ( document.getElementById('rm-stripe-widget') ) return;
+
+			var widget = document.createElement('div');
+			widget.id = 'rm-stripe-widget';
+			widget.className = 'rm-stripe-widget';
+
+			if ( isConnected && isComplete ) {
+				widget.innerHTML =
+					'<h3>Stripe Payments</h3>' +
+					'<span class="rm-stripe-status rm-stripe-status--active">&#10003; Stripe Connected</span>' +
+					'<br><button type="button" class="rm-stripe-disconnect" id="rm-stripe-disconnect">Disconnect</button>';
+			} else if ( isConnected && ! isComplete ) {
+				widget.innerHTML =
+					'<h3>Stripe Payments</h3>' +
+					'<span class="rm-stripe-status rm-stripe-status--pending">&#9888; Setup incomplete</span>' +
+					'<br><button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Complete Stripe Setup</button>';
+			} else {
+				widget.innerHTML =
+					'<h3>Stripe Payments</h3>' +
+					'<span class="rm-stripe-status rm-stripe-status--disconnected">Not connected</span>' +
+					'<p style="margin:8px 0 0;font-size:13px;color:#6b7280;">Connect your Stripe account to receive payments from your camps.</p>' +
+					'<button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Connect with Stripe</button>';
+			}
+
+			container.prepend(widget);
+
+			var connectBtn = document.getElementById('rm-stripe-connect-btn');
+			if ( connectBtn ) {
+				connectBtn.addEventListener('click', function() {
+					connectBtn.disabled = true;
+					connectBtn.textContent = 'Redirecting...';
+					var fd = new FormData();
+					fd.append('action', 'rm_stripe_connect');
+					fd.append('nonce', nonce);
+					fetch(ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
+						.then(function(r) { return r.json(); })
+						.then(function(resp) {
+							if ( resp.success && resp.data.url ) {
+								window.location.href = resp.data.url;
+							} else {
+								var msg = (resp.data && typeof resp.data === 'string') ? resp.data : 'Error connecting to Stripe.';
+								alert(msg);
+								connectBtn.disabled = false;
+								connectBtn.textContent = 'Connect with Stripe';
+							}
+						})
+						.catch(function() {
+							alert('Network error. Please try again.');
+							connectBtn.disabled = false;
+							connectBtn.textContent = 'Connect with Stripe';
+						});
+				});
+			}
+
+			var disconnectBtn = document.getElementById('rm-stripe-disconnect');
+			if ( disconnectBtn ) {
+				disconnectBtn.addEventListener('click', function() {
+					if ( ! confirm('Are you sure you want to disconnect your Stripe account?') ) return;
+					var fd = new FormData();
+					fd.append('action', 'rm_stripe_disconnect');
+					fd.append('nonce', nonce);
+					fetch(ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
+						.then(function(r) { return r.json(); })
+						.then(function() { window.location.reload(); });
+				});
+			}
+		}
+
+		if ( document.readyState === 'complete' ) {
+			setTimeout( init, 300 );
+		} else {
+			window.addEventListener('load', function() { setTimeout( init, 300 ); });
 		}
 	})();
 	</script>

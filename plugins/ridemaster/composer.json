@@ -1,0 +1,13 @@
+{
+    "name": "ridemaster/ridemaster",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "Xavier Kain",
+            "email": "xavierkain.consulting@gmail.com"
+        }
+    ],
+    "require": {
+        "stripe/stripe-php": "^20.0"
+    }
+}

@@ -169,10 +169,23 @@ class RM_Camp {
         self::log( 'RideMaster: Assigned product category "camp" to post ' . $post_id );
 
         // ---------------------------------------------------------------
-        // E. Create Coach → Camp relation.
+        // E. Block if coach has not connected Stripe.
         // ---------------------------------------------------------------
         $current_user_id = get_current_user_id();
-        $coach_post_id   = get_user_meta( $current_user_id, 'coach_post_id', true );
+        $stripe_complete = get_user_meta( $current_user_id, 'stripe_onboarding_complete', true );
+        if ( $stripe_complete !== '1' ) {
+            wp_update_post( [
+                'ID'          => $post_id,
+                'post_status' => 'draft',
+            ] );
+            update_post_meta( $post_id, '_rm_blocked_reason', 'stripe_not_connected' );
+            self::log( 'RideMaster: Camp ' . $post_id . ' set to draft — coach Stripe not connected.' );
+        }
+
+        // ---------------------------------------------------------------
+        // F. Create Coach → Camp relation.
+        // ---------------------------------------------------------------
+        $coach_post_id = get_user_meta( $current_user_id, 'coach_post_id', true );
 
         if ( $coach_post_id ) {
             $coach_to_camps = self::find_relation( 'Coach to Camps' );

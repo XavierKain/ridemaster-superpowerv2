@@ -35,3 +35,4 @@ build/
 .env
 .env.local
 .env.*.local
+plugins/ridemaster/vendor/stripe/stripe-php/README.md
