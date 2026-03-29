@@ -2114,3 +2114,235 @@ add_action( 'wp_footer', function() {
 	</script>
 	<?php
 } );
+
+// =========================================================================
+// 11. COACH DASHBOARD — MY EARNINGS WIDGET + MY PAYMENTS PAGE
+// =========================================================================
+
+add_action( 'wp_footer', function() {
+	if ( strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
+		return;
+	}
+
+	$user_id = get_current_user_id();
+	if ( ! $user_id ) {
+		return;
+	}
+	$user = get_userdata( $user_id );
+	if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+		return;
+	}
+
+	$is_payments_page = strpos( $_SERVER['REQUEST_URI'], '/payments' ) !== false;
+	$is_homepage      = ! $is_payments_page
+		&& strpos( $_SERVER['REQUEST_URI'], '/profile' ) === false
+		&& strpos( $_SERVER['REQUEST_URI'], '/create-' ) === false;
+
+	if ( ! $is_homepage && ! $is_payments_page ) {
+		return;
+	}
+
+	// Gather payment data for this coach.
+	$coach_post_id = get_user_meta( $user_id, 'coach_post_id', true );
+	$stripe_id     = get_user_meta( $user_id, 'stripe_account_id', true );
+
+	// Get all orders for this coach's camps.
+	$camp_ids = get_posts( [
+		'post_type'      => 'product',
+		'posts_per_page' => -1,
+		'post_status'    => 'publish',
+		'fields'         => 'ids',
+		'meta_query'     => [
+			[ 'key' => '_coach_post_id', 'value' => $coach_post_id ],
+		],
+	] );
+
+	$earnings = [
+		'available'   => 0,
+		'escrow'      => 0,
+		'total'       => 0,
+		'next_payout' => null,
+		'transactions' => [],
+	];
+
+	if ( ! empty( $camp_ids ) && function_exists( 'wc_get_orders' ) ) {
+		$orders = wc_get_orders( [
+			'limit'      => 100,
+			'orderby'    => 'date',
+			'order'      => 'DESC',
+			'status'     => [ 'processing', 'completed', 'refunded', 'cancelled' ],
+			'meta_query' => [
+				[ 'key' => '_camp_id', 'value' => $camp_ids, 'compare' => 'IN' ],
+			],
+		] );
+
+		foreach ( $orders as $order ) {
+			$payout_status = $order->get_meta( '_payout_status' );
+			$coach_amount  = floatval( $order->get_meta( '_amount_coach' ) );
+			$hotel_amount  = floatval( $order->get_meta( '_amount_hotel' ) );
+			$total_amount  = floatval( $order->get_total() );
+			$camp_id       = $order->get_meta( '_camp_id' );
+			$payout_date   = $order->get_meta( '_payout_date' );
+
+			// Determine status for display.
+			$display_status = 'escrow';
+			if ( $payout_status === 'paid' ) {
+				$display_status = 'paid';
+				$earnings['available'] += $coach_amount;
+			} elseif ( $payout_status === 'cancelled' ) {
+				$display_status = 'cancelled';
+			} elseif ( $payout_status === 'failed' ) {
+				$display_status = 'error';
+			} else {
+				$earnings['escrow'] += $coach_amount;
+				if ( $payout_date && ( ! $earnings['next_payout'] || $payout_date < $earnings['next_payout']['date'] ) ) {
+					$earnings['next_payout'] = [
+						'date'   => $payout_date,
+						'amount' => $coach_amount,
+					];
+				}
+			}
+
+			$earnings['total'] += $coach_amount;
+
+			// Get rider name.
+			$rider_name = $order->get_billing_first_name() . ' ' . substr( $order->get_billing_last_name(), 0, 1 ) . '.';
+
+			$earnings['transactions'][] = [
+				'date'         => $order->get_date_created() ? $order->get_date_created()->format( 'd/m/Y' ) : '',
+				'camp'         => $camp_id ? get_the_title( $camp_id ) : '—',
+				'rider'        => $rider_name,
+				'total'        => $total_amount,
+				'coach_amount' => $coach_amount,
+				'hotel_amount' => $hotel_amount,
+				'status'       => $display_status,
+				'payout_date'  => $order->get_meta( '_payout_date_actual' ) ?: $payout_date,
+				'refund_pct'   => $order->get_meta( '_cancellation_tier' ),
+			];
+		}
+	}
+
+	$earnings_json = wp_json_encode( $earnings );
+	?>
+	<style>
+	.rm-earnings-widget {
+		background: #fff;
+		border-radius: 12px;
+		padding: 20px 24px;
+		box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+		margin-bottom: 24px;
+		border: 1px solid #e5e7eb;
+	}
+	.rm-earnings-widget h3 { margin: 0 0 16px; font-size: 16px; font-weight: 600; color: #1f2937; }
+	.rm-earnings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+	.rm-earnings-card { text-align: center; }
+	.rm-earnings-card .rm-amount { font-size: 22px; font-weight: 700; color: #1f2937; }
+	.rm-earnings-card .rm-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+	.rm-earnings-card .rm-amount--teal { color: #0d9488; }
+
+	.rm-payments-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+	.rm-payments-table th { text-align: left; padding: 10px 12px; border-bottom: 2px solid #e5e7eb; font-weight: 600; color: #374151; font-size: 13px; }
+	.rm-payments-table td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
+	.rm-payments-table tr:hover td { background: #f9fafb; }
+	.rm-pay-status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+	.rm-pay-status--escrow { background: #fef3c7; color: #92400e; }
+	.rm-pay-status--paid { background: #d1fae5; color: #065f46; }
+	.rm-pay-status--cancelled { background: #fee2e2; color: #991b1b; }
+	.rm-pay-status--error { background: #fef3c7; color: #dc2626; }
+	</style>
+	<script>
+	(function() {
+		var data = <?php echo $earnings_json; ?>;
+		var isPaymentsPage = <?php echo $is_payments_page ? 'true' : 'false'; ?>;
+		var isHomepage = <?php echo $is_homepage ? 'true' : 'false'; ?>;
+
+		function init() {
+			if ( isHomepage ) { renderEarningsWidget(); }
+			if ( isPaymentsPage ) { renderPaymentsPage(); }
+		}
+
+		function renderEarningsWidget() {
+			var container = document.querySelector('.elementor-widget-wrap') ||
+							document.querySelector('.e-con-inner') ||
+							document.querySelector('main');
+			if ( ! container || document.getElementById('rm-earnings-widget') ) return;
+
+			var stripeWidget = document.getElementById('rm-stripe-widget');
+
+			var widget = document.createElement('div');
+			widget.id = 'rm-earnings-widget';
+			widget.className = 'rm-earnings-widget';
+
+			var nextPayout = data.next_payout
+				? formatPrice(data.next_payout.amount) + ' on ' + data.next_payout.date
+				: 'None scheduled';
+
+			widget.innerHTML =
+				'<h3>My Earnings</h3>' +
+				'<div class="rm-earnings-grid">' +
+					'<div class="rm-earnings-card"><div class="rm-amount rm-amount--teal">' + formatPrice(data.available) + '</div><div class="rm-label">Available (paid out)</div></div>' +
+					'<div class="rm-earnings-card"><div class="rm-amount">' + formatPrice(data.escrow) + '</div><div class="rm-label">In escrow</div></div>' +
+					'<div class="rm-earnings-card"><div class="rm-amount">' + formatPrice(data.total) + '</div><div class="rm-label">Total earned</div></div>' +
+					'<div class="rm-earnings-card"><div class="rm-amount" style="font-size:14px;">' + nextPayout + '</div><div class="rm-label">Next payout</div></div>' +
+				'</div>';
+
+			if ( stripeWidget && stripeWidget.nextSibling ) {
+				stripeWidget.parentNode.insertBefore(widget, stripeWidget.nextSibling);
+			} else {
+				container.prepend(widget);
+			}
+		}
+
+		function renderPaymentsPage() {
+			var container = document.querySelector('.elementor-widget-wrap') ||
+							document.querySelector('.e-con-inner') ||
+							document.querySelector('main');
+			if ( ! container || document.getElementById('rm-payments-page') ) return;
+
+			var div = document.createElement('div');
+			div.id = 'rm-payments-page';
+
+			if ( data.transactions.length === 0 ) {
+				div.innerHTML = '<p style="color:#6b7280;">No transactions yet. Your payments will appear here when riders book your camps.</p>';
+				container.prepend(div);
+				return;
+			}
+
+			var rows = '';
+			data.transactions.forEach(function(tx) {
+				var statusClass = 'rm-pay-status--' + tx.status;
+				var statusLabel = tx.status === 'escrow' ? 'In escrow' :
+								 tx.status === 'paid' ? 'Paid' + (tx.payout_date ? ' ' + tx.payout_date : '') :
+								 tx.status === 'cancelled' ? 'Cancelled' + (tx.refund_pct ? ' (' + tx.refund_pct + '%)' : '') :
+								 'Error';
+
+				rows += '<tr>' +
+					'<td>' + tx.date + '</td>' +
+					'<td>' + tx.camp + '</td>' +
+					'<td>' + tx.rider + '</td>' +
+					'<td>' + formatPrice(tx.total) + '</td>' +
+					'<td><strong>' + formatPrice(tx.coach_amount) + '</strong></td>' +
+					'<td>' + (tx.hotel_amount > 0 ? formatPrice(tx.hotel_amount) : '—') + '</td>' +
+					'<td><span class="rm-pay-status ' + statusClass + '">' + statusLabel + '</span></td>' +
+				'</tr>';
+			});
+
+			div.innerHTML =
+				'<table class="rm-payments-table">' +
+					'<thead><tr><th>Date</th><th>Camp</th><th>Rider</th><th>Total</th><th>My Share</th><th>Hotel</th><th>Status</th></tr></thead>' +
+					'<tbody>' + rows + '</tbody>' +
+				'</table>';
+
+			container.prepend(div);
+		}
+
+		function formatPrice(amount) {
+			return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount || 0);
+		}
+
+		if ( document.readyState === 'complete' ) { setTimeout(init, 500); }
+		else { window.addEventListener('load', function() { setTimeout(init, 500); }); }
+	})();
+	</script>
+	<?php
+} );

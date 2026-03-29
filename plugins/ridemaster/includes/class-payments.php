@@ -41,6 +41,20 @@ class RM_Payments {
 
 		// Stripe webhook endpoint.
 		add_action( 'rest_api_init', [ $this, 'register_webhook_endpoint' ] );
+
+		// Register WooCommerce payment gateway.
+		add_filter( 'woocommerce_payment_gateways', [ $this, 'register_gateway' ] );
+
+		// AJAX: create PaymentIntent for checkout.
+		add_action( 'wp_ajax_rm_create_payment_intent', [ $this, 'ajax_create_payment_intent' ] );
+		add_action( 'wp_ajax_nopriv_rm_create_payment_intent', [ $this, 'ajax_create_payment_intent' ] );
+
+		// Insurance checkbox on checkout.
+		add_action( 'woocommerce_review_order_before_submit', [ $this, 'render_insurance_checkbox' ] );
+		add_action( 'woocommerce_checkout_process', [ $this, 'validate_insurance_checkbox' ] );
+
+		// Attach insurance PDF to order confirmation email.
+		add_filter( 'woocommerce_email_attachments', [ $this, 'attach_insurance_pdf' ], 10, 4 );
 	}
 
 	// =========================================================================
@@ -306,17 +320,252 @@ class RM_Payments {
 	}
 
 	/**
-	 * Render the Payments admin page (placeholder).
+	 * Render the Payments admin dashboard page.
 	 */
 	public function render_payments_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+
+		$tab = sanitize_text_field( $_GET['tab'] ?? 'escrow' );
+		$tabs = [
+			'escrow'        => 'Escrow',
+			'payouts'       => 'Payouts',
+			'coaches'       => 'Coaches',
+			'hotels'        => 'Hotels',
+			'cancellations' => 'Cancellations',
+		];
 		?>
 		<div class="wrap">
 			<h1>RideMaster Payments</h1>
-			<p>Payment dashboard will be available once the checkout system is implemented.</p>
+			<nav class="nav-tab-wrapper">
+				<?php foreach ( $tabs as $slug => $label ) : ?>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=ridemaster-payments&tab=' . $slug ) ); ?>"
+					   class="nav-tab <?php echo $tab === $slug ? 'nav-tab-active' : ''; ?>">
+						<?php echo esc_html( $label ); ?>
+					</a>
+				<?php endforeach; ?>
+			</nav>
+			<div style="margin-top:20px;">
+				<?php
+				switch ( $tab ) {
+					case 'escrow':
+						$this->render_tab_escrow();
+						break;
+					case 'payouts':
+						$this->render_tab_payouts();
+						break;
+					case 'coaches':
+						$this->render_tab_coaches();
+						break;
+					case 'hotels':
+						$this->render_tab_hotels();
+						break;
+					case 'cancellations':
+						$this->render_tab_cancellations();
+						break;
+				}
+				?>
+			</div>
 		</div>
+		<?php
+	}
+
+	private function render_tab_escrow() {
+		$stats = RM_Payout_Cron::get_stats();
+		$nonce = wp_create_nonce( 'rm_run_payouts' );
+		?>
+		<div style="display:flex;gap:24px;margin-bottom:24px;">
+			<div style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:8px;flex:1;">
+				<h3 style="margin:0 0 8px;"><?php echo esc_html( wc_price( $stats['escrow_total'] ) ); ?></h3>
+				<p style="margin:0;color:#666;"><?php echo $stats['escrow_count']; ?> orders in escrow</p>
+			</div>
+			<div style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:8px;flex:1;">
+				<h3 style="margin:0 0 8px;"><?php echo esc_html( wc_price( $stats['paid_total'] ) ); ?></h3>
+				<p style="margin:0;color:#666;"><?php echo $stats['paid_count']; ?> payouts completed</p>
+			</div>
+			<div style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:8px;flex:1;">
+				<h3 style="margin:0 0 8px;<?php echo $stats['failed_count'] > 0 ? 'color:#dc2626;' : ''; ?>"><?php echo $stats['failed_count']; ?></h3>
+				<p style="margin:0;color:#666;">Failed payouts</p>
+			</div>
+		</div>
+		<button type="button" class="button button-primary" onclick="
+			if(!confirm('Run payouts now?'))return;
+			fetch(ajaxurl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'action=rm_run_payouts_now&nonce=<?php echo $nonce; ?>'})
+			.then(r=>r.json()).then(r=>{alert(r.data?.message||'Done');location.reload();});
+		">Run Payouts Now</button>
+
+		<h3>Upcoming Payouts</h3>
+		<?php if ( empty( $stats['upcoming'] ) ) : ?>
+			<p>No upcoming payouts.</p>
+		<?php else : ?>
+			<table class="wp-list-table widefat fixed striped">
+				<thead><tr><th>Order</th><th>Camp</th><th>Amount</th><th>Payout Date</th></tr></thead>
+				<tbody>
+				<?php foreach ( $stats['upcoming'] as $item ) : ?>
+					<tr>
+						<td><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $item['order_id'] . '&action=edit' ) ); ?>">#<?php echo $item['order_id']; ?></a></td>
+						<td><?php echo $item['camp_id'] ? get_the_title( $item['camp_id'] ) : '—'; ?></td>
+						<td><?php echo wc_price( $item['amount'] ); ?></td>
+						<td><?php echo esc_html( $item['payout_date'] ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif;
+	}
+
+	private function render_tab_payouts() {
+		$orders = wc_get_orders( [
+			'limit'      => 50,
+			'orderby'    => 'date',
+			'order'      => 'DESC',
+			'meta_query' => [
+				[ 'key' => '_payout_status', 'value' => [ 'paid', 'failed' ], 'compare' => 'IN' ],
+			],
+		] );
+		?>
+		<table class="wp-list-table widefat fixed striped">
+			<thead><tr><th>Order</th><th>Camp</th><th>Coach Amount</th><th>Hotel Amount</th><th>Payout Date</th><th>Status</th></tr></thead>
+			<tbody>
+			<?php if ( empty( $orders ) ) : ?>
+				<tr><td colspan="6">No payouts yet.</td></tr>
+			<?php else : ?>
+				<?php foreach ( $orders as $order ) : ?>
+					<tr>
+						<td><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $order->get_id() . '&action=edit' ) ); ?>">#<?php echo $order->get_id(); ?></a></td>
+						<td><?php $cid = $order->get_meta( '_camp_id' ); echo $cid ? get_the_title( $cid ) : '—'; ?></td>
+						<td><?php echo wc_price( $order->get_meta( '_amount_coach' ) ); ?></td>
+						<td><?php echo wc_price( $order->get_meta( '_amount_hotel' ) ); ?></td>
+						<td><?php echo esc_html( $order->get_meta( '_payout_date_actual' ) ?: $order->get_meta( '_payout_date' ) ); ?></td>
+						<td>
+							<?php
+							$status = $order->get_meta( '_payout_status' );
+							if ( $status === 'paid' ) {
+								echo '<span style="color:#065f46;font-weight:600;">Paid</span>';
+							} else {
+								echo '<span style="color:#dc2626;font-weight:600;">Failed</span>';
+							}
+							?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			<?php endif; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	private function render_tab_coaches() {
+		$coaches = get_posts( [ 'post_type' => 'coach', 'posts_per_page' => -1, 'post_status' => 'any' ] );
+		?>
+		<table class="wp-list-table widefat fixed striped">
+			<thead><tr><th>Coach</th><th>Stripe Account</th><th>Status</th></tr></thead>
+			<tbody>
+			<?php foreach ( $coaches as $coach ) :
+				$user_id    = $coach->post_author;
+				$stripe_id  = get_user_meta( $user_id, 'stripe_account_id', true );
+				$stripe_ok  = get_user_meta( $user_id, 'stripe_onboarding_complete', true ) === '1';
+			?>
+				<tr>
+					<td><?php echo esc_html( $coach->post_title ); ?></td>
+					<td><?php echo $stripe_id ? '<code>' . esc_html( $stripe_id ) . '</code>' : '—'; ?></td>
+					<td>
+						<?php
+						if ( ! $stripe_id ) {
+							echo '<span style="color:#9ca3af;">Not connected</span>';
+						} elseif ( $stripe_ok ) {
+							echo '<span style="color:#065f46;font-weight:600;">&#10003; Active</span>';
+						} else {
+							echo '<span style="color:#92400e;">&#9888; Pending</span>';
+						}
+						?>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	private function render_tab_hotels() {
+		$hotels = get_posts( [ 'post_type' => 'hotel', 'posts_per_page' => -1, 'post_status' => 'any' ] );
+		if ( empty( $hotels ) ) {
+			echo '<p>No hotels registered yet. Hotels are created when coaches add accommodation to their camps.</p>';
+			return;
+		}
+		?>
+		<table class="wp-list-table widefat fixed striped">
+			<thead><tr><th>Hotel</th><th>Country</th><th>Stripe Account</th><th>Status</th></tr></thead>
+			<tbody>
+			<?php foreach ( $hotels as $hotel ) :
+				$stripe_id = get_post_meta( $hotel->ID, 'hotel_stripe_account_id', true );
+				$status    = get_post_meta( $hotel->ID, 'hotel_stripe_status', true );
+				$country   = get_post_meta( $hotel->ID, 'hotel_country', true );
+			?>
+				<tr>
+					<td><?php echo esc_html( $hotel->post_title ); ?></td>
+					<td><?php echo esc_html( $country ?: '—' ); ?></td>
+					<td><?php echo $stripe_id ? '<code>' . esc_html( $stripe_id ) . '</code>' : '—'; ?></td>
+					<td>
+						<?php
+						if ( $status === 'verified' ) {
+							echo '<span style="color:#065f46;">&#10003; Verified</span>';
+						} elseif ( $status === 'pending' ) {
+							echo '<span style="color:#92400e;">Pending</span>';
+						} elseif ( $status === 'requires_action' ) {
+							$err = get_post_meta( $hotel->ID, 'hotel_stripe_error', true );
+							echo '<span style="color:#dc2626;">Requires action</span>';
+							if ( $err ) echo '<br><small>' . esc_html( $err ) . '</small>';
+						} else {
+							echo '<span style="color:#9ca3af;">Not set up</span>';
+						}
+						?>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	private function render_tab_cancellations() {
+		$orders = wc_get_orders( [
+			'limit'      => 50,
+			'orderby'    => 'date',
+			'order'      => 'DESC',
+			'status'     => [ 'cancelled', 'refunded' ],
+			'meta_query' => [
+				[ 'key' => '_cancellation_date', 'compare' => 'EXISTS' ],
+			],
+		] );
+		?>
+		<table class="wp-list-table widefat fixed striped">
+			<thead><tr><th>Order</th><th>Camp</th><th>Cancelled By</th><th>Tier</th><th>Refund</th><th>Date</th><th>Alert</th></tr></thead>
+			<tbody>
+			<?php if ( empty( $orders ) ) : ?>
+				<tr><td colspan="7">No cancellations yet.</td></tr>
+			<?php else : ?>
+				<?php foreach ( $orders as $order ) : ?>
+					<tr>
+						<td><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $order->get_id() . '&action=edit' ) ); ?>">#<?php echo $order->get_id(); ?></a></td>
+						<td><?php $cid = $order->get_meta( '_camp_id' ); echo $cid ? get_the_title( $cid ) : '—'; ?></td>
+						<td><?php echo esc_html( ucfirst( $order->get_meta( '_cancellation_by' ) ) ); ?></td>
+						<td><?php echo esc_html( $order->get_meta( '_cancellation_tier' ) . '%' ); ?></td>
+						<td><?php echo wc_price( $order->get_meta( '_refund_amount' ) ); ?></td>
+						<td><?php echo esc_html( $order->get_meta( '_cancellation_date' ) ); ?></td>
+						<td>
+							<?php if ( $order->get_meta( '_cancellation_alert' ) ) : ?>
+								<span style="color:#dc2626;font-weight:600;">&#9888; Action needed</span>
+							<?php else : ?>
+								—
+							<?php endif; ?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			<?php endif; ?>
+			</tbody>
+		</table>
 		<?php
 	}
 
@@ -523,5 +772,116 @@ class RM_Payments {
 
 		update_user_meta( $user_id, 'stripe_onboarding_complete', $complete ? '1' : '0' );
 		update_user_meta( $user_id, 'stripe_account_status', $complete ? 'active' : 'pending' );
+	}
+
+	// =========================================================================
+	// WOOCOMMERCE GATEWAY REGISTRATION
+	// =========================================================================
+
+	/**
+	 * Register our payment gateway with WooCommerce.
+	 */
+	public function register_gateway( $gateways ) {
+		require_once RM_PLUGIN_DIR . 'includes/class-payment-gateway.php';
+		$gateways[] = 'RM_Payment_Gateway';
+		return $gateways;
+	}
+
+	// =========================================================================
+	// AJAX: CREATE PAYMENT INTENT
+	// =========================================================================
+
+	/**
+	 * AJAX: Create a Stripe PaymentIntent for the current cart.
+	 */
+	public function ajax_create_payment_intent() {
+		check_ajax_referer( 'rm_stripe_checkout', 'nonce' );
+
+		if ( ! $this->is_configured() ) {
+			wp_send_json_error( 'Stripe is not configured.' );
+		}
+
+		$cart_total = WC()->cart->get_total( 'raw' );
+		$amount     = intval( round( floatval( $cart_total ) * 100 ) );
+
+		if ( $amount < 50 ) { // Stripe minimum is 50 cents.
+			wp_send_json_error( 'Order total is too low.' );
+		}
+
+		try {
+			$pi = \Stripe\PaymentIntent::create( [
+				'amount'   => $amount,
+				'currency' => strtolower( get_woocommerce_currency() ),
+				'metadata' => [
+					'rm_source' => 'checkout',
+				],
+			] );
+
+			wp_send_json_success( [
+				'client_secret' => $pi->client_secret,
+				'pi_id'         => $pi->id,
+			] );
+
+		} catch ( \Stripe\Exception\ApiErrorException $e ) {
+			error_log( '[RM Payments] PaymentIntent create error: ' . $e->getMessage() );
+			wp_send_json_error( 'Payment error: ' . $e->getMessage() );
+		}
+	}
+
+	// =========================================================================
+	// INSURANCE CHECKBOX (CHECKOUT)
+	// =========================================================================
+
+	/**
+	 * Render the mandatory insurance/CGV checkbox on checkout.
+	 */
+	public function render_insurance_checkbox() {
+		$cgv_page_id = get_option( 'rm_cgv_page_id', 0 );
+		$cgv_url     = $cgv_page_id ? get_permalink( $cgv_page_id ) : '#';
+		$pdf_id      = get_option( 'rm_insurance_pdf_id', 0 );
+		$pdf_url     = $pdf_id ? wp_get_attachment_url( $pdf_id ) : '#';
+
+		echo '<p class="form-row rm-insurance-checkbox" style="margin-top:16px;">';
+		echo '<label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox">';
+		echo '<input type="checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" name="rm_insurance_accepted" id="rm_insurance_accepted" />';
+		echo '<span class="woocommerce-terms-and-conditions-checkbox-text">';
+		printf(
+			'I accept the <a href="%s" target="_blank">Terms &amp; Conditions</a> and confirm I have read the <a href="%s" target="_blank">accident insurance information notice</a>.',
+			esc_url( $cgv_url ),
+			esc_url( $pdf_url )
+		);
+		echo '</span>';
+		echo '</label>';
+		echo '</p>';
+	}
+
+	/**
+	 * Validate the insurance checkbox.
+	 */
+	public function validate_insurance_checkbox() {
+		if ( empty( $_POST['rm_insurance_accepted'] ) ) {
+			wc_add_notice( 'You must accept the Terms & Conditions and acknowledge the insurance notice to proceed.', 'error' );
+		}
+	}
+
+	/**
+	 * Attach insurance PDF to the order confirmation email.
+	 */
+	public function attach_insurance_pdf( $attachments, $email_id, $order, $email ) {
+		if ( ! in_array( $email_id, [ 'customer_processing_order', 'customer_completed_order', 'customer_on_hold_order' ], true ) ) {
+			return $attachments;
+		}
+
+		$pdf_id = get_option( 'rm_insurance_pdf_id', 0 );
+		if ( ! $pdf_id ) {
+			return $attachments;
+		}
+
+		$pdf_path = get_attached_file( $pdf_id );
+		if ( $pdf_path && file_exists( $pdf_path ) ) {
+			$attachments[] = $pdf_path;
+		}
+
+		return $attachments;
 	}
 }

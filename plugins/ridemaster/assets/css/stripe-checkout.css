@@ -1,0 +1,27 @@
+/* RideMaster Stripe Checkout Styles */
+
+#rm-stripe-card-element {
+	padding: 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	background: #fff;
+	margin-bottom: 8px;
+	transition: border-color 0.2s;
+}
+
+#rm-stripe-card-element:focus-within,
+#rm-stripe-card-element.StripeElement--focus {
+	border-color: #0d9488;
+	box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+#rm-stripe-card-element.StripeElement--invalid {
+	border-color: #dc2626;
+}
+
+#rm-stripe-card-errors {
+	color: #dc2626;
+	font-size: 13px;
+	min-height: 20px;
+	margin-bottom: 8px;
+}
