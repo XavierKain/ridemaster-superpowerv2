@@ -1008,16 +1008,41 @@ class RM_Payments {
 		$coach_user_id   = $coach_post->post_author;
 		$coach_stripe_id = get_user_meta( $coach_user_id, 'stripe_account_id', true ) ?: 'acct_demo_' . $coach_post_id;
 
-		// Find this coach's camps.
+		// Find this coach's camps (try meta, then JetEngine relation, then post_author).
 		$camp_ids = get_posts( [
 			'post_type'      => 'product',
 			'posts_per_page' => -1,
 			'post_status'    => 'publish',
 			'fields'         => 'ids',
 			'meta_query'     => [
-				[ 'key' => '_coach_post_id', 'value' => $coach_post_id ],
+				[ 'key' => '_coach_post_id', 'value' => strval( $coach_post_id ) ],
 			],
 		] );
+
+		// Fallback: try JetEngine relation (Coach to Camps, rel_id 20).
+		if ( empty( $camp_ids ) && function_exists( 'jet_engine' ) ) {
+			$relation = RM_Camp::find_relation( 'Coach to Camps' );
+			if ( $relation && method_exists( $relation, 'get_children' ) ) {
+				$children = $relation->get_children( $coach_post_id, 'ids' );
+				if ( is_array( $children ) ) {
+					$camp_ids = array_map( 'intval', $children );
+				}
+			}
+		}
+
+		// Fallback: try post_author.
+		if ( empty( $camp_ids ) && $coach_user_id ) {
+			$camp_ids = get_posts( [
+				'post_type'      => 'product',
+				'posts_per_page' => -1,
+				'post_status'    => 'publish',
+				'fields'         => 'ids',
+				'author'         => $coach_user_id,
+				'tax_query'      => [
+					[ 'taxonomy' => 'product_cat', 'field' => 'slug', 'terms' => 'camp' ],
+				],
+			] );
+		}
 
 		if ( empty( $camp_ids ) ) {
 			wp_send_json_error( 'This coach has no published camps. Create at least one camp first.' );
