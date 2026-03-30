@@ -377,11 +377,11 @@ class RM_Payments {
 		?>
 		<div style="display:flex;gap:24px;margin-bottom:24px;">
 			<div style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:8px;flex:1;">
-				<h3 style="margin:0 0 8px;"><?php echo esc_html( wc_price( $stats['escrow_total'] ) ); ?></h3>
+				<h3 style="margin:0 0 8px;"><?php echo wp_kses_post( wc_price( $stats['escrow_total'] ) ); ?></h3>
 				<p style="margin:0;color:#666;"><?php echo $stats['escrow_count']; ?> orders in escrow</p>
 			</div>
 			<div style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:8px;flex:1;">
-				<h3 style="margin:0 0 8px;"><?php echo esc_html( wc_price( $stats['paid_total'] ) ); ?></h3>
+				<h3 style="margin:0 0 8px;"><?php echo wp_kses_post( wc_price( $stats['paid_total'] ) ); ?></h3>
 				<p style="margin:0;color:#666;"><?php echo $stats['paid_count']; ?> payouts completed</p>
 			</div>
 			<div style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:8px;flex:1;">
