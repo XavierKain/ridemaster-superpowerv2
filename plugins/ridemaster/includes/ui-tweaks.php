@@ -2001,15 +2001,21 @@ add_shortcode( 'rm_stripe_connect', function() {
 	ob_start();
 	?>
 	<style>
-	.rm-stripe-widget { background:#fff; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,0.08); border:1px solid #e5e7eb; }
-	.rm-stripe-widget h3 { margin:0 0 12px; font-size:16px; font-weight:600; color:#1f2937; }
-	.rm-stripe-status { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; }
+	.rm-stripe-widget,
+	.rm-earnings-widget,
+	.rm-payments-wrap {
+		font-family: 'DM Sans', sans-serif;
+	}
+	.rm-stripe-widget { background:#fff; border-radius:16px; padding:24px 28px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:1px solid #e5e7eb; }
+	.rm-stripe-widget h3 { margin:0 0 14px; font-size:18px; font-weight:700; color:#1f2937; font-family:'DM Sans',sans-serif; }
+	.rm-stripe-widget p { font-family:'DM Sans',sans-serif; }
+	.rm-stripe-status { display:inline-flex; align-items:center; gap:8px; padding:6px 16px; border-radius:20px; font-size:14px; font-weight:600; font-family:'DM Sans',sans-serif; }
 	.rm-stripe-status--active { background:#d1fae5; color:#065f46; }
 	.rm-stripe-status--pending { background:#fef3c7; color:#92400e; }
 	.rm-stripe-status--disconnected { background:#f3f4f6; color:#6b7280; }
-	.rm-stripe-connect-btn { display:inline-flex; align-items:center; gap:8px; margin-top:12px; padding:10px 20px; background:#635bff; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; transition:background 0.2s; }
-	.rm-stripe-connect-btn:hover { background:#5147e5; }
-	.rm-stripe-disconnect { display:inline-block; margin-top:8px; font-size:12px; color:#9ca3af; cursor:pointer; border:none; background:none; text-decoration:underline; }
+	.rm-stripe-connect-btn { display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:12px 24px; background:#635bff; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s; }
+	.rm-stripe-connect-btn:hover { background:#5147e5; transform:translateY(-1px); box-shadow:0 4px 12px rgba(99,91,255,0.3); }
+	.rm-stripe-disconnect { display:inline-block; margin-top:10px; font-size:13px; color:#9ca3af; cursor:pointer; border:none; background:none; text-decoration:underline; font-family:'DM Sans',sans-serif; }
 	.rm-stripe-disconnect:hover { color:#ef4444; }
 	</style>
 	<div class="rm-stripe-widget" id="rm-stripe-widget">
@@ -2184,12 +2190,12 @@ add_shortcode( 'rm_my_earnings', function() {
 	ob_start();
 	?>
 	<style>
-	.rm-earnings-widget { background:#fff; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,0.08); border:1px solid #e5e7eb; }
-	.rm-earnings-widget h3 { margin:0 0 16px; font-size:16px; font-weight:600; color:#1f2937; }
-	.rm-earnings-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; }
-	.rm-earnings-card { text-align:center; }
-	.rm-earnings-card .rm-amount { font-size:22px; font-weight:700; color:#1f2937; }
-	.rm-earnings-card .rm-label { font-size:12px; color:#6b7280; margin-top:4px; }
+	.rm-earnings-widget { background:#fff; border-radius:16px; padding:24px 28px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:1px solid #e5e7eb; }
+	.rm-earnings-widget h3 { margin:0 0 18px; font-size:18px; font-weight:700; color:#1f2937; font-family:'DM Sans',sans-serif; }
+	.rm-earnings-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:20px; }
+	.rm-earnings-card { text-align:center; padding:8px 0; }
+	.rm-earnings-card .rm-amount { font-size:24px; font-weight:700; color:#1f2937; font-family:'DM Sans',sans-serif; }
+	.rm-earnings-card .rm-label { font-size:13px; color:#6b7280; margin-top:6px; font-family:'DM Sans',sans-serif; }
 	.rm-earnings-card .rm-amount--teal { color:#0d9488; }
 	</style>
 	<div class="rm-earnings-widget">
@@ -2229,18 +2235,18 @@ add_shortcode( 'rm_my_payments', function() {
 	ob_start();
 	?>
 	<style>
-	.rm-payments-table { width:100%; border-collapse:collapse; font-size:14px; }
-	.rm-payments-table th { text-align:left; padding:10px 12px; border-bottom:2px solid #e5e7eb; font-weight:600; color:#374151; font-size:13px; }
-	.rm-payments-table td { padding:10px 12px; border-bottom:1px solid #f3f4f6; }
-	.rm-payments-table tr:hover td { background:#f9fafb; }
-	.rm-pay-status { display:inline-block; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+	.rm-payments-table { width:100%; border-collapse:collapse; font-size:14px; font-family:'DM Sans',sans-serif; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:1px solid #e5e7eb; }
+	.rm-payments-table th { text-align:left; padding:14px 16px; border-bottom:2px solid #e5e7eb; font-weight:700; color:#374151; font-size:13px; background:#f9fafb; }
+	.rm-payments-table td { padding:14px 16px; border-bottom:1px solid #f3f4f6; }
+	.rm-payments-table tr:hover td { background:#f0fdfa; }
+	.rm-pay-status { display:inline-block; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; }
 	.rm-pay-status--escrow { background:#fef3c7; color:#92400e; }
 	.rm-pay-status--paid { background:#d1fae5; color:#065f46; }
 	.rm-pay-status--cancelled { background:#fee2e2; color:#991b1b; }
 	.rm-pay-status--error { background:#fef3c7; color:#dc2626; }
 	</style>
 	<?php if ( empty( $data['transactions'] ) ) : ?>
-		<p style="color:#6b7280;">No transactions yet. Your payments will appear here when riders book your camps.</p>
+		<p style="color:#6b7280;font-family:'DM Sans',sans-serif;font-size:14px;">No transactions yet. Your payments will appear here when riders book your camps.</p>
 	<?php else : ?>
 		<table class="rm-payments-table">
 			<thead><tr><th>Date</th><th>Camp</th><th>Rider</th><th>Total</th><th>My Share</th><th>Hotel</th><th>Status</th></tr></thead>
