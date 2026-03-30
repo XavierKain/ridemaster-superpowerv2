@@ -2100,15 +2100,39 @@ function rm_get_coach_earnings() {
 		return null;
 	}
 
+	// Find coach's camps (3-level fallback: meta, JetEngine relation, post_author).
 	$camp_ids = get_posts( [
 		'post_type'      => 'product',
 		'posts_per_page' => -1,
 		'post_status'    => 'publish',
 		'fields'         => 'ids',
 		'meta_query'     => [
-			[ 'key' => '_coach_post_id', 'value' => $coach_post_id ],
+			[ 'key' => '_coach_post_id', 'value' => strval( $coach_post_id ) ],
 		],
 	] );
+
+	if ( empty( $camp_ids ) && function_exists( 'jet_engine' ) && class_exists( 'RM_Camp' ) ) {
+		$relation = RM_Camp::find_relation( 'Coach to Camps' );
+		if ( $relation && method_exists( $relation, 'get_children' ) ) {
+			$children = $relation->get_children( $coach_post_id, 'ids' );
+			if ( is_array( $children ) ) {
+				$camp_ids = array_map( 'intval', $children );
+			}
+		}
+	}
+
+	if ( empty( $camp_ids ) ) {
+		$camp_ids = get_posts( [
+			'post_type'      => 'product',
+			'posts_per_page' => -1,
+			'post_status'    => 'publish',
+			'fields'         => 'ids',
+			'author'         => $user_id,
+			'tax_query'      => [
+				[ 'taxonomy' => 'product_cat', 'field' => 'slug', 'terms' => 'camp' ],
+			],
+		] );
+	}
 
 	$earnings = [ 'available' => 0, 'escrow' => 0, 'total' => 0, 'next_payout' => null, 'transactions' => [] ];
 
