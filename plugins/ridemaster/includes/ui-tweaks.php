@@ -1929,228 +1929,120 @@ add_action( 'wp_footer', function() {
 } );
 
 // =========================================================================
-// 10. COACH DASHBOARD — STRIPE CONNECT WIDGET
+// 10. SHORTCODE: [rm_stripe_connect] — Stripe Connect widget for coach dashboard
 // =========================================================================
 
-add_action( 'wp_footer', function() {
-	// Only on coach dashboard homepage (not sub-pages).
-	if ( strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
-		return;
-	}
-	if ( strpos( $_SERVER['REQUEST_URI'], '/profile' ) !== false
-		|| strpos( $_SERVER['REQUEST_URI'], '/create-' ) !== false ) {
-		return;
-	}
-
+add_shortcode( 'rm_stripe_connect', function() {
 	$user_id = get_current_user_id();
 	if ( ! $user_id ) {
-		return;
+		return '';
 	}
 	$user = get_userdata( $user_id );
 	if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
-		return;
+		return '';
 	}
 
 	$stripe_account_id = get_user_meta( $user_id, 'stripe_account_id', true );
 	$stripe_complete   = get_user_meta( $user_id, 'stripe_onboarding_complete', true ) === '1';
 	$nonce             = wp_create_nonce( 'rm_stripe_connect' );
 	$ajax_url          = admin_url( 'admin-ajax.php' );
+
+	ob_start();
 	?>
 	<style>
-	.rm-stripe-widget {
-		background: #fff;
-		border-radius: 12px;
-		padding: 20px 24px;
-		box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-		margin-bottom: 24px;
-		border: 1px solid #e5e7eb;
-	}
-	.rm-stripe-widget h3 {
-		margin: 0 0 12px;
-		font-size: 16px;
-		font-weight: 600;
-		color: #1f2937;
-	}
-	.rm-stripe-status {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		padding: 6px 14px;
-		border-radius: 20px;
-		font-size: 13px;
-		font-weight: 600;
-	}
-	.rm-stripe-status--active {
-		background: #d1fae5;
-		color: #065f46;
-	}
-	.rm-stripe-status--pending {
-		background: #fef3c7;
-		color: #92400e;
-	}
-	.rm-stripe-status--disconnected {
-		background: #f3f4f6;
-		color: #6b7280;
-	}
-	.rm-stripe-connect-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		margin-top: 12px;
-		padding: 10px 20px;
-		background: #635bff;
-		color: #fff;
-		border: none;
-		border-radius: 8px;
-		font-size: 14px;
-		font-weight: 600;
-		cursor: pointer;
-		transition: background 0.2s;
-	}
-	.rm-stripe-connect-btn:hover {
-		background: #5147e5;
-	}
-	.rm-stripe-disconnect {
-		display: inline-block;
-		margin-top: 8px;
-		font-size: 12px;
-		color: #9ca3af;
-		cursor: pointer;
-		border: none;
-		background: none;
-		text-decoration: underline;
-	}
-	.rm-stripe-disconnect:hover {
-		color: #ef4444;
-	}
+	.rm-stripe-widget { background:#fff; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,0.08); border:1px solid #e5e7eb; }
+	.rm-stripe-widget h3 { margin:0 0 12px; font-size:16px; font-weight:600; color:#1f2937; }
+	.rm-stripe-status { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; }
+	.rm-stripe-status--active { background:#d1fae5; color:#065f46; }
+	.rm-stripe-status--pending { background:#fef3c7; color:#92400e; }
+	.rm-stripe-status--disconnected { background:#f3f4f6; color:#6b7280; }
+	.rm-stripe-connect-btn { display:inline-flex; align-items:center; gap:8px; margin-top:12px; padding:10px 20px; background:#635bff; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; transition:background 0.2s; }
+	.rm-stripe-connect-btn:hover { background:#5147e5; }
+	.rm-stripe-disconnect { display:inline-block; margin-top:8px; font-size:12px; color:#9ca3af; cursor:pointer; border:none; background:none; text-decoration:underline; }
+	.rm-stripe-disconnect:hover { color:#ef4444; }
 	</style>
+	<div class="rm-stripe-widget" id="rm-stripe-widget">
+		<h3>Stripe Payments</h3>
+		<?php if ( $stripe_account_id && $stripe_complete ) : ?>
+			<span class="rm-stripe-status rm-stripe-status--active">&#10003; Stripe Connected</span>
+			<br><button type="button" class="rm-stripe-disconnect" id="rm-stripe-disconnect">Disconnect</button>
+		<?php elseif ( $stripe_account_id ) : ?>
+			<span class="rm-stripe-status rm-stripe-status--pending">&#9888; Setup incomplete</span>
+			<br><button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Complete Stripe Setup</button>
+		<?php else : ?>
+			<span class="rm-stripe-status rm-stripe-status--disconnected">Not connected</span>
+			<p style="margin:8px 0 0;font-size:13px;color:#6b7280;">Connect your Stripe account to receive payments from your camps.</p>
+			<button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Connect with Stripe</button>
+		<?php endif; ?>
+	</div>
 	<script>
 	(function() {
 		var nonce = <?php echo wp_json_encode( $nonce ); ?>;
 		var ajaxUrl = <?php echo wp_json_encode( $ajax_url ); ?>;
-		var isConnected = <?php echo $stripe_account_id ? 'true' : 'false'; ?>;
-		var isComplete = <?php echo $stripe_complete ? 'true' : 'false'; ?>;
 
-		function init() {
-			var container = document.querySelector('.site-main .elementor-widget-wrap') ||
-							document.querySelector('.site-main .e-con-inner') ||
-							document.querySelector('#content .elementor-widget-wrap') ||
-							document.querySelector('#content .e-con-inner') ||
-							document.querySelector('main .elementor-widget-wrap') ||
-							document.querySelector('main .e-con-inner') ||
-							document.querySelector('main') ||
-							document.querySelector('.site-main');
-			if ( ! container ) return;
-			if ( document.getElementById('rm-stripe-widget') ) return;
-
-			var widget = document.createElement('div');
-			widget.id = 'rm-stripe-widget';
-			widget.className = 'rm-stripe-widget';
-
-			if ( isConnected && isComplete ) {
-				widget.innerHTML =
-					'<h3>Stripe Payments</h3>' +
-					'<span class="rm-stripe-status rm-stripe-status--active">&#10003; Stripe Connected</span>' +
-					'<br><button type="button" class="rm-stripe-disconnect" id="rm-stripe-disconnect">Disconnect</button>';
-			} else if ( isConnected && ! isComplete ) {
-				widget.innerHTML =
-					'<h3>Stripe Payments</h3>' +
-					'<span class="rm-stripe-status rm-stripe-status--pending">&#9888; Setup incomplete</span>' +
-					'<br><button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Complete Stripe Setup</button>';
-			} else {
-				widget.innerHTML =
-					'<h3>Stripe Payments</h3>' +
-					'<span class="rm-stripe-status rm-stripe-status--disconnected">Not connected</span>' +
-					'<p style="margin:8px 0 0;font-size:13px;color:#6b7280;">Connect your Stripe account to receive payments from your camps.</p>' +
-					'<button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Connect with Stripe</button>';
-			}
-
-			container.prepend(widget);
-
-			var connectBtn = document.getElementById('rm-stripe-connect-btn');
-			if ( connectBtn ) {
-				connectBtn.addEventListener('click', function() {
-					connectBtn.disabled = true;
-					connectBtn.textContent = 'Redirecting...';
-					var fd = new FormData();
-					fd.append('action', 'rm_stripe_connect');
-					fd.append('nonce', nonce);
-					fetch(ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
-						.then(function(r) { return r.json(); })
-						.then(function(resp) {
-							if ( resp.success && resp.data.url ) {
-								window.location.href = resp.data.url;
-							} else {
-								var msg = (resp.data && typeof resp.data === 'string') ? resp.data : 'Error connecting to Stripe.';
-								alert(msg);
-								connectBtn.disabled = false;
-								connectBtn.textContent = 'Connect with Stripe';
-							}
-						})
-						.catch(function() {
-							alert('Network error. Please try again.');
+		var connectBtn = document.getElementById('rm-stripe-connect-btn');
+		if ( connectBtn ) {
+			connectBtn.addEventListener('click', function() {
+				connectBtn.disabled = true;
+				connectBtn.textContent = 'Redirecting...';
+				var fd = new FormData();
+				fd.append('action', 'rm_stripe_connect');
+				fd.append('nonce', nonce);
+				fetch(ajaxUrl, { method:'POST', body:fd, credentials:'same-origin' })
+					.then(function(r) { return r.json(); })
+					.then(function(resp) {
+						if ( resp.success && resp.data.url ) {
+							window.location.href = resp.data.url;
+						} else {
+							alert(resp.data || 'Error connecting to Stripe.');
 							connectBtn.disabled = false;
 							connectBtn.textContent = 'Connect with Stripe';
-						});
-				});
-			}
-
-			var disconnectBtn = document.getElementById('rm-stripe-disconnect');
-			if ( disconnectBtn ) {
-				disconnectBtn.addEventListener('click', function() {
-					if ( ! confirm('Are you sure you want to disconnect your Stripe account?') ) return;
-					var fd = new FormData();
-					fd.append('action', 'rm_stripe_disconnect');
-					fd.append('nonce', nonce);
-					fetch(ajaxUrl, { method: 'POST', body: fd, credentials: 'same-origin' })
-						.then(function(r) { return r.json(); })
-						.then(function() { window.location.reload(); });
-				});
-			}
+						}
+					})
+					.catch(function() {
+						alert('Network error. Please try again.');
+						connectBtn.disabled = false;
+						connectBtn.textContent = 'Connect with Stripe';
+					});
+			});
 		}
 
-		if ( document.readyState === 'complete' ) {
-			setTimeout( init, 300 );
-		} else {
-			window.addEventListener('load', function() { setTimeout( init, 300 ); });
+		var disconnectBtn = document.getElementById('rm-stripe-disconnect');
+		if ( disconnectBtn ) {
+			disconnectBtn.addEventListener('click', function() {
+				if ( ! confirm('Are you sure you want to disconnect your Stripe account?') ) return;
+				var fd = new FormData();
+				fd.append('action', 'rm_stripe_disconnect');
+				fd.append('nonce', nonce);
+				fetch(ajaxUrl, { method:'POST', body:fd, credentials:'same-origin' })
+					.then(function(r) { return r.json(); })
+					.then(function() { window.location.reload(); });
+			});
 		}
 	})();
 	</script>
 	<?php
+	return ob_get_clean();
 } );
 
 // =========================================================================
-// 11. COACH DASHBOARD — MY EARNINGS WIDGET + MY PAYMENTS PAGE
+// 11. SHORTCODE: [rm_my_earnings] — Earnings summary widget
 // =========================================================================
 
-add_action( 'wp_footer', function() {
-	if ( strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
-		return;
-	}
-
+/**
+ * Helper: gather earnings data for the current coach.
+ */
+function rm_get_coach_earnings() {
 	$user_id = get_current_user_id();
 	if ( ! $user_id ) {
-		return;
-	}
-	$user = get_userdata( $user_id );
-	if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
-		return;
+		return null;
 	}
 
-	$is_payments_page = strpos( $_SERVER['REQUEST_URI'], '/payments' ) !== false;
-	$is_homepage      = ! $is_payments_page
-		&& strpos( $_SERVER['REQUEST_URI'], '/profile' ) === false
-		&& strpos( $_SERVER['REQUEST_URI'], '/create-' ) === false;
-
-	if ( ! $is_homepage && ! $is_payments_page ) {
-		return;
-	}
-
-	// Gather payment data for this coach.
 	$coach_post_id = get_user_meta( $user_id, 'coach_post_id', true );
-	$stripe_id     = get_user_meta( $user_id, 'stripe_account_id', true );
+	if ( ! $coach_post_id ) {
+		return null;
+	}
 
-	// Get all orders for this coach's camps.
 	$camp_ids = get_posts( [
 		'post_type'      => 'product',
 		'posts_per_page' => -1,
@@ -2161,192 +2053,165 @@ add_action( 'wp_footer', function() {
 		],
 	] );
 
-	$earnings = [
-		'available'   => 0,
-		'escrow'      => 0,
-		'total'       => 0,
-		'next_payout' => null,
-		'transactions' => [],
-	];
+	$earnings = [ 'available' => 0, 'escrow' => 0, 'total' => 0, 'next_payout' => null, 'transactions' => [] ];
 
-	if ( ! empty( $camp_ids ) && function_exists( 'wc_get_orders' ) ) {
-		$orders = wc_get_orders( [
-			'limit'      => 100,
-			'orderby'    => 'date',
-			'order'      => 'DESC',
-			'status'     => [ 'processing', 'completed', 'refunded', 'cancelled' ],
-			'meta_query' => [
-				[ 'key' => '_camp_id', 'value' => $camp_ids, 'compare' => 'IN' ],
-			],
-		] );
-
-		foreach ( $orders as $order ) {
-			$payout_status = $order->get_meta( '_payout_status' );
-			$coach_amount  = floatval( $order->get_meta( '_amount_coach' ) );
-			$hotel_amount  = floatval( $order->get_meta( '_amount_hotel' ) );
-			$total_amount  = floatval( $order->get_total() );
-			$camp_id       = $order->get_meta( '_camp_id' );
-			$payout_date   = $order->get_meta( '_payout_date' );
-
-			// Determine status for display.
-			$display_status = 'escrow';
-			if ( $payout_status === 'paid' ) {
-				$display_status = 'paid';
-				$earnings['available'] += $coach_amount;
-			} elseif ( $payout_status === 'cancelled' ) {
-				$display_status = 'cancelled';
-			} elseif ( $payout_status === 'failed' ) {
-				$display_status = 'error';
-			} else {
-				$earnings['escrow'] += $coach_amount;
-				if ( $payout_date && ( ! $earnings['next_payout'] || $payout_date < $earnings['next_payout']['date'] ) ) {
-					$earnings['next_payout'] = [
-						'date'   => $payout_date,
-						'amount' => $coach_amount,
-					];
-				}
-			}
-
-			$earnings['total'] += $coach_amount;
-
-			// Get rider name.
-			$rider_name = $order->get_billing_first_name() . ' ' . substr( $order->get_billing_last_name(), 0, 1 ) . '.';
-
-			$earnings['transactions'][] = [
-				'date'         => $order->get_date_created() ? $order->get_date_created()->format( 'd/m/Y' ) : '',
-				'camp'         => $camp_id ? get_the_title( $camp_id ) : '—',
-				'rider'        => $rider_name,
-				'total'        => $total_amount,
-				'coach_amount' => $coach_amount,
-				'hotel_amount' => $hotel_amount,
-				'status'       => $display_status,
-				'payout_date'  => $order->get_meta( '_payout_date_actual' ) ?: $payout_date,
-				'refund_pct'   => $order->get_meta( '_cancellation_tier' ),
-			];
-		}
+	if ( empty( $camp_ids ) || ! function_exists( 'wc_get_orders' ) ) {
+		return $earnings;
 	}
 
-	$earnings_json = wp_json_encode( $earnings );
+	$orders = wc_get_orders( [
+		'limit'      => 100,
+		'orderby'    => 'date',
+		'order'      => 'DESC',
+		'status'     => [ 'processing', 'completed', 'refunded', 'cancelled' ],
+		'meta_query' => [
+			[ 'key' => '_camp_id', 'value' => $camp_ids, 'compare' => 'IN' ],
+		],
+	] );
+
+	foreach ( $orders as $order ) {
+		$payout_status = $order->get_meta( '_payout_status' );
+		$coach_amount  = floatval( $order->get_meta( '_amount_coach' ) );
+		$hotel_amount  = floatval( $order->get_meta( '_amount_hotel' ) );
+		$total_amount  = floatval( $order->get_total() );
+		$camp_id       = $order->get_meta( '_camp_id' );
+		$payout_date   = $order->get_meta( '_payout_date' );
+
+		$display_status = 'escrow';
+		if ( $payout_status === 'paid' ) {
+			$display_status = 'paid';
+			$earnings['available'] += $coach_amount;
+		} elseif ( $payout_status === 'cancelled' ) {
+			$display_status = 'cancelled';
+		} elseif ( $payout_status === 'failed' ) {
+			$display_status = 'error';
+		} else {
+			$earnings['escrow'] += $coach_amount;
+			if ( $payout_date && ( ! $earnings['next_payout'] || $payout_date < $earnings['next_payout']['date'] ) ) {
+				$earnings['next_payout'] = [ 'date' => $payout_date, 'amount' => $coach_amount ];
+			}
+		}
+		$earnings['total'] += $coach_amount;
+
+		$rider_name = $order->get_billing_first_name() . ' ' . substr( $order->get_billing_last_name(), 0, 1 ) . '.';
+		$earnings['transactions'][] = [
+			'date'         => $order->get_date_created() ? $order->get_date_created()->format( 'd/m/Y' ) : '',
+			'camp'         => $camp_id ? get_the_title( $camp_id ) : '—',
+			'rider'        => $rider_name,
+			'total'        => $total_amount,
+			'coach_amount' => $coach_amount,
+			'hotel_amount' => $hotel_amount,
+			'status'       => $display_status,
+			'payout_date'  => $order->get_meta( '_payout_date_actual' ) ?: $payout_date,
+			'refund_pct'   => $order->get_meta( '_cancellation_tier' ),
+		];
+	}
+
+	return $earnings;
+}
+
+add_shortcode( 'rm_my_earnings', function() {
+	$user_id = get_current_user_id();
+	if ( ! $user_id ) {
+		return '';
+	}
+	$user = get_userdata( $user_id );
+	if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+		return '';
+	}
+
+	$data = rm_get_coach_earnings();
+	if ( ! $data ) {
+		return '';
+	}
+
+	$fmt = function( $v ) { return number_format( $v, 2, ',', ' ' ) . ' &euro;'; };
+	$next = $data['next_payout']
+		? $fmt( $data['next_payout']['amount'] ) . ' on ' . esc_html( $data['next_payout']['date'] )
+		: 'None scheduled';
+
+	ob_start();
 	?>
 	<style>
-	.rm-earnings-widget {
-		background: #fff;
-		border-radius: 12px;
-		padding: 20px 24px;
-		box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-		margin-bottom: 24px;
-		border: 1px solid #e5e7eb;
-	}
-	.rm-earnings-widget h3 { margin: 0 0 16px; font-size: 16px; font-weight: 600; color: #1f2937; }
-	.rm-earnings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
-	.rm-earnings-card { text-align: center; }
-	.rm-earnings-card .rm-amount { font-size: 22px; font-weight: 700; color: #1f2937; }
-	.rm-earnings-card .rm-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
-	.rm-earnings-card .rm-amount--teal { color: #0d9488; }
-
-	.rm-payments-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-	.rm-payments-table th { text-align: left; padding: 10px 12px; border-bottom: 2px solid #e5e7eb; font-weight: 600; color: #374151; font-size: 13px; }
-	.rm-payments-table td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
-	.rm-payments-table tr:hover td { background: #f9fafb; }
-	.rm-pay-status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-	.rm-pay-status--escrow { background: #fef3c7; color: #92400e; }
-	.rm-pay-status--paid { background: #d1fae5; color: #065f46; }
-	.rm-pay-status--cancelled { background: #fee2e2; color: #991b1b; }
-	.rm-pay-status--error { background: #fef3c7; color: #dc2626; }
+	.rm-earnings-widget { background:#fff; border-radius:12px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,0.08); border:1px solid #e5e7eb; }
+	.rm-earnings-widget h3 { margin:0 0 16px; font-size:16px; font-weight:600; color:#1f2937; }
+	.rm-earnings-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; }
+	.rm-earnings-card { text-align:center; }
+	.rm-earnings-card .rm-amount { font-size:22px; font-weight:700; color:#1f2937; }
+	.rm-earnings-card .rm-label { font-size:12px; color:#6b7280; margin-top:4px; }
+	.rm-earnings-card .rm-amount--teal { color:#0d9488; }
 	</style>
-	<script>
-	(function() {
-		var data = <?php echo $earnings_json; ?>;
-		var isPaymentsPage = <?php echo $is_payments_page ? 'true' : 'false'; ?>;
-		var isHomepage = <?php echo $is_homepage ? 'true' : 'false'; ?>;
-
-		function init() {
-			if ( isHomepage ) { renderEarningsWidget(); }
-			if ( isPaymentsPage ) { renderPaymentsPage(); }
-		}
-
-		function renderEarningsWidget() {
-			var container = document.querySelector('.elementor-widget-wrap') ||
-							document.querySelector('.e-con-inner') ||
-							document.querySelector('main');
-			if ( ! container || document.getElementById('rm-earnings-widget') ) return;
-
-			var stripeWidget = document.getElementById('rm-stripe-widget');
-
-			var widget = document.createElement('div');
-			widget.id = 'rm-earnings-widget';
-			widget.className = 'rm-earnings-widget';
-
-			var nextPayout = data.next_payout
-				? formatPrice(data.next_payout.amount) + ' on ' + data.next_payout.date
-				: 'None scheduled';
-
-			widget.innerHTML =
-				'<h3>My Earnings</h3>' +
-				'<div class="rm-earnings-grid">' +
-					'<div class="rm-earnings-card"><div class="rm-amount rm-amount--teal">' + formatPrice(data.available) + '</div><div class="rm-label">Available (paid out)</div></div>' +
-					'<div class="rm-earnings-card"><div class="rm-amount">' + formatPrice(data.escrow) + '</div><div class="rm-label">In escrow</div></div>' +
-					'<div class="rm-earnings-card"><div class="rm-amount">' + formatPrice(data.total) + '</div><div class="rm-label">Total earned</div></div>' +
-					'<div class="rm-earnings-card"><div class="rm-amount" style="font-size:14px;">' + nextPayout + '</div><div class="rm-label">Next payout</div></div>' +
-				'</div>';
-
-			if ( stripeWidget && stripeWidget.nextSibling ) {
-				stripeWidget.parentNode.insertBefore(widget, stripeWidget.nextSibling);
-			} else {
-				container.prepend(widget);
-			}
-		}
-
-		function renderPaymentsPage() {
-			var container = document.querySelector('.elementor-widget-wrap') ||
-							document.querySelector('.e-con-inner') ||
-							document.querySelector('main');
-			if ( ! container || document.getElementById('rm-payments-page') ) return;
-
-			var div = document.createElement('div');
-			div.id = 'rm-payments-page';
-
-			if ( data.transactions.length === 0 ) {
-				div.innerHTML = '<p style="color:#6b7280;">No transactions yet. Your payments will appear here when riders book your camps.</p>';
-				container.prepend(div);
-				return;
-			}
-
-			var rows = '';
-			data.transactions.forEach(function(tx) {
-				var statusClass = 'rm-pay-status--' + tx.status;
-				var statusLabel = tx.status === 'escrow' ? 'In escrow' :
-								 tx.status === 'paid' ? 'Paid' + (tx.payout_date ? ' ' + tx.payout_date : '') :
-								 tx.status === 'cancelled' ? 'Cancelled' + (tx.refund_pct ? ' (' + tx.refund_pct + '%)' : '') :
-								 'Error';
-
-				rows += '<tr>' +
-					'<td>' + tx.date + '</td>' +
-					'<td>' + tx.camp + '</td>' +
-					'<td>' + tx.rider + '</td>' +
-					'<td>' + formatPrice(tx.total) + '</td>' +
-					'<td><strong>' + formatPrice(tx.coach_amount) + '</strong></td>' +
-					'<td>' + (tx.hotel_amount > 0 ? formatPrice(tx.hotel_amount) : '—') + '</td>' +
-					'<td><span class="rm-pay-status ' + statusClass + '">' + statusLabel + '</span></td>' +
-				'</tr>';
-			});
-
-			div.innerHTML =
-				'<table class="rm-payments-table">' +
-					'<thead><tr><th>Date</th><th>Camp</th><th>Rider</th><th>Total</th><th>My Share</th><th>Hotel</th><th>Status</th></tr></thead>' +
-					'<tbody>' + rows + '</tbody>' +
-				'</table>';
-
-			container.prepend(div);
-		}
-
-		function formatPrice(amount) {
-			return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount || 0);
-		}
-
-		if ( document.readyState === 'complete' ) { setTimeout(init, 500); }
-		else { window.addEventListener('load', function() { setTimeout(init, 500); }); }
-	})();
-	</script>
+	<div class="rm-earnings-widget">
+		<h3>My Earnings</h3>
+		<div class="rm-earnings-grid">
+			<div class="rm-earnings-card"><div class="rm-amount rm-amount--teal"><?php echo $fmt( $data['available'] ); ?></div><div class="rm-label">Available (paid out)</div></div>
+			<div class="rm-earnings-card"><div class="rm-amount"><?php echo $fmt( $data['escrow'] ); ?></div><div class="rm-label">In escrow</div></div>
+			<div class="rm-earnings-card"><div class="rm-amount"><?php echo $fmt( $data['total'] ); ?></div><div class="rm-label">Total earned</div></div>
+			<div class="rm-earnings-card"><div class="rm-amount" style="font-size:14px;"><?php echo $next; ?></div><div class="rm-label">Next payout</div></div>
+		</div>
+	</div>
 	<?php
+	return ob_get_clean();
+} );
+
+// =========================================================================
+// 12. SHORTCODE: [rm_my_payments] — Full transaction table
+// =========================================================================
+
+add_shortcode( 'rm_my_payments', function() {
+	$user_id = get_current_user_id();
+	if ( ! $user_id ) {
+		return '';
+	}
+	$user = get_userdata( $user_id );
+	if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+		return '';
+	}
+
+	$data = rm_get_coach_earnings();
+	if ( ! $data ) {
+		return '';
+	}
+
+	$fmt = function( $v ) { return number_format( $v, 2, ',', ' ' ) . ' &euro;'; };
+
+	ob_start();
+	?>
+	<style>
+	.rm-payments-table { width:100%; border-collapse:collapse; font-size:14px; }
+	.rm-payments-table th { text-align:left; padding:10px 12px; border-bottom:2px solid #e5e7eb; font-weight:600; color:#374151; font-size:13px; }
+	.rm-payments-table td { padding:10px 12px; border-bottom:1px solid #f3f4f6; }
+	.rm-payments-table tr:hover td { background:#f9fafb; }
+	.rm-pay-status { display:inline-block; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:600; }
+	.rm-pay-status--escrow { background:#fef3c7; color:#92400e; }
+	.rm-pay-status--paid { background:#d1fae5; color:#065f46; }
+	.rm-pay-status--cancelled { background:#fee2e2; color:#991b1b; }
+	.rm-pay-status--error { background:#fef3c7; color:#dc2626; }
+	</style>
+	<?php if ( empty( $data['transactions'] ) ) : ?>
+		<p style="color:#6b7280;">No transactions yet. Your payments will appear here when riders book your camps.</p>
+	<?php else : ?>
+		<table class="rm-payments-table">
+			<thead><tr><th>Date</th><th>Camp</th><th>Rider</th><th>Total</th><th>My Share</th><th>Hotel</th><th>Status</th></tr></thead>
+			<tbody>
+			<?php foreach ( $data['transactions'] as $tx ) :
+				$status_label = $tx['status'] === 'escrow' ? 'In escrow' :
+								( $tx['status'] === 'paid' ? 'Paid' . ( $tx['payout_date'] ? ' ' . esc_html( $tx['payout_date'] ) : '' ) :
+								( $tx['status'] === 'cancelled' ? 'Cancelled' . ( $tx['refund_pct'] ? ' (' . $tx['refund_pct'] . '%)' : '' ) : 'Error' ) );
+			?>
+				<tr>
+					<td><?php echo esc_html( $tx['date'] ); ?></td>
+					<td><?php echo esc_html( $tx['camp'] ); ?></td>
+					<td><?php echo esc_html( $tx['rider'] ); ?></td>
+					<td><?php echo $fmt( $tx['total'] ); ?></td>
+					<td><strong><?php echo $fmt( $tx['coach_amount'] ); ?></strong></td>
+					<td><?php echo $tx['hotel_amount'] > 0 ? $fmt( $tx['hotel_amount'] ) : '—'; ?></td>
+					<td><span class="rm-pay-status rm-pay-status--<?php echo esc_attr( $tx['status'] ); ?>"><?php echo esc_html( $status_label ); ?></span></td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php endif; ?>
+	<?php
+	return ob_get_clean();
 } );
