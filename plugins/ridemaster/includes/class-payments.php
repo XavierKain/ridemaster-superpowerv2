@@ -55,6 +55,10 @@ class RM_Payments {
 
 		// Attach insurance PDF to order confirmation email.
 		add_filter( 'woocommerce_email_attachments', [ $this, 'attach_insurance_pdf' ], 10, 4 );
+
+		// Demo data AJAX handlers.
+		add_action( 'wp_ajax_rm_generate_demo_data', [ $this, 'ajax_generate_demo_data' ] );
+		add_action( 'wp_ajax_rm_clean_demo_data', [ $this, 'ajax_clean_demo_data' ] );
 	}
 
 	// =========================================================================
@@ -244,6 +248,10 @@ class RM_Payments {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+
+		// Get coaches for the demo data selector.
+		$coaches = get_posts( [ 'post_type' => 'coach', 'posts_per_page' => -1, 'post_status' => 'any' ] );
+		$demo_nonce = wp_create_nonce( 'rm_demo_data' );
 		?>
 		<div class="wrap">
 			<h1>RideMaster Settings</h1>
@@ -254,6 +262,91 @@ class RM_Payments {
 				submit_button();
 				?>
 			</form>
+
+			<hr>
+			<h2>Demo Data</h2>
+			<p class="description">Generate realistic demo bookings to preview the coach dashboard and admin payments views. Demo orders are tagged and can be cleaned up easily.</p>
+
+			<table class="form-table">
+				<tr>
+					<th>Coach</th>
+					<td>
+						<select id="rm-demo-coach">
+							<option value="">— Select a coach —</option>
+							<?php foreach ( $coaches as $coach ) : ?>
+								<option value="<?php echo esc_attr( $coach->ID ); ?>">
+									<?php echo esc_html( $coach->post_title ); ?> (ID: <?php echo $coach->ID; ?>)
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>Number of bookings</th>
+					<td>
+						<select id="rm-demo-count">
+							<option value="5">5 bookings</option>
+							<option value="10" selected>10 bookings</option>
+							<option value="20">20 bookings</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>Actions</th>
+					<td>
+						<button type="button" class="button button-primary" id="rm-generate-demo" style="margin-right:12px;">
+							Generate Demo Data
+						</button>
+						<button type="button" class="button" id="rm-clean-demo" style="color:#dc2626;">
+							Clean All Demo Data
+						</button>
+						<p id="rm-demo-status" style="margin-top:10px;font-weight:600;"></p>
+					</td>
+				</tr>
+			</table>
+
+			<script>
+			jQuery(function($) {
+				$('#rm-generate-demo').on('click', function() {
+					var coachId = $('#rm-demo-coach').val();
+					if ( ! coachId ) { alert('Please select a coach.'); return; }
+					var btn = $(this);
+					btn.prop('disabled', true).text('Generating...');
+					$('#rm-demo-status').text('').css('color', '');
+					$.post(ajaxurl, {
+						action: 'rm_generate_demo_data',
+						nonce: '<?php echo $demo_nonce; ?>',
+						coach_id: coachId,
+						count: $('#rm-demo-count').val()
+					}, function(resp) {
+						btn.prop('disabled', false).text('Generate Demo Data');
+						if ( resp.success ) {
+							$('#rm-demo-status').text(resp.data.message).css('color', '#065f46');
+						} else {
+							$('#rm-demo-status').text(resp.data || 'Error').css('color', '#dc2626');
+						}
+					});
+				});
+
+				$('#rm-clean-demo').on('click', function() {
+					if ( ! confirm('Delete ALL demo orders? This cannot be undone.') ) return;
+					var btn = $(this);
+					btn.prop('disabled', true).text('Cleaning...');
+					$('#rm-demo-status').text('').css('color', '');
+					$.post(ajaxurl, {
+						action: 'rm_clean_demo_data',
+						nonce: '<?php echo $demo_nonce; ?>'
+					}, function(resp) {
+						btn.prop('disabled', false).text('Clean All Demo Data');
+						if ( resp.success ) {
+							$('#rm-demo-status').text(resp.data.message).css('color', '#065f46');
+						} else {
+							$('#rm-demo-status').text(resp.data || 'Error').css('color', '#dc2626');
+						}
+					});
+				});
+			});
+			</script>
 		</div>
 		<?php
 	}
@@ -883,5 +976,222 @@ class RM_Payments {
 		}
 
 		return $attachments;
+	}
+
+	// =========================================================================
+	// DEMO DATA
+	// =========================================================================
+
+	/**
+	 * AJAX: Generate demo booking data for a coach.
+	 */
+	public function ajax_generate_demo_data() {
+		check_ajax_referer( 'rm_demo_data', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Not authorized.' );
+		}
+
+		$coach_post_id = intval( $_POST['coach_id'] ?? 0 );
+		$count         = intval( $_POST['count'] ?? 10 );
+		$count         = max( 1, min( 50, $count ) );
+
+		if ( ! $coach_post_id ) {
+			wp_send_json_error( 'Invalid coach.' );
+		}
+
+		$coach_post = get_post( $coach_post_id );
+		if ( ! $coach_post || $coach_post->post_type !== 'coach' ) {
+			wp_send_json_error( 'Coach not found.' );
+		}
+
+		$coach_user_id   = $coach_post->post_author;
+		$coach_stripe_id = get_user_meta( $coach_user_id, 'stripe_account_id', true ) ?: 'acct_demo_' . $coach_post_id;
+
+		// Find this coach's camps.
+		$camp_ids = get_posts( [
+			'post_type'      => 'product',
+			'posts_per_page' => -1,
+			'post_status'    => 'publish',
+			'fields'         => 'ids',
+			'meta_query'     => [
+				[ 'key' => '_coach_post_id', 'value' => $coach_post_id ],
+			],
+		] );
+
+		if ( empty( $camp_ids ) ) {
+			wp_send_json_error( 'This coach has no published camps. Create at least one camp first.' );
+		}
+
+		// Demo rider names.
+		$riders = [
+			[ 'first' => 'Sophie', 'last' => 'Martin' ],
+			[ 'first' => 'Lucas', 'last' => 'Bernard' ],
+			[ 'first' => 'Emma', 'last' => 'Dubois' ],
+			[ 'first' => 'Hugo', 'last' => 'Thomas' ],
+			[ 'first' => 'Lea', 'last' => 'Robert' ],
+			[ 'first' => 'Nathan', 'last' => 'Richard' ],
+			[ 'first' => 'Chloe', 'last' => 'Petit' ],
+			[ 'first' => 'Louis', 'last' => 'Durand' ],
+			[ 'first' => 'Alice', 'last' => 'Leroy' ],
+			[ 'first' => 'Gabriel', 'last' => 'Moreau' ],
+			[ 'first' => 'Jade', 'last' => 'Simon' ],
+			[ 'first' => 'Raphael', 'last' => 'Laurent' ],
+			[ 'first' => 'Lina', 'last' => 'Michel' ],
+			[ 'first' => 'Adam', 'last' => 'Garcia' ],
+			[ 'first' => 'Manon', 'last' => 'David' ],
+			[ 'first' => 'Jules', 'last' => 'Bertrand' ],
+			[ 'first' => 'Camille', 'last' => 'Roux' ],
+			[ 'first' => 'Arthur', 'last' => 'Vincent' ],
+			[ 'first' => 'Sarah', 'last' => 'Fournier' ],
+			[ 'first' => 'Tom', 'last' => 'Morel' ],
+		];
+
+		// Payout statuses to distribute.
+		$status_distribution = [
+			'pending'   => 0.40,
+			'paid'      => 0.35,
+			'cancelled' => 0.15,
+			'failed'    => 0.10,
+		];
+
+		$commission_rate = floatval( get_option( 'rm_commission_rate', 0 ) ) / 100;
+		$payout_delay    = intval( get_option( 'rm_payout_delay_days', 15 ) );
+		$created_count   = 0;
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$camp_id = $camp_ids[ array_rand( $camp_ids ) ];
+			$product = wc_get_product( $camp_id );
+			if ( ! $product ) {
+				continue;
+			}
+
+			$price        = floatval( $product->get_price() ) ?: rand( 500, 2000 );
+			$quantity     = rand( 1, 3 );
+			$total        = $price * $quantity;
+			$rider        = $riders[ $i % count( $riders ) ];
+			$hotel_amount = floatval( get_post_meta( $camp_id, '_hotel_amount', true ) ) * $quantity;
+			$commission   = round( $total * $commission_rate, 2 );
+			$coach_amount = round( $total - $commission - $hotel_amount, 2 );
+
+			$hotel_id        = get_post_meta( $camp_id, '_hotel_id', true );
+			$hotel_stripe_id = $hotel_id ? ( get_post_meta( $hotel_id, 'hotel_stripe_account_id', true ) ?: 'acct_hotel_demo_' . $hotel_id ) : '';
+
+			// Determine payout status based on distribution.
+			$rand = mt_rand( 0, 100 ) / 100;
+			$cumulative = 0;
+			$payout_status = 'pending';
+			foreach ( $status_distribution as $status => $pct ) {
+				$cumulative += $pct;
+				if ( $rand <= $cumulative ) {
+					$payout_status = $status;
+					break;
+				}
+			}
+
+			// Camp start date: random between 10 days ago and 60 days from now.
+			$camp_start_offset = rand( -10, 60 );
+			$camp_start_date   = gmdate( 'Y-m-d', strtotime( "+{$camp_start_offset} days" ) );
+			$payout_date       = gmdate( 'Y-m-d', strtotime( $camp_start_date ) - ( $payout_delay * DAY_IN_SECONDS ) );
+
+			// Order date: random between 60 days ago and 5 days ago.
+			$order_date_offset = rand( 5, 60 );
+			$order_date        = gmdate( 'Y-m-d H:i:s', strtotime( "-{$order_date_offset} days" ) );
+
+			// Create the WooCommerce order.
+			$order = wc_create_order( [
+				'status' => $payout_status === 'paid' ? 'completed' : ( in_array( $payout_status, [ 'cancelled' ], true ) ? 'cancelled' : 'processing' ),
+			] );
+
+			if ( is_wp_error( $order ) ) {
+				continue;
+			}
+
+			// Add product.
+			$order->add_product( $product, $quantity );
+
+			// Set billing info.
+			$order->set_billing_first_name( $rider['first'] );
+			$order->set_billing_last_name( $rider['last'] );
+			$order->set_billing_email( strtolower( $rider['first'] ) . '.' . strtolower( $rider['last'] ) . '@demo.ridemaster.eu' );
+			$order->set_billing_country( 'FR' );
+			$order->set_date_created( $order_date );
+			$order->set_total( $total );
+			$order->set_payment_method( 'ridemaster_stripe' );
+			$order->set_payment_method_title( 'Credit Card (Stripe)' );
+
+			// Set all payment metas.
+			$order->update_meta_data( '_rm_demo_order', '1' );
+			$order->update_meta_data( '_stripe_payment_intent_id', 'pi_demo_' . $order->get_id() );
+			$order->update_meta_data( '_camp_id', $camp_id );
+			$order->update_meta_data( '_coach_stripe_account_id', $coach_stripe_id );
+			$order->update_meta_data( '_hotel_stripe_account_id', $hotel_stripe_id );
+			$order->update_meta_data( '_amount_total', $total );
+			$order->update_meta_data( '_amount_commission', $commission );
+			$order->update_meta_data( '_amount_hotel', $hotel_amount );
+			$order->update_meta_data( '_amount_coach', $coach_amount );
+			$order->update_meta_data( '_camp_start_date', $camp_start_date );
+			$order->update_meta_data( '_payout_status', $payout_status );
+			$order->update_meta_data( '_payout_date', $payout_date );
+
+			// Add extra metas based on status.
+			if ( $payout_status === 'paid' ) {
+				$order->update_meta_data( '_payout_date_actual', gmdate( 'Y-m-d', strtotime( $payout_date ) + rand( 0, 2 ) * DAY_IN_SECONDS ) );
+				$order->update_meta_data( '_transfer_coach_id', 'tr_demo_coach_' . $order->get_id() );
+				if ( $hotel_amount > 0 ) {
+					$order->update_meta_data( '_transfer_hotel_id', 'tr_demo_hotel_' . $order->get_id() );
+				}
+			}
+
+			if ( $payout_status === 'cancelled' ) {
+				$tiers = [ 100, 90, 50, 25 ];
+				$tier  = $tiers[ array_rand( $tiers ) ];
+				$refund_amount = round( $total * $tier / 100, 2 );
+				$order->update_meta_data( '_cancellation_date', gmdate( 'Y-m-d H:i:s', strtotime( "-" . rand( 1, 30 ) . " days" ) ) );
+				$order->update_meta_data( '_cancellation_by', rand( 0, 3 ) === 0 ? 'coach' : 'rider' );
+				$order->update_meta_data( '_cancellation_tier', $tier );
+				$order->update_meta_data( '_refund_amount', $refund_amount );
+				$order->update_meta_data( '_refund_stripe_id', 're_demo_' . $order->get_id() );
+			}
+
+			$order->add_order_note( 'Demo order generated by RideMaster.' );
+			$order->save();
+			$created_count++;
+		}
+
+		wp_send_json_success( [
+			'message' => sprintf( '%d demo orders created for coach "%s".', $created_count, $coach_post->post_title ),
+			'count'   => $created_count,
+		] );
+	}
+
+	/**
+	 * AJAX: Clean all demo data.
+	 */
+	public function ajax_clean_demo_data() {
+		check_ajax_referer( 'rm_demo_data', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Not authorized.' );
+		}
+
+		$demo_orders = wc_get_orders( [
+			'limit'      => -1,
+			'status'     => 'any',
+			'meta_query' => [
+				[ 'key' => '_rm_demo_order', 'value' => '1' ],
+			],
+		] );
+
+		$deleted = 0;
+		foreach ( $demo_orders as $order ) {
+			$order->delete( true ); // Force delete (bypass trash).
+			$deleted++;
+		}
+
+		wp_send_json_success( [
+			'message' => sprintf( '%d demo orders permanently deleted.', $deleted ),
+			'count'   => $deleted,
+		] );
 	}
 }
