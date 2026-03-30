@@ -20,6 +20,9 @@ class RM_Hotel {
 
 		// Stamp _coach_post_id on new hotels (ownership).
 		add_action( 'save_post_hotel', [ $this, 'stamp_coach' ], 10, 3 );
+
+		// Filter hotel queries so coaches only see their own hotels.
+		add_action( 'pre_get_posts', [ $this, 'filter_hotels_by_coach' ] );
 	}
 
 	/**
@@ -51,7 +54,7 @@ class RM_Hotel {
 		}
 
 		// Only proceed if we have the minimum required info.
-		$hotel_name  = get_post_meta( $post_id, 'hotel_name', true );
+		$hotel_name  = get_the_title( $post_id );
 		$hotel_iban  = get_post_meta( $post_id, 'hotel_iban', true );
 		$hotel_country = get_post_meta( $post_id, 'hotel_country', true );
 
@@ -204,5 +207,41 @@ class RM_Hotel {
 		$account_id = get_post_meta( $hotel_post_id, 'hotel_stripe_account_id', true );
 		$status     = get_post_meta( $hotel_post_id, 'hotel_stripe_status', true );
 		return ! empty( $account_id ) && in_array( $status, [ 'verified', 'pending' ], true );
+	}
+
+	/**
+	 * Filter hotel queries so non-admin users only see their own hotels.
+	 * This affects JetFormBuilder select fields, JetEngine listings, and any WP_Query for hotels.
+	 */
+	public function filter_hotels_by_coach( $query ) {
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return; // Don't filter in admin (admins see all).
+		}
+
+		if ( $query->get( 'post_type' ) !== 'hotel' ) {
+			return;
+		}
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			return;
+		}
+
+		// Admins see all hotels.
+		if ( current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$coach_post_id = get_user_meta( $user_id, 'coach_post_id', true );
+		if ( ! $coach_post_id ) {
+			return;
+		}
+
+		$meta_query = $query->get( 'meta_query' ) ?: [];
+		$meta_query[] = [
+			'key'   => '_coach_post_id',
+			'value' => $coach_post_id,
+		];
+		$query->set( 'meta_query', $meta_query );
 	}
 }

@@ -2032,8 +2032,12 @@ add_action( 'wp_footer', function() {
 		var isComplete = <?php echo $stripe_complete ? 'true' : 'false'; ?>;
 
 		function init() {
-			var container = document.querySelector('.elementor-widget-wrap') ||
-							document.querySelector('.e-con-inner') ||
+			var container = document.querySelector('.site-main .elementor-widget-wrap') ||
+							document.querySelector('.site-main .e-con-inner') ||
+							document.querySelector('#content .elementor-widget-wrap') ||
+							document.querySelector('#content .e-con-inner') ||
+							document.querySelector('main .elementor-widget-wrap') ||
+							document.querySelector('main .e-con-inner') ||
 							document.querySelector('main') ||
 							document.querySelector('.site-main');
 			if ( ! container ) return;
