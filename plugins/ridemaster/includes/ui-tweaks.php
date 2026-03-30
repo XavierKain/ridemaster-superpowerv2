@@ -472,6 +472,33 @@ add_action( 'wp_head', function() {
 		position: relative !important;
 	}
 
+	/* --- LABEL ALIGNMENT --- */
+	.jet-form-builder-row {
+		align-items: center !important;
+	}
+
+	.jet-form-builder-row .jet-form-builder__label {
+		align-self: center !important;
+	}
+
+	/* For textarea/wysiwyg rows, keep label at top */
+	.jet-form-builder-row:has(textarea),
+	.jet-form-builder-row:has(.jet-form-builder-file-upload),
+	.jet-form-builder-row:has(.mce-tinymce),
+	.jet-form-builder-row.field-type-repeater-field,
+	.jet-form-builder-row:has(.jet-form-builder__field-wrap--map) {
+		align-items: flex-start !important;
+	}
+
+	.jet-form-builder-row:has(textarea) .jet-form-builder__label,
+	.jet-form-builder-row:has(.jet-form-builder-file-upload) .jet-form-builder__label,
+	.jet-form-builder-row:has(.mce-tinymce) .jet-form-builder__label,
+	.jet-form-builder-row.field-type-repeater-field .jet-form-builder__label,
+	.jet-form-builder-row:has(.jet-form-builder__field-wrap--map) .jet-form-builder__label {
+		align-self: flex-start !important;
+		padding-top: 10px !important;
+	}
+
 	/* --- REPEATER --- */
 	.jet-form-builder-repeater__row {
 		display: flex !important;
@@ -1737,12 +1764,28 @@ add_action( 'wp_footer', function() {
 	if ( ! empty( $spot_ids ) ) {
 		$inline_edit = new RM_Inline_Edit();
 		foreach ( $spot_ids as $sid ) {
-			// Deletable only if no linked camps.
 			$spot_data[ $sid ] = ! $inline_edit->spot_has_camps( $sid );
 		}
 	}
 
-	if ( empty( $camp_data ) && empty( $spot_data ) ) {
+	// --- Hotel data ---
+	$hotel_ids = get_posts( [
+		'post_type'      => 'hotel',
+		'posts_per_page' => -1,
+		'post_status'    => 'publish',
+		'fields'         => 'ids',
+		'meta_query'     => [
+			[ 'key' => '_coach_post_id', 'value' => $coach_post_id ],
+		],
+	] );
+
+	$hotel_data = [];
+	foreach ( $hotel_ids as $hid ) {
+		// Hotels can always be deleted (no dependency check for now).
+		$hotel_data[ $hid ] = true;
+	}
+
+	if ( empty( $camp_data ) && empty( $spot_data ) && empty( $hotel_data ) ) {
 		return;
 	}
 
@@ -1815,6 +1858,7 @@ add_action( 'wp_footer', function() {
 	(function() {
 		var campData = <?php echo wp_json_encode( $camp_data ); ?>;
 		var spotData = <?php echo wp_json_encode( $spot_data ); ?>;
+		var hotelData = <?php echo wp_json_encode( $hotel_data ); ?>;
 		var nonce = <?php echo wp_json_encode( $nonce ); ?>;
 		var ajaxUrl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
 
@@ -1834,13 +1878,15 @@ add_action( 'wp_footer', function() {
 						addMenu( item, numId, 'camp' );
 					} else if ( spotData.hasOwnProperty( numId ) ) {
 						addMenu( item, numId, 'spot' );
+					} else if ( hotelData.hasOwnProperty( numId ) ) {
+						addMenu( item, numId, 'hotel' );
 					}
 				}
 			});
 		}
 
 		function addMenu( item, postId, type ) {
-			var data = type === 'spot' ? spotData : campData;
+			var data = type === 'spot' ? spotData : type === 'hotel' ? hotelData : campData;
 			if ( ! data[ postId ] ) return; // Not deletable.
 			if ( item.querySelector('.rm-camp-menu-wrap') ) return;
 
@@ -1849,11 +1895,16 @@ add_action( 'wp_footer', function() {
 				posParent.style.position = 'relative';
 			}
 
-			var label = type === 'spot' ? 'Delete Spot' : 'Delete Camp';
-			var action = type === 'spot' ? 'rm_delete_spot' : 'rm_delete_camp';
-			var confirmMsg = type === 'spot'
-				? 'Are you sure you want to delete this spot? This action cannot be undone.'
-				: 'Are you sure you want to delete this camp? This action cannot be undone.';
+			var labels = { camp: 'Delete Camp', spot: 'Delete Spot', hotel: 'Delete Hotel' };
+			var actions = { camp: 'rm_delete_camp', spot: 'rm_delete_spot', hotel: 'rm_delete_hotel' };
+			var confirms = {
+				camp: 'Are you sure you want to delete this camp? This action cannot be undone.',
+				spot: 'Are you sure you want to delete this spot? This action cannot be undone.',
+				hotel: 'Are you sure you want to delete this hotel? This action cannot be undone.'
+			};
+			var label = labels[type] || 'Delete';
+			var action = actions[type] || 'rm_delete_camp';
+			var confirmMsg = confirms[type] || 'Are you sure?';
 
 			var wrap = document.createElement('div');
 			wrap.className = 'rm-camp-menu-wrap';

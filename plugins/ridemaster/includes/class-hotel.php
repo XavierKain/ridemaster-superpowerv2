@@ -23,6 +23,9 @@ class RM_Hotel {
 
 		// Filter hotel queries so coaches only see their own hotels.
 		add_action( 'pre_get_posts', [ $this, 'filter_hotels_by_coach' ] );
+
+		// AJAX: delete hotel.
+		add_action( 'wp_ajax_rm_delete_hotel', [ $this, 'ajax_delete_hotel' ] );
 	}
 
 	/**
@@ -207,6 +210,47 @@ class RM_Hotel {
 		$account_id = get_post_meta( $hotel_post_id, 'hotel_stripe_account_id', true );
 		$status     = get_post_meta( $hotel_post_id, 'hotel_stripe_status', true );
 		return ! empty( $account_id ) && in_array( $status, [ 'verified', 'pending' ], true );
+	}
+
+	/**
+	 * AJAX: Trash a hotel owned by the current coach.
+	 */
+	public function ajax_delete_hotel() {
+		check_ajax_referer( 'rm_inline_edit', 'nonce' );
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			wp_send_json_error( 'Not logged in.' );
+		}
+
+		$user = get_userdata( $user_id );
+		if ( ! $user || ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+			wp_send_json_error( 'Not authorized.' );
+		}
+
+		$post_id = intval( $_POST['post_id'] ?? 0 );
+		if ( ! $post_id ) {
+			wp_send_json_error( 'Invalid post.' );
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post || $post->post_type !== 'hotel' ) {
+			wp_send_json_error( 'Invalid hotel.' );
+		}
+
+		// Check ownership.
+		$coach_post_id = get_user_meta( $user_id, 'coach_post_id', true );
+		$hotel_coach   = get_post_meta( $post_id, '_coach_post_id', true );
+		if ( ! $coach_post_id || $coach_post_id !== $hotel_coach ) {
+			wp_send_json_error( 'Unauthorized — not your hotel.' );
+		}
+
+		$result = wp_trash_post( $post_id );
+		if ( ! $result ) {
+			wp_send_json_error( 'Failed to delete the hotel.' );
+		}
+
+		wp_send_json_success( [ 'message' => 'Hotel deleted successfully.' ] );
 	}
 
 	/**
