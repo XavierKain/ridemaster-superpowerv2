@@ -2176,15 +2176,22 @@ function rm_get_coach_earnings() {
 
 		$rider_name = $order->get_billing_first_name() . ' ' . substr( $order->get_billing_last_name(), 0, 1 ) . '.';
 		$earnings['transactions'][] = [
+			'order_id'     => $order->get_id(),
+			'order_number' => $order->get_order_number(),
 			'date'         => $order->get_date_created() ? $order->get_date_created()->format( 'd/m/Y' ) : '',
 			'camp'         => $camp_id ? get_the_title( $camp_id ) : '—',
+			'camp_id'      => $camp_id,
 			'rider'        => $rider_name,
+			'rider_full'   => trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() ),
+			'rider_email'  => $order->get_billing_email(),
 			'total'        => $total_amount,
 			'coach_amount' => $coach_amount,
 			'hotel_amount' => $hotel_amount,
 			'status'       => $display_status,
 			'payout_date'  => $order->get_meta( '_payout_date_actual' ) ?: $payout_date,
 			'refund_pct'   => $order->get_meta( '_cancellation_tier' ),
+			'order_date'   => $order->get_date_created() ? $order->get_date_created()->format( 'Y-m-d H:i' ) : '',
+			'participants' => $order->get_meta( '_participants_count' ) ?: '1',
 		];
 	}
 
@@ -2206,7 +2213,7 @@ add_shortcode( 'rm_my_earnings', function() {
 		return '';
 	}
 
-	$fmt = function( $v ) { return number_format( $v, 2, ',', ' ' ) . ' &euro;'; };
+	$fmt = function( $v ) { return number_format( $v, 0, ',', ' ' ) . '&nbsp;&euro;'; };
 	$next = $data['next_payout']
 		? $fmt( $data['next_payout']['amount'] ) . ' on ' . esc_html( $data['next_payout']['date'] )
 		: 'None scheduled';
@@ -2254,20 +2261,31 @@ add_shortcode( 'rm_my_payments', function() {
 		return '';
 	}
 
-	$fmt = function( $v ) { return number_format( $v, 2, ',', ' ' ) . ' &euro;'; };
+	$fmt = function( $v ) { return number_format( $v, 0, ',', ' ' ) . '&nbsp;&euro;'; };
 
 	ob_start();
 	?>
 	<style>
 	.rm-payments-table { width:100%; border-collapse:collapse; font-size:14px; font-family:'DM Sans',sans-serif; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:1px solid #e5e7eb; }
-	.rm-payments-table th { text-align:left; padding:14px 16px; border-bottom:2px solid #e5e7eb; font-weight:700; color:#374151; font-size:13px; background:#f9fafb; }
-	.rm-payments-table td { padding:14px 16px; border-bottom:1px solid #f3f4f6; }
-	.rm-payments-table tr:hover td { background:#f0fdfa; }
-	.rm-pay-status { display:inline-block; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; }
+	.rm-payments-table th { text-align:left; padding:14px 16px; border-bottom:2px solid #e5e7eb; font-weight:700; color:#374151; font-size:13px; background:#f9fafb; white-space:nowrap; }
+	.rm-payments-table td { padding:14px 16px; border-bottom:1px solid #f3f4f6; white-space:nowrap; }
+	.rm-payments-table .rm-tx-row { cursor:pointer; transition:background 0.15s ease; }
+	.rm-payments-table .rm-tx-row:hover td { background:#f0fdfa; }
+	.rm-payments-table .rm-tx-row td:nth-child(2) { white-space:normal; }
+	.rm-pay-status { display:inline-block; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; white-space:nowrap; }
 	.rm-pay-status--escrow { background:#fef3c7; color:#92400e; }
 	.rm-pay-status--paid { background:#d1fae5; color:#065f46; }
 	.rm-pay-status--cancelled { background:#fee2e2; color:#991b1b; }
 	.rm-pay-status--error { background:#fef3c7; color:#dc2626; }
+	.rm-tx-detail { display:none; }
+	.rm-tx-detail.rm-open { display:table-row; }
+	.rm-tx-detail td { padding:0; border-bottom:1px solid #e5e7eb; background:#f9fafb; }
+	.rm-tx-detail-inner { padding:16px 24px; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px 24px; font-family:'DM Sans',sans-serif; }
+	.rm-tx-detail-item { font-size:13px; }
+	.rm-tx-detail-item .rm-detail-label { color:#6b7280; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px; }
+	.rm-tx-detail-item .rm-detail-value { color:#1f2937; font-weight:600; }
+	.rm-tx-chevron { display:inline-block; width:16px; text-align:center; color:#9ca3af; transition:transform 0.2s ease; font-size:12px; margin-right:8px; }
+	.rm-tx-row.rm-expanded .rm-tx-chevron { transform:rotate(90deg); color:#0d9488; }
 	</style>
 	<?php if ( empty( $data['transactions'] ) ) : ?>
 		<p style="color:#6b7280;font-family:'DM Sans',sans-serif;font-size:14px;">No transactions yet. Your payments will appear here when riders book your camps.</p>
@@ -2275,13 +2293,14 @@ add_shortcode( 'rm_my_payments', function() {
 		<table class="rm-payments-table">
 			<thead><tr><th>Date</th><th>Camp</th><th>Rider</th><th>Total</th><th>My Share</th><th>Hotel</th><th>Status</th></tr></thead>
 			<tbody>
-			<?php foreach ( $data['transactions'] as $tx ) :
+			<?php foreach ( $data['transactions'] as $i => $tx ) :
 				$status_label = $tx['status'] === 'escrow' ? 'In escrow' :
 								( $tx['status'] === 'paid' ? 'Paid' . ( $tx['payout_date'] ? ' ' . esc_html( $tx['payout_date'] ) : '' ) :
 								( $tx['status'] === 'cancelled' ? 'Cancelled' . ( $tx['refund_pct'] ? ' (' . $tx['refund_pct'] . '%)' : '' ) : 'Error' ) );
+				$camp_url = $tx['camp_id'] ? get_permalink( $tx['camp_id'] ) : '';
 			?>
-				<tr>
-					<td><?php echo esc_html( $tx['date'] ); ?></td>
+				<tr class="rm-tx-row" data-tx="<?php echo $i; ?>">
+					<td><span class="rm-tx-chevron">&#9654;</span><?php echo esc_html( $tx['date'] ); ?></td>
 					<td><?php echo esc_html( $tx['camp'] ); ?></td>
 					<td><?php echo esc_html( $tx['rider'] ); ?></td>
 					<td><?php echo $fmt( $tx['total'] ); ?></td>
@@ -2289,9 +2308,77 @@ add_shortcode( 'rm_my_payments', function() {
 					<td><?php echo $tx['hotel_amount'] > 0 ? $fmt( $tx['hotel_amount'] ) : '—'; ?></td>
 					<td><span class="rm-pay-status rm-pay-status--<?php echo esc_attr( $tx['status'] ); ?>"><?php echo esc_html( $status_label ); ?></span></td>
 				</tr>
+				<tr class="rm-tx-detail" data-tx-detail="<?php echo $i; ?>">
+					<td colspan="7">
+						<div class="rm-tx-detail-inner">
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Order</div>
+								<div class="rm-detail-value">#<?php echo esc_html( $tx['order_number'] ); ?></div>
+							</div>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Rider</div>
+								<div class="rm-detail-value"><?php echo esc_html( $tx['rider_full'] ); ?></div>
+							</div>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Email</div>
+								<div class="rm-detail-value"><?php echo esc_html( $tx['rider_email'] ); ?></div>
+							</div>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Participants</div>
+								<div class="rm-detail-value"><?php echo esc_html( $tx['participants'] ); ?></div>
+							</div>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Total order</div>
+								<div class="rm-detail-value"><?php echo $fmt( $tx['total'] ); ?></div>
+							</div>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">My share</div>
+								<div class="rm-detail-value" style="color:#0d9488;"><?php echo $fmt( $tx['coach_amount'] ); ?></div>
+							</div>
+							<?php if ( $tx['hotel_amount'] > 0 ) : ?>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Hotel share</div>
+								<div class="rm-detail-value"><?php echo $fmt( $tx['hotel_amount'] ); ?></div>
+							</div>
+							<?php endif; ?>
+							<?php if ( $tx['payout_date'] ) : ?>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Payout date</div>
+								<div class="rm-detail-value"><?php echo esc_html( $tx['payout_date'] ); ?></div>
+							</div>
+							<?php endif; ?>
+							<?php if ( $camp_url ) : ?>
+							<div class="rm-tx-detail-item">
+								<div class="rm-detail-label">Camp</div>
+								<div class="rm-detail-value"><a href="<?php echo esc_url( $camp_url ); ?>" style="color:#0d9488;text-decoration:none;" target="_blank">View camp &rarr;</a></div>
+							</div>
+							<?php endif; ?>
+						</div>
+					</td>
+				</tr>
 			<?php endforeach; ?>
 			</tbody>
 		</table>
+		<script>
+		(function(){
+			document.querySelectorAll('.rm-tx-row').forEach(function(row){
+				row.addEventListener('click', function(){
+					var idx = this.getAttribute('data-tx');
+					var detail = document.querySelector('.rm-tx-detail[data-tx-detail="'+idx+'"]');
+					if(detail){
+						var isOpen = detail.classList.contains('rm-open');
+						// Close all others
+						document.querySelectorAll('.rm-tx-detail.rm-open').forEach(function(d){ d.classList.remove('rm-open'); });
+						document.querySelectorAll('.rm-tx-row.rm-expanded').forEach(function(r){ r.classList.remove('rm-expanded'); });
+						if(!isOpen){
+							detail.classList.add('rm-open');
+							this.classList.add('rm-expanded');
+						}
+					}
+				});
+			});
+		})();
+		</script>
 	<?php endif; ?>
 	<?php
 	return ob_get_clean();
