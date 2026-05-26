@@ -1324,3 +1324,6 @@ body:not(.rm-edit-mode) .rm-number-input,
 body:not(.rm-edit-mode) .rm-cpt-popup {
 	display: none !important;
 }
+
+/* Accommodation visibility rules now live in ui-tweaks.php so they apply
+   for all visitors (the inline-edit.css file is only loaded for the camp owner). */

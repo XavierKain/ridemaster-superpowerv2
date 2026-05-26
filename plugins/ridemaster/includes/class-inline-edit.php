@@ -73,6 +73,9 @@ class RM_Inline_Edit {
 		'camp_sport'         => [ 'type' => 'taxonomy', 'taxonomy' => 'sport', 'label' => 'Sport', 'placeholder' => 'Select the sport' ],
 		'camp_level'         => [ 'type' => 'taxonomy', 'taxonomy' => 'level', 'label' => 'Level', 'placeholder' => 'Select the level' ],
 		'camp_language'      => [ 'type' => 'taxonomy', 'taxonomy' => 'language', 'label' => 'Language', 'placeholder' => 'Select the language' ],
+		'camp_hotel'              => [ 'type' => 'cpt_select', 'post_type' => 'hotel', 'storage' => 'meta', 'meta_key' => '_hotel_id', 'label' => 'Accommodation', 'placeholder' => 'Select an accommodation' ],
+		'camp_hotel_description'  => [ 'type' => 'wysiwyg', 'meta_key' => 'description', 'target_post_via' => '_hotel_id', 'label' => 'Accommodation Description', 'placeholder' => 'Describe the accommodation...' ],
+		'camp_hotel_gallery'      => [ 'type' => 'gallery', 'meta_key' => 'accommodation_photos', 'target_post_via' => '_hotel_id', 'label' => 'Accommodation Photos', 'placeholder' => 'Add accommodation photos' ],
 	];
 
 	public function __construct() {
@@ -85,6 +88,22 @@ class RM_Inline_Edit {
 		add_action( 'template_redirect', [ $this, 'nocache_profile_page' ], 1 );
 		add_filter( 'get_post_metadata', [ $this, 'filter_repeater_meta_for_public' ], 10, 4 );
 		add_filter( 'get_post_metadata', [ $this, 'filter_wysiwyg_meta_for_dashboard' ], 20, 4 );
+		add_filter( 'body_class', [ $this, 'filter_body_class_camp_hotel' ] );
+	}
+
+	/**
+	 * Add a body class indicating whether the current camp has an associated hotel.
+	 * Used by CSS to reveal the "no accommodation" placeholder in edit mode, and to
+	 * keep the accommodation section hidden for the public when no hotel is linked.
+	 */
+	public function filter_body_class_camp_hotel( $classes ) {
+		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+			return $classes;
+		}
+		$post_id  = get_the_ID();
+		$hotel_id = $post_id ? intval( get_post_meta( $post_id, '_hotel_id', true ) ) : 0;
+		$classes[] = $hotel_id ? 'rm-camp-has-hotel' : 'rm-camp-no-hotel';
+		return $classes;
 	}
 
 	// =========================================================================
@@ -614,8 +633,13 @@ class RM_Inline_Edit {
 			if ( $gal_config['type'] !== 'gallery' ) {
 				continue;
 			}
-			$meta_key  = isset( $gal_config['meta_key'] ) ? $gal_config['meta_key'] : $field_name;
-			$raw_ids   = get_post_meta( $post_id, $meta_key, true );
+			$meta_key = isset( $gal_config['meta_key'] ) ? $gal_config['meta_key'] : $field_name;
+			$read_id  = $post_id;
+			if ( ! empty( $gal_config['target_post_via'] ) ) {
+				$linked  = intval( get_post_meta( $post_id, $gal_config['target_post_via'], true ) );
+				$read_id = $linked ?: 0;
+			}
+			$raw_ids   = $read_id ? get_post_meta( $read_id, $meta_key, true ) : '';
 			$image_ids = $raw_ids ? array_filter( array_map( 'intval', explode( ',', $raw_ids ) ) ) : [];
 			$images    = [];
 			foreach ( $image_ids as $aid ) {
@@ -686,7 +710,12 @@ class RM_Inline_Edit {
 			foreach ( $cpt_posts as $cp ) {
 				$options[] = [ 'id' => $cp->ID, 'title' => $cp->post_title ];
 			}
-			$current_id = $this->get_related_cpt( $post_id, $target_post_type );
+			if ( isset( $cpt_cfg['storage'] ) && $cpt_cfg['storage'] === 'meta' ) {
+				$meta_key   = isset( $cpt_cfg['meta_key'] ) ? $cpt_cfg['meta_key'] : $field_name;
+				$current_id = intval( get_post_meta( $post_id, $meta_key, true ) );
+			} else {
+				$current_id = $this->get_related_cpt( $post_id, $target_post_type );
+			}
 			$cpt_options_data[ $field_name ] = [
 				'options'  => $options,
 				'selected' => $current_id,
@@ -849,6 +878,24 @@ class RM_Inline_Edit {
 				continue;
 			}
 
+			// Resolve write target: a field can target a linked post (e.g. camp → hotel via _hotel_id meta).
+			// Defaults to the current post. Verifies the coach owns the linked post.
+			$write_id = $post_id;
+			if ( ! empty( $config['target_post_via'] ) ) {
+				$linked = intval( get_post_meta( $post_id, $config['target_post_via'], true ) );
+				if ( ! $linked ) {
+					$errors[ $key ] = sprintf( 'No linked %s.', $config['label'] );
+					continue;
+				}
+				$linked_coach = get_post_meta( $linked, '_coach_post_id', true );
+				$user_coach   = get_user_meta( $user_id, 'coach_post_id', true );
+				if ( ! $linked_coach || ! $user_coach || intval( $linked_coach ) !== intval( $user_coach ) ) {
+					$errors[ $key ] = 'Unauthorized linked post.';
+					continue;
+				}
+				$write_id = $linked;
+			}
+
 			// Post field storage (camp_title, camp_description)
 			if ( ! empty( $config['storage'] ) && $config['storage'] === 'post_field' ) {
 				if ( $config['type'] === 'text' ) {
@@ -879,7 +926,7 @@ class RM_Inline_Edit {
 
 				case 'wysiwyg':
 					$value = wp_kses_post( wp_unslash( $value ) );
-					update_post_meta( $post_id, $meta_key, $value );
+					update_post_meta( $write_id, $meta_key, $value );
 					$updated[ $key ] = $value;
 					break;
 
@@ -993,7 +1040,7 @@ class RM_Inline_Edit {
 						}
 					}
 
-					update_post_meta( $post_id, $meta_key, implode( ',', $valid_ids ) );
+					update_post_meta( $write_id, $meta_key, implode( ',', $valid_ids ) );
 
 					// Return images array for JS
 					$images = [];
@@ -1060,15 +1107,24 @@ class RM_Inline_Edit {
 							continue 2;
 						}
 					}
-					$result = $this->save_cpt_relation( $post_id, $target_post_type, $target_id );
-					if ( is_array( $result ) && ! empty( $result['ok'] ) ) {
+					if ( isset( $config['storage'] ) && $config['storage'] === 'meta' ) {
+						// Meta-based link (e.g. camp ↔ hotel via _hotel_id, no JetEngine relation).
+						update_post_meta( $post_id, $meta_key, $target_id );
 						$updated[ $key ] = $target_id > 0 ? [
 							'id'    => $target_id,
 							'title' => get_the_title( $target_id ),
 						] : null;
 					} else {
-						$debug = is_array( $result ) && isset( $result['debug'] ) ? $result['debug'] : 'Unknown';
-						$errors[ $key ] = 'Could not save relation. Debug: ' . $debug;
+						$result = $this->save_cpt_relation( $post_id, $target_post_type, $target_id );
+						if ( is_array( $result ) && ! empty( $result['ok'] ) ) {
+							$updated[ $key ] = $target_id > 0 ? [
+								'id'    => $target_id,
+								'title' => get_the_title( $target_id ),
+							] : null;
+						} else {
+							$debug = is_array( $result ) && isset( $result['debug'] ) ? $result['debug'] : 'Unknown';
+							$errors[ $key ] = 'Could not save relation. Debug: ' . $debug;
+						}
 					}
 					break;
 			}

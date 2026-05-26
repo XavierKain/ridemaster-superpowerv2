@@ -396,6 +396,39 @@ add_action( 'wp_head', function() {
 } );
 
 // =========================================================================
+// 3b. ACCOMMODATION SECTION VISIBILITY (global — applies to all visitors)
+// Lives here (not in inline-edit.css) because the inline-edit asset is only
+// enqueued for the authenticated camp owner.
+// =========================================================================
+
+add_action( 'wp_head', function() {
+	?>
+	<style>
+	/* Empty placeholder is hidden by default everywhere. Shown only when coach
+	   is editing AND no hotel is linked (see override below). */
+	.rm-accommodation-empty {
+		display: none !important;
+	}
+
+	/* Show the empty placeholder ONLY for the camp owner in edit mode, when no hotel is linked. */
+	body.rm-camp-no-hotel.rm-edit-mode .rm-accommodation-empty {
+		display: block !important;
+	}
+
+	/* Public view, no hotel linked: hide the entire accommodation section. */
+	body.rm-camp-no-hotel:not(.rm-edit-mode) .rm-accommodation-section {
+		display: none !important;
+	}
+
+	/* No hotel linked AND in edit mode: hide the "filled" card (listing has nothing). */
+	body.rm-camp-no-hotel.rm-edit-mode .rm-accommodation-filled {
+		display: none !important;
+	}
+	</style>
+	<?php
+} );
+
+// =========================================================================
 // 4. CAMP CREATION FORM CSS (JetFormBuilder styling)
 // =========================================================================
 
@@ -409,7 +442,8 @@ add_action( 'wp_head', function() {
 	#camp_thumbnail.jet-form-builder-file-upload__input,
 	#camp_gallery.jet-form-builder-file-upload__input,
 	#spot_image.jet-form-builder-file-upload__input,
-	#spot_gallery.jet-form-builder-file-upload__input {
+	#spot_gallery.jet-form-builder-file-upload__input,
+	#accommodation_photos.jet-form-builder-file-upload__input {
 		position: absolute !important;
 		width: 100% !important;
 		height: 100% !important;
