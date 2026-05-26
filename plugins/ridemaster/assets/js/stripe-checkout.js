@@ -7,13 +7,23 @@
 	if ( typeof rmStripe === 'undefined' ) return;
 
 	var stripe = Stripe( rmStripe.publishableKey );
-	var elements = stripe.elements();
+	var elements = null;
 	var cardElement = null;
 	var processing = false;
 
 	function init() {
 		var container = document.getElementById('rm-stripe-card-element');
 		if ( ! container ) return;
+
+		// Destroy previous instances (WooCommerce AJAX replaces the HTML).
+		if ( cardElement ) {
+			try { cardElement.unmount(); } catch(e) {}
+			try { cardElement.destroy(); } catch(e) {}
+			cardElement = null;
+		}
+
+		// Recreate elements instance to avoid "Can only create one Element" error.
+		elements = stripe.elements();
 
 		cardElement = elements.create('card', {
 			style: {
