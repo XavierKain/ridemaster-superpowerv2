@@ -61,9 +61,78 @@ class RM_Importer_Endpoint {
             );
         }
 
-        // Build camp payload for RM_Camp::create_from_payload.
+        $warnings = [];
+
+        // ----- Resolve coach -----
+        $coach_post_id = 0;
+        $coach_result  = null;
+
+        if ( ! empty( $payload['coach']['existing_post_id'] ) ) {
+            $coach_post_id = (int) $payload['coach']['existing_post_id'];
+        } elseif ( ! empty( $payload['coach']['data'] ) || ! empty( $payload['coach']['match_by'] ) ) {
+            $coach_result = RM_Coach::create_from_payload( $payload['coach'] );
+            if ( is_wp_error( $coach_result ) ) {
+                return new WP_Error(
+                    'IMPORT_FAILED',
+                    'Coach resolution failed: ' . $coach_result->get_error_message(),
+                    [ 'status' => 500, 'step' => 'coach' ]
+                );
+            }
+            $coach_post_id = (int) $coach_result['post_id'];
+        }
+
+        // ----- Build camp payload -----
+        // $resolved collects the IDs that subsequent tasks (spot, hotel)
+        // will populate via the same inline-or-existing dispatch pattern.
         $camp = $payload['camp'];
-        $camp_payload = [
+        $resolved = [
+            'coach_post_id' => $coach_post_id,
+            'spot_id'       => (int) ( $payload['spot']['existing_post_id']  ?? 0 ),
+            'hotel_id'      => (int) ( $payload['hotel']['existing_post_id'] ?? 0 ),
+        ];
+        $camp_payload = self::build_camp_payload( $camp, $payload, $resolved );
+
+        // ----- Create the camp -----
+        $camp_id = RM_Camp::create_from_payload( $camp_payload );
+        if ( is_wp_error( $camp_id ) ) {
+            return new WP_Error( 'IMPORT_FAILED', 'Camp creation failed: ' . $camp_id->get_error_message(), [ 'status' => 500, 'step' => 'camp' ] );
+        }
+
+        // Flush deferred stock writes synchronously (without triggering unrelated shutdown handlers).
+        self::flush_camp_stock_meta( $camp_id, (int) $camp['max_spots'] );
+
+        return new WP_REST_Response( [
+            'status'    => 'success',
+            'camp_id'   => $camp_id,
+            'edit_url'  => admin_url( "post.php?post={$camp_id}&action=edit" ),
+            'public_url'=> get_permalink( $camp_id ),
+            'created'   => [
+                'coach' => $coach_result
+                    ? [
+                        'id'           => (int) $coach_result['user_id'],
+                        'post_id'      => (int) $coach_result['post_id'],
+                        'was_new'      => (bool) $coach_result['was_new'],
+                        'was_new_user' => (bool) $coach_result['was_new_user'],
+                        'was_new_post' => (bool) $coach_result['was_new_post'],
+                    ]
+                    : ( $coach_post_id ? [ 'post_id' => $coach_post_id, 'was_new' => false ] : null ),
+                'camp'  => [ 'id' => $camp_id, 'images_imported' => 0, 'images_failed' => 0 ],
+            ],
+            'warnings'  => $warnings,
+        ], 200 );
+    }
+
+    /**
+     * Translate the public REST payload shape into the shape expected by
+     * RM_Camp::create_from_payload. Keeps handle_import readable as more
+     * entities are wired in (spot, hotel, images).
+     *
+     * @param array $camp     The `camp` block from the payload.
+     * @param array $payload  The full payload (for top-level fields like import_source_url).
+     * @param array $resolved Pre-resolved entity IDs: ['coach_post_id'=>int, 'spot_id'=>int, 'hotel_id'=>int].
+     */
+    private static function build_camp_payload( array $camp, array $payload, array $resolved ): array {
+        return [
             'title'             => $camp['title'],
             'description_html'  => $camp['description_html'] ?? '',
             'price'             => (string) $camp['price_eur'],
@@ -77,33 +146,12 @@ class RM_Importer_Endpoint {
             'level'             => $camp['level'] ?? [],
             'languages'         => $camp['languages'] ?? [],
             'camp_status'       => $camp['camp_status'] ?? 'open',
-            'coach_post_id'     => $payload['coach']['existing_post_id'] ?? 0,
-            'spot_id'           => $payload['spot']['existing_post_id'] ?? 0,
-            'hotel_id'          => $payload['hotel']['existing_post_id'] ?? 0,
+            'coach_post_id'     => $resolved['coach_post_id'] ?? 0,
+            'spot_id'           => $resolved['spot_id'] ?? 0,
+            'hotel_id'          => $resolved['hotel_id'] ?? 0,
             'import_source_url' => $payload['import_source_url'],
             'check_stripe'      => false,  // imports skip Stripe check for example data
         ];
-
-        $camp_id = RM_Camp::create_from_payload( $camp_payload );
-        if ( is_wp_error( $camp_id ) ) {
-            return new WP_Error( 'IMPORT_FAILED', 'Camp creation failed: ' . $camp_id->get_error_message(), [ 'status' => 500 ] );
-        }
-
-        // Flush the shutdown-deferred stock writes immediately so the response
-        // reflects final state. Use a focused approach (NOT do_action('shutdown'))
-        // to avoid triggering unrelated shutdown handlers (cron spawn, etc.).
-        self::flush_camp_stock_meta( $camp_id, (int) $camp['max_spots'] );
-
-        return new WP_REST_Response( [
-            'status'    => 'success',
-            'camp_id'   => $camp_id,
-            'edit_url'  => admin_url( "post.php?post={$camp_id}&action=edit" ),
-            'public_url'=> get_permalink( $camp_id ),
-            'created'   => [
-                'camp' => [ 'id' => $camp_id, 'images_imported' => 0, 'images_failed' => 0 ],
-            ],
-            'warnings'  => [],
-        ], 200 );
     }
 
     /**
