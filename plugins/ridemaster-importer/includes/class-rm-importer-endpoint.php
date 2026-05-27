@@ -205,6 +205,20 @@ class RM_Importer_Endpoint {
             update_post_meta( $camp_id, '_product_image_gallery', implode( ',', $gallery_ids ) );
         }
 
+        // ----- Stripe blocker warning -----
+        // If the linked coach hasn't completed Stripe onboarding, the camp may
+        // be hidden from the public site (the main plugin's blocker forces draft
+        // in some flows). Surface this as a warning so the importer knows.
+        if ( $coach_post_id ) {
+            $linked_user_id = self::get_user_id_for_coach_post( $coach_post_id );
+            if ( $linked_user_id ) {
+                $stripe = get_user_meta( $linked_user_id, 'stripe_onboarding_complete', true );
+                if ( $stripe !== '1' ) {
+                    $warnings[] = 'Coach Stripe onboarding is incomplete — camp may be hidden from public.';
+                }
+            }
+        }
+
         // ----- Yoast SEO -----
         if ( ! empty( $camp['yoast']['focus_keyword'] ) ) {
             update_post_meta( $camp_id, '_yoast_wpseo_focuskw', sanitize_text_field( $camp['yoast']['focus_keyword'] ) );
@@ -238,6 +252,20 @@ class RM_Importer_Endpoint {
             ],
             'warnings'  => $warnings,
         ], 200 );
+    }
+
+    /**
+     * Look up the WP user whose coach_post_id usermeta points at this coach CPT.
+     * Returns 0 if no user is linked.
+     */
+    private static function get_user_id_for_coach_post( int $coach_post_id ): int {
+        $users = get_users( [
+            'meta_key'   => 'coach_post_id',
+            'meta_value' => $coach_post_id,
+            'number'     => 1,
+            'fields'     => 'ID',
+        ] );
+        return $users ? (int) $users[0] : 0;
     }
 
     /**
