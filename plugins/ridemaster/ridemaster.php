@@ -31,6 +31,7 @@ require_once RM_PLUGIN_DIR . 'includes/class-cleanup.php';
 require_once RM_PLUGIN_DIR . 'includes/class-inline-edit.php';
 require_once RM_PLUGIN_DIR . 'includes/class-payments.php';
 require_once RM_PLUGIN_DIR . 'includes/class-hotel.php';
+require_once RM_PLUGIN_DIR . 'includes/class-spot.php';
 require_once RM_PLUGIN_DIR . 'includes/class-payout-cron.php';
 require_once RM_PLUGIN_DIR . 'includes/class-cancellation.php';
 require_once RM_PLUGIN_DIR . 'includes/ui-tweaks.php';
