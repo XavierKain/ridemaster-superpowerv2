@@ -61,6 +61,14 @@ class RM_Importer_Endpoint {
             );
         }
 
+        // force_overwrite=true → delete the existing camp and proceed as a fresh import.
+        // We do NOT touch the linked coach/spot/hotel — they remain. Attachments owned
+        // by the old camp are also deleted (wp_delete_post true cleans up _thumbnail_id
+        // attachments and gallery attachments via WP's media cascade).
+        if ( $existing && ! empty( $payload['force_overwrite'] ) ) {
+            wp_delete_post( $existing, true );
+        }
+
         $warnings = [];
 
         $rollback = new RM_Importer_Rollback();
