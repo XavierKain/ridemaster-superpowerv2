@@ -28,9 +28,13 @@ Aujourd'hui, l'ajout de camps "exemple" sur la plateforme Ridemaster (pour pré-
 
 ## 2. Contexte projet utile
 
-Ridemaster est actuellement en phase pré-lancement : le site est accessible sur son URL finale mais aucun coach réel ne l'utilise. Un backup complet existe. **Cela permet de travailler directement sur la "prod" pendant le développement de cet outil** — voir [section 10](#10-environnement-de-test-et-sécurité).
+Ridemaster est actuellement en phase pré-lancement : le site (https://ridemaster.eu) est accessible sur son URL finale mais aucun coach réel ne l'utilise. Un backup complet existe. **Cela permet de travailler directement sur la "prod" pendant le développement de cet outil** — voir [section 10](#10-environnement-de-test-et-sécurité).
 
-Un camp dans Ridemaster est un produit WooCommerce (`post_type = product`) avec la taxonomie `product_cat = camp`. Voir [plugins/ridemaster/includes/class-camp.php](../../../plugins/ridemaster/includes/class-camp.php) pour le détail du modèle de données. Les liaisons coach↔camp, spot↔camp et coach↔spot sont gérées via **JetEngine relations** stockées dans la table `wp_jet_rel_default` (IDs 20, 18, 19 respectivement).
+Timezone serveur : Europe/Paris.
+
+Un camp dans Ridemaster est un produit WooCommerce (`post_type = product`) avec la taxonomie `product_cat = camp`. Voir [plugins/ridemaster/includes/class-camp.php](../../../plugins/ridemaster/includes/class-camp.php) pour le détail du modèle de données. Les liaisons coach↔camp (ID 20, one-to-many), coach↔spot (ID 19, many-to-many), spot↔camp (ID 18, one-to-many) sont gérées via **JetEngine relations** stockées dans la table `wp_jet_rel_default`.
+
+Un audit live de l'install a été réalisé le 2026-05-27 (cf [Annexe B](#annexe-b--audit-live-2026-05-27)) qui confirme les slugs CPT, IDs de relations, et énumère exhaustivement les termes de taxonomie disponibles.
 
 ---
 
@@ -127,14 +131,16 @@ Claude (moi) :
       "first_name": "John",
       "last_name": "Doe",
       "email": "john@coachsite.com",
-      "bio": "10 years of kiteboarding...",
+      "wp_role": "coach_role",
+      "coach_status": "validated",
+      "bio": "10 years of kitesurf coaching...",
       "location": "Tarifa, Spain",
       "years_experience": 10,
       "certifications": ["IKO Level 3", "VDWS Instructor"],
       "profile_photo": {"url": "https://...", "base64": null, "alt": "..."},
       "cover_image":   {"url": "https://...", "base64": null, "alt": "..."},
-      "sport": "kiteboarding",
-      "languages": ["en", "fr"],
+      "sport": ["kitesurf"],
+      "languages": ["english", "french"],
       "instagram": "@johndoe",
       "youtube": "https://youtube.com/...",
       "website": "https://coachsite.com"
@@ -148,6 +154,9 @@ Claude (moi) :
       "name": "Tarifa",
       "country": "Spain",
       "description": "...",
+      "sport": ["kitesurf"],
+      "level": ["beginner", "intermediate", "advanced"],
+      "water_type": ["flat-water", "waves"],
       "images": [{"url": "...", "base64": null, "alt": "...", "filename": "..."}]
     }
   },
@@ -164,10 +173,11 @@ Claude (moi) :
 
   "camp": {
     "title": "Tarifa Kite Camp — June 2026",
-    "description_html": "<p>Join us for an unforgettable week of kiteboarding...</p>",
-    "sport": "kiteboarding",
-    "level": "intermediate",
-    "languages": ["en", "fr"],
+    "description_html": "<p>Join us for an unforgettable week of kitesurf...</p>",
+    "sport": "kitesurf",
+    "level": ["beginner", "intermediate"],
+    "languages": ["english", "french"],
+    "camp_status": "open",
     "price_eur": 890,
     "max_spots": 12,
     "start_date": "2026-06-15",
@@ -175,10 +185,14 @@ Claude (moi) :
     "schedule": "Day 1: Arrival and welcome dinner\nDay 2-6: Morning theory...",
     "included":     ["Coaching 6h/day", "Board and kite rental", "Lunch on the beach"],
     "not_included": ["Flights", "Insurance", "Dinner"],
-    "featured_image": {"url": "...", "base64": null, "alt": "...", "filename": "...", "role": "hero"},
+    "yoast": {
+      "focus_keyword": "tarifa kite camp june",
+      "meta_description": "Join a week of kitesurf coaching in Tarifa with..."
+    },
+    "featured_image": {"url": "...", "base64": null, "alt": "...", "filename": "...", "role": "camp_hero"},
     "gallery": [
-      {"url": "...", "base64": null, "alt": "...", "filename": "...", "role": "action"},
-      {"url": "...", "base64": null, "alt": "...", "filename": "...", "role": "group"}
+      {"url": "...", "base64": null, "alt": "...", "filename": "...", "role": "camp_action"},
+      {"url": "...", "base64": null, "alt": "...", "filename": "...", "role": "camp_group"}
     ]
   }
 }
@@ -197,8 +211,8 @@ Claude (moi) :
 {
   "status": "success",
   "camp_id": 1234,
-  "edit_url":   "https://ridemaster.com/wp-admin/post.php?post=1234&action=edit",
-  "public_url": "https://ridemaster.com/camps/tarifa-kite-camp-june-2026/",
+  "edit_url":   "https://ridemaster.eu/wp-admin/post.php?post=1234&action=edit",
+  "public_url": "https://ridemaster.eu/camps/tarifa-kite-camp-june-2026/",
   "created": {
     "coach":  {"id": 567,  "post_id": 568,  "was_new": true},
     "spot":   {"id": 89,                     "was_new": false},
@@ -600,21 +614,88 @@ Référence rapide (la source de vérité reste [class-camp.php](../../../plugin
 | `_thumbnail_id`           | number          | Featured image attachment ID               |
 | `_coach_post_id`          | number          | ID du coach CPT (redondant avec relation)  |
 | `_hotel_id`               | number          | Optional                                   |
+| `_yoast_wpseo_focuskw`    | string          | Focus keyword Yoast SEO                    |
+| `_yoast_wpseo_metadesc`   | string          | Meta description Yoast SEO                 |
 | `_import_source_url`      | string          | **Nouveau** — pour idempotence             |
 | `_import_imported_at`     | number          | **Nouveau** — timestamp d'import           |
 
-### Taxonomies
+### Taxonomies sur product (camp)
 
 - `product_type` = `simple`
-- `product_cat` = `camp` (obligatoire)
-- `sport` = ex `kiteboarding`
-- `level` = ex `intermediate`
-- `language` = optionnel
+- `product_cat` = `camp` (obligatoire, term_id=55)
+- `sport` ∈ `kitesurf` | `parakite` | `wingfoil` (term IDs : 21, 57, 22)
+- `level` ∈ `beginner` | `intermediate` | `advanced` | `expert` (23-26)
+- `language` ∈ `english` | `french` | `german` | `italian` | `portuguese` | `spanish` (27-32)
+- `camp-status` ∈ `open` | `full` | `cancelled` (36, 37, 38) — défaut import : `open`
+
+### Taxonomies sur coach
+
+- `sport` (mêmes valeurs que ci-dessus)
+- `language` (mêmes valeurs)
+- `coach-status` ∈ `pending` | `validated` | `suspended` (33, 34, 35) — défaut import : `validated`
+- ❗ `level` n'est PAS associé à coach
+
+### Taxonomies sur spot
+
+- `sport` (mêmes valeurs)
+- `level` (mêmes valeurs)
+- `water-type` ∈ `flat-water` | `waves` | `choppy` | `mixed` (39, 41, 40, 42)
+- ❗ `language` n'est PAS associé à spot
+
+### Coach : WP user + CPT post
+
+- Rôle WP : **`coach_role`** (custom, défini par le plugin ridemaster)
+- Liaison : `_coach_post_id` (postmeta sur coach CPT) ↔ `coach_post_id` (usermeta sur WP user)
+- ❗ Le champ `post_author` du coach CPT n'est PAS utilisé pour la liaison
 
 ### Relations JetEngine (`wp_jet_rel_default`)
 
-| `rel_id` | Parent      | Child       | Quand                                  |
-|----------|-------------|-------------|----------------------------------------|
-| 20       | coach CPT   | camp product| Toujours                               |
-| 18       | spot CPT    | camp product| Toujours                               |
-| 19       | coach CPT   | spot CPT    | Auto si coach + spot tous deux liés    |
+| `rel_id` | Parent      | Child       | Type        | Quand                                  |
+|----------|-------------|-------------|-------------|----------------------------------------|
+| 20       | coach CPT   | camp product| one-to-many | Toujours                               |
+| 19       | coach CPT   | spot CPT    | many-to-many| Auto si coach + spot tous deux liés    |
+| 18       | spot CPT    | camp product| one-to-many | Toujours                               |
+
+---
+
+## Annexe B — Audit live 2026-05-27
+
+Audit réalisé sur `https://ridemaster.eu` via WP REST API + Application Password. Source de vérité au moment du design ; à re-vérifier si > 3 mois.
+
+### Versions et environnement
+
+- WordPress : 6.9+ (Abilities API présente à `/wp-json/wp-abilities/v1`)
+- Timezone : Europe/Paris
+- Plugins REST exposés : `wc/v3`, `jet-engine/v2`, `jet-form-builder/v1`, `ridemaster/v1`, `yoast/v1`, `elementor/v1`, `jetpack/v4`, `complianz/v1`, `matomo/v1`, `siteground-optimizer/v1`, `sg-security/v1`, …
+- Hosting : SiteGround (présence des namespaces `siteground-*` et `sg-*`)
+
+### CPT enregistrés
+
+| Slug      | rest_base | Display name   | Notes                          |
+|-----------|-----------|----------------|--------------------------------|
+| `coach`   | coach     | Coaches        | Singulier dans slug, pluriel UI|
+| `spot`    | spot      | Spots          |                                |
+| `hotel`   | hotel     | Accommodation  |                                |
+| `product` | product   | Products (WC)  | Filtré par `product_cat=camp`  |
+
+### État de la BDD au moment de l'audit
+
+- 4 utilisateurs WP (3 avec `coach_role`, 1 admin, 1 customer)
+- 8 coachs CPT (Xavier Kain id=189, Val Garat 390, Chris Macdonald 392, Philippe Ancelin 441, Ben Beholz 453, Mike MacDonald 464, Marco Koppel 2158, Pierre Dupont 2259)
+- 6 spots (Tarifa 195, Fuerteventura 394, Port Barcares 395, Cape Town 452, Egypt 2161, Mayapo 2275)
+- 3 hôtels (Casa Solea 2293, Hotel Tarifa 2382, "HOtel 45" 2387)
+- 2 camps existants (Coaching Mayapo Colombie 2279, Parakite in the Egyptian desert 2164)
+
+### Endpoints REST `ridemaster/v1` existants
+
+- `POST /ridemaster/v1/guest-upload`    (défini dans class-auth.php)
+- `POST /ridemaster/v1/stripe-webhook`  (défini dans class-payments.php)
+- `POST /ridemaster/v1/import-camp`     ← **nouveau, à créer**
+
+### Limite REST observée
+
+Les méta-clés business (`_price`, `camp_start_date`, `camp_included`, etc.) ne sont **pas exposées** via `GET /wp-json/wp/v2/product/{id}?context=edit` car non enregistrées avec `register_post_meta(..., show_in_rest=true)`. Seules les méta Elementor remontent. Cela **confirme** la nécessité d'un endpoint custom côté plugin pour l'import (le serveur peut lire/écrire toutes les méta en PHP direct, contournant cette limite).
+
+### Sources de vérité pour les énumérations de termes
+
+Les listes de slugs en [Annexe A](#annexe-a--méta-clés-ridemaster-à-respecter) reflètent l'état au 2026-05-27. Si un nouveau sport ou statut est ajouté en BDD entre-temps, l'endpoint d'import doit **valider** que le slug fourni existe (`get_term_by('slug', $slug, $taxonomy)`) et renvoyer `INVALID_PAYLOAD` avec la liste des slugs valides en cas d'inconnu — pas créer un nouveau term à la volée.
