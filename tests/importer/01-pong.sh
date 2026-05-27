@@ -13,8 +13,8 @@ response=$(curl -s -o /tmp/rm-pong.json -w "%{http_code}" \
 status=$(python3 -c "import json; print(json.load(open('/tmp/rm-pong.json')).get('status', 'NO_STATUS'))")
 version=$(python3 -c "import json; print(json.load(open('/tmp/rm-pong.json')).get('version', 'NO_VERSION'))")
 
-if [ "$response" = "200" ] && [ "$status" = "pong" ] && [ "$version" = "0.1.0" ]; then
-    echo "PASS: HTTP 200, status=pong, version=0.1.0"
+if [ "$response" = "200" ] && [ "$status" = "pong" ] && [ "$version" = "1.0.0" ]; then
+    echo "PASS: HTTP 200, status=pong, version=1.0.0"
     exit 0
 else
     echo "FAIL: HTTP $response, status=$status, version=$version"
