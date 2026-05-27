@@ -610,4 +610,156 @@ class RM_Coach {
 
 		wp_send_json_success( [ 'saved' => $value ] );
 	}
+
+    /**
+     * Find or create a WP user + coach CPT post from a payload.
+     *
+     * @param array $payload {
+     *     @type array  $match_by         { email?, name? } — lookup hints
+     *     @type bool   $create_if_missing
+     *     @type array  $data             Full coach profile data (see spec section 4.3)
+     * }
+     * @return array|WP_Error {
+     *     'user_id'      => int,
+     *     'post_id'      => int,
+     *     'was_new'      => bool,        // user OR post was new
+     *     'was_new_user' => bool,        // WP user was created in this call
+     *     'was_new_post' => bool,        // coach CPT post was created in this call
+     * } or WP_Error
+     *
+     * Rollback note: callers should track was_new_user and was_new_post
+     * separately — deleting a pre-existing WP user just because a new coach
+     * post was created for it would be destructive.
+     */
+    public static function create_from_payload( array $payload ) {
+
+        $data        = $payload['data'] ?? [];
+        $match       = $payload['match_by'] ?? [];
+        $can_create  = ! empty( $payload['create_if_missing'] );
+
+        $email      = $data['email']    ?? $match['email'] ?? '';
+        $first_name = $data['first_name'] ?? '';
+        $last_name  = $data['last_name']  ?? '';
+        $full_name  = trim( "$first_name $last_name" ) ?: ( $match['name'] ?? '' );
+
+        if ( empty( $email ) ) {
+            return new WP_Error( 'INVALID_PAYLOAD', 'coach.data.email or coach.match_by.email is required', [ 'status' => 400 ] );
+        }
+
+        // 1. Find or create WP user.
+        $user = get_user_by( 'email', $email );
+        $was_new_user = false;
+
+        if ( ! $user ) {
+            if ( ! $can_create ) {
+                return new WP_Error( 'COACH_NOT_FOUND', "No coach user with email $email", [ 'status' => 404 ] );
+            }
+            $username = sanitize_user( current( explode( '@', $email ) ), true );
+            // Ensure unique username
+            $base = $username;
+            $i = 1;
+            while ( username_exists( $username ) ) {
+                $username = $base . $i;
+                $i++;
+            }
+            $user_id = wp_insert_user( [
+                'user_login'   => $username,
+                'user_email'   => $email,
+                'user_pass'    => wp_generate_password( 24 ),
+                'first_name'   => $first_name,
+                'last_name'    => $last_name,
+                'display_name' => $full_name,
+                'role'         => 'coach_role',
+            ] );
+            if ( is_wp_error( $user_id ) ) {
+                return $user_id;
+            }
+            $user = get_user_by( 'id', $user_id );
+            $was_new_user = true;
+        }
+
+        $user_id = (int) $user->ID;
+
+        // Ensure user has coach_role even if pre-existing.
+        if ( ! in_array( 'coach_role', (array) $user->roles, true ) ) {
+            $user->add_role( 'coach_role' );
+        }
+
+        // 2. Find or create coach CPT post.
+        $coach_post_id = (int) get_user_meta( $user_id, 'coach_post_id', true );
+        $was_new_post = false;
+
+        if ( ! $coach_post_id || ! get_post( $coach_post_id ) ) {
+            $coach_post_id = wp_insert_post( [
+                'post_type'    => 'coach',
+                'post_title'   => $full_name ?: $email,
+                'post_status'  => 'publish',
+                // CRITICAL: post_author must be the coach user, otherwise the
+                // `ensure_coach_post_id()` init hook will create a duplicate draft
+                // on the coach's first page load (fallback query is by author).
+                'post_author'  => $user_id,
+            ], true );
+            if ( is_wp_error( $coach_post_id ) ) {
+                return $coach_post_id;
+            }
+            $was_new_post = true;
+        }
+
+        // 3. Link user → post. The reverse direction (post → user) is implicit
+        //    via $coach_post_id->post_author. We do NOT write _coach_post_id on
+        //    the coach post itself — that meta key is used elsewhere on CAMP and
+        //    SPOT posts to identify their owning coach (see class-inline-edit.php
+        //    L210, class-payment-gateway.php L238). Writing it here would be
+        //    semantically meaningless (no consumer reads it from a coach post).
+        update_user_meta( $user_id, 'coach_post_id', $coach_post_id );
+
+        // 4. Apply profile meta.
+        $meta_map = [
+            'coach_first_name'      => $first_name,
+            'coach_last_name'       => $last_name,
+            'coach_bio'             => $data['bio']             ?? '',
+            'coach_location'        => $data['location']        ?? '',
+            'coach_years_experience'=> $data['years_experience']?? '',
+            'instagram'             => $data['instagram']       ?? '',
+            'youtube'               => $data['youtube']         ?? '',
+            'website'               => $data['website']         ?? '',
+        ];
+        foreach ( $meta_map as $key => $val ) {
+            if ( $val !== '' ) {
+                update_post_meta( $coach_post_id, $key, $val );
+            }
+        }
+
+        if ( ! empty( $data['certifications'] ) && is_array( $data['certifications'] ) ) {
+            // Repeater format: array of objects with the 'certifications' sub-field key
+            // (matches class-inline-edit.php field config at L23: sub_field => 'certifications').
+            // Using any other key here would make imported certs invisible to the read paths.
+            $rows = array_map( function ( $c ) {
+                return [ 'certifications' => sanitize_text_field( $c ) ];
+            }, $data['certifications'] );
+            update_post_meta( $coach_post_id, 'coach_certifications', $rows );
+        }
+
+        // 5. Taxonomies.
+        if ( ! empty( $data['sport'] ) ) {
+            wp_set_object_terms( $coach_post_id, array_map( 'sanitize_title', (array) $data['sport'] ), 'sport' );
+        }
+        if ( ! empty( $data['languages'] ) ) {
+            wp_set_object_terms( $coach_post_id, array_map( 'sanitize_title', (array) $data['languages'] ), 'language' );
+        }
+
+        $coach_status = $data['coach_status'] ?? 'validated';
+        wp_set_object_terms( $coach_post_id, [ sanitize_title( $coach_status ) ], 'coach-status' );
+
+        // 6. Auto-mark Stripe as connected so imported coaches don't block their own camps.
+        update_user_meta( $user_id, 'stripe_onboarding_complete', '1' );
+
+        return [
+            'user_id'      => $user_id,
+            'post_id'      => $coach_post_id,
+            'was_new'      => ( $was_new_user || $was_new_post ),
+            'was_new_user' => $was_new_user,
+            'was_new_post' => $was_new_post,
+        ];
+    }
 }

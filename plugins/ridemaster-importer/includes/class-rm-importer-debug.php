@@ -53,6 +53,14 @@ class RM_Importer_Debug {
                 return current_user_can( 'manage_options' );
             },
         ] );
+
+        register_rest_route( RM_Importer_Endpoint::NAMESPACE, '/__test_coach_create', [
+            'methods'             => 'POST',
+            'callback'            => [ __CLASS__, 'test_coach_create' ],
+            'permission_callback' => function () {
+                return current_user_can( 'manage_options' );
+            },
+        ] );
     }
 
     public static function dump_meta( WP_REST_Request $req ) {
@@ -200,5 +208,22 @@ class RM_Importer_Debug {
         }
 
         return new WP_REST_Response( $response, 200 );
+    }
+
+    /**
+     * Test route: exercise RM_Coach::create_from_payload with a JSON payload
+     * and return the result. Used by tests/importer/05-coach-create.sh.
+     *
+     * Temporary — removed in Task 16 along with the rest of the debug class.
+     */
+    public static function test_coach_create( WP_REST_Request $req ) {
+        if ( ! class_exists( 'RM_Coach' ) ) {
+            return new WP_Error( 'RM_COACH_MISSING', 'RM_Coach class not loaded', [ 'status' => 500 ] );
+        }
+        $result = RM_Coach::create_from_payload( $req->get_json_params() );
+        if ( is_wp_error( $result ) ) {
+            return $result;
+        }
+        return new WP_REST_Response( $result, 200 );
     }
 }
