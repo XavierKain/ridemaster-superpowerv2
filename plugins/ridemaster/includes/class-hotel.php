@@ -294,7 +294,19 @@ class RM_Hotel {
      *
      * Match strategy: by exact title (case-insensitive).
      *
-     * @param array $payload { match_by{name}, create_if_missing, data{name, description} }
+     * Image handling is NOT performed here to avoid a circular dependency on
+     * the importer plugin's RM_Importer_Images class. The endpoint processes
+     * `data.images` after this method returns.
+     *
+     * UPDATE BEHAVIOR: when a hotel is matched-existing, meta from `data` is
+     * still applied (overwriting). The importer is the source of truth for
+     * example data; users edit afterward.
+     *
+     * @param array $payload {
+     *     match_by{name},
+     *     create_if_missing,
+     *     data{ name, description, description_html, country, address }
+     * }
      * @return array|WP_Error { 'post_id' => int, 'was_new' => bool }
      */
     public static function create_from_payload( array $payload ) {
@@ -316,25 +328,40 @@ class RM_Hotel {
             'fields'         => 'ids',
         ] );
 
+        $was_new = false;
+        $post_id = 0;
+
         if ( ! empty( $existing ) ) {
-            return [ 'post_id' => (int) $existing[0], 'was_new' => false ];
+            $post_id = (int) $existing[0];
+        } else {
+            if ( ! $can_create ) {
+                return new WP_Error( 'HOTEL_NOT_FOUND', "No hotel with name '$name'", [ 'status' => 404 ] );
+            }
+
+            $post_id = wp_insert_post( [
+                'post_type'    => 'hotel',
+                'post_title'   => sanitize_text_field( $name ),
+                'post_content' => isset( $data['description'] ) ? wp_kses_post( $data['description'] ) : '',
+                'post_status'  => 'publish',
+            ], true );
+
+            if ( is_wp_error( $post_id ) ) {
+                return $post_id;
+            }
+            $was_new = true;
         }
 
-        if ( ! $can_create ) {
-            return new WP_Error( 'HOTEL_NOT_FOUND', "No hotel with name '$name'", [ 'status' => 404 ] );
+        // ---- Meta (always apply when present in data, even on update) ----
+        if ( array_key_exists( 'country', $data ) ) {
+            update_post_meta( $post_id, 'hotel_country', sanitize_text_field( (string) $data['country'] ) );
+        }
+        if ( array_key_exists( 'address', $data ) ) {
+            update_post_meta( $post_id, 'hotel_address', sanitize_text_field( (string) $data['address'] ) );
+        }
+        if ( array_key_exists( 'description_html', $data ) ) {
+            update_post_meta( $post_id, '_description', wp_kses_post( (string) $data['description_html'] ) );
         }
 
-        $post_id = wp_insert_post( [
-            'post_type'    => 'hotel',
-            'post_title'   => sanitize_text_field( $name ),
-            'post_content' => isset( $data['description'] ) ? wp_kses_post( $data['description'] ) : '',
-            'post_status'  => 'publish',
-        ], true );
-
-        if ( is_wp_error( $post_id ) ) {
-            return $post_id;
-        }
-
-        return [ 'post_id' => $post_id, 'was_new' => true ];
+        return [ 'post_id' => (int) $post_id, 'was_new' => $was_new ];
     }
 }

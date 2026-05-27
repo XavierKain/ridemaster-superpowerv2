@@ -166,44 +166,49 @@ class RM_Importer_Endpoint {
         // images and Yoast only emit warnings, not hard failures.
         $rollback->track_camp( (int) $camp_id );
 
+        // Explicit coach↔spot link (rel_id 19).
+        // The main plugin's auto_link_coach_to_spot hook on save_post_product fires
+        // during wp_insert_post, BEFORE apply_meta_from_data writes the rel_id 20
+        // and 18 relations — so the hook doesn't find them. We write rel 19
+        // ourselves here, idempotently (existence check on the unique constraint).
+        if ( $coach_post_id && $spot_id ) {
+            global $wpdb;
+            $table = $wpdb->prefix . 'jet_rel_default';
+            $existing_rel = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$table} WHERE rel_id = %d AND parent_object_id = %d AND child_object_id = %d",
+                19, $coach_post_id, $spot_id
+            ) );
+            if ( ! $existing_rel ) {
+                $wpdb->insert( $table, [
+                    'rel_id'           => 19,
+                    'parent_object_id' => $coach_post_id,
+                    'child_object_id'  => $spot_id,
+                ], [ '%d', '%d', '%d' ] );
+            }
+        }
+
         // Flush deferred stock writes synchronously (without triggering unrelated shutdown handlers).
         self::flush_camp_stock_meta( $camp_id, (int) $camp['max_spots'] );
 
-        // ----- Images -----
-        $images_imported = 0;
-        $images_failed   = 0;
+        // ----- Spot images -----
+        if ( $spot_id && ! empty( $payload['spot']['data']['images'] ) ) {
+            self::attach_entity_images( $spot_id, $payload['spot']['data']['images'], '_thumbnail_id', 'spot_gallery', $warnings, $rollback );
+        }
 
+        // ----- Hotel images -----
+        if ( $hotel_id && ! empty( $payload['hotel']['data']['images'] ) ) {
+            self::attach_entity_images( $hotel_id, $payload['hotel']['data']['images'], '_thumbnail_id', 'accommodation_photos', $warnings, $rollback );
+        }
+
+        // ----- Camp images -----
         $featured = $camp['featured_image'] ?? null;
         $gallery  = $camp['gallery']        ?? [];
-
-        if ( $featured ) {
-            $result = RM_Importer_Images::import( $featured, $camp_id );
-            if ( $result['attachment_id'] ) {
-                set_post_thumbnail( $camp_id, $result['attachment_id'] );
-                $images_imported++;
-                $rollback->track_attachment( (int) $result['attachment_id'] );
-            } else {
-                $images_failed++;
-                $warnings[] = "Featured image: {$result['error']}";
-            }
-        }
-
-        $gallery_ids = [];
-        foreach ( $gallery as $item ) {
-            $result = RM_Importer_Images::import( $item, $camp_id );
-            if ( $result['attachment_id'] ) {
-                $gallery_ids[] = $result['attachment_id'];
-                $images_imported++;
-                $rollback->track_attachment( (int) $result['attachment_id'] );
-            } else {
-                $images_failed++;
-                $warnings[] = "Gallery image: {$result['error']}";
-            }
-        }
-
-        if ( ! empty( $gallery_ids ) ) {
-            update_post_meta( $camp_id, '_product_image_gallery', implode( ',', $gallery_ids ) );
-        }
+        $all_camp_images = $featured ? array_merge( [ $featured ], $gallery ) : $gallery;
+        $img_result = $all_camp_images
+            ? self::attach_entity_images( $camp_id, $all_camp_images, '_thumbnail_id', '_product_image_gallery', $warnings, $rollback )
+            : [ 'imported' => 0, 'failed' => 0 ];
+        $images_imported = $img_result['imported'];
+        $images_failed   = $img_result['failed'];
 
         // ----- Stripe blocker warning -----
         // If the linked coach hasn't completed Stripe onboarding, the camp may
@@ -317,6 +322,65 @@ class RM_Importer_Endpoint {
             ],
         ] );
         return $q->posts ? (int) $q->posts[0] : null;
+    }
+
+    /**
+     * Attach a list of images to a post (camp, spot, hotel).
+     *
+     * First successful image becomes the featured image (_thumbnail_id via
+     * set_post_thumbnail). Subsequent successful images go into a CSV postmeta
+     * key (e.g. _product_image_gallery for camps, spot_gallery for spots,
+     * accommodation_photos for hotels).
+     *
+     * Each successful attachment is tracked in the rollback so it is cleaned
+     * up if a later step fails. Failures are pushed as warnings.
+     *
+     * @param int                   $parent_id          Post ID to attach to.
+     * @param array                 $images             Image descriptor list (url|base64, filename, alt, title, role).
+     * @param string                $featured_meta_key  Currently always '_thumbnail_id'; passed for clarity at call sites.
+     * @param string                $gallery_meta_key   CSV postmeta key for the gallery.
+     * @param array                 $warnings           Reference; failure messages are appended.
+     * @param RM_Importer_Rollback  $rollback           Rollback tracker.
+     * @return array { imported: int, failed: int }
+     */
+    private static function attach_entity_images(
+        int $parent_id,
+        array $images,
+        string $featured_meta_key,
+        string $gallery_meta_key,
+        array &$warnings,
+        RM_Importer_Rollback $rollback
+    ): array {
+        unset( $featured_meta_key ); // currently always _thumbnail_id; reserved for future override.
+
+        $imported     = 0;
+        $failed       = 0;
+        $featured_set = false;
+        $gallery_ids  = [];
+
+        foreach ( $images as $item ) {
+            $result = RM_Importer_Images::import( $item, $parent_id );
+            if ( empty( $result['attachment_id'] ) ) {
+                $warnings[] = "Image for post {$parent_id}: " . ( $result['error'] ?? 'unknown error' );
+                $failed++;
+                continue;
+            }
+            $rollback->track_attachment( (int) $result['attachment_id'] );
+            $imported++;
+
+            if ( ! $featured_set ) {
+                set_post_thumbnail( $parent_id, (int) $result['attachment_id'] );
+                $featured_set = true;
+            } else {
+                $gallery_ids[] = (int) $result['attachment_id'];
+            }
+        }
+
+        if ( $gallery_ids ) {
+            update_post_meta( $parent_id, $gallery_meta_key, implode( ',', $gallery_ids ) );
+        }
+
+        return [ 'imported' => $imported, 'failed' => $failed ];
     }
 
     /**

@@ -2,7 +2,7 @@
 Contributors: ridemaster
 Requires at least: 6.9
 Tested up to: 6.9
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 
 Conversational import of camps from external coach websites into Ridemaster.
 

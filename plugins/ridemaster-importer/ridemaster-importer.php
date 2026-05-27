@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RideMaster Importer
  * Description: Conversational import of camps from external coach websites into Ridemaster. Depends on the RideMaster plugin.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: RideMaster
  * Text Domain: ridemaster-importer
  * Requires Plugins: ridemaster
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RM_IMPORTER_VERSION', '1.0.0' );
+define( 'RM_IMPORTER_VERSION', '1.1.0' );
 define( 'RM_IMPORTER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RM_IMPORTER_URL', plugin_dir_url( __FILE__ ) );
 
