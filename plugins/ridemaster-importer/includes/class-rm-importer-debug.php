@@ -45,6 +45,14 @@ class RM_Importer_Debug {
                 'id' => [ 'required' => true, 'type' => 'integer' ],
             ],
         ] );
+
+        register_rest_route( RM_Importer_Endpoint::NAMESPACE, '/__test_camp_parity', [
+            'methods'             => 'POST',
+            'callback'            => [ __CLASS__, 'test_camp_parity' ],
+            'permission_callback' => function () {
+                return current_user_can( 'manage_options' );
+            },
+        ] );
     }
 
     public static function dump_meta( WP_REST_Request $req ) {
@@ -108,5 +116,89 @@ class RM_Importer_Debug {
             'as_parent' => $as_parent,
             'as_child'  => $as_child,
         ], 200 );
+    }
+
+    /**
+     * Parity test: create two camps via two code paths and return their meta side-by-side.
+     *
+     * Path A: simulate the JFB hook entrypoint by setting $_REQUEST and inserting a product.
+     * Path B: call RM_Camp::create_from_payload() directly with equivalent data.
+     *
+     * Both camps share the same input values (price, max_spots, dates, spot).
+     * The caller diffs the two meta dumps to confirm byte-identical behavior.
+     *
+     * Returns { jfb_id, payload_id, jfb_meta, payload_meta } as JSON.
+     * The caller is responsible for deleting both camps after inspection.
+     */
+    public static function test_camp_parity( WP_REST_Request $req ) {
+        if ( ! class_exists( 'RM_Camp' ) ) {
+            return new WP_Error( 'RM_CAMP_MISSING', 'RM_Camp class not loaded', [ 'status' => 500 ] );
+        }
+
+        // Save current $_REQUEST so we can restore it afterwards — the parity
+        // path overwrites several keys to simulate the JFB form payload, which
+        // would otherwise pollute the rest of the request lifecycle.
+        $saved_request = $_REQUEST;
+
+        try {
+            // ---- Path A: JFB-style ----
+            $_REQUEST['camp_title']       = '[TEST-JFB] Parity Camp';
+            $_REQUEST['camp_price']       = '777';
+            $_REQUEST['camp_max_spots']   = 5;
+            $_REQUEST['camp_start_date']  = '2026-08-01';
+            $_REQUEST['camp_end_date']    = '2026-08-08';
+            $_REQUEST['camp_spot']        = 195;  // Tarifa
+
+            $jfb_id = wp_insert_post( [
+                'post_type'    => 'product',
+                'post_title'   => '[TEST-JFB] Parity Camp',
+                'post_status'  => 'publish',
+            ] );
+
+            // ---- Path B: create_from_payload ----
+            $payload_id = RM_Camp::create_from_payload( [
+                'title'         => '[TEST-PAYLOAD] Parity Camp',
+                'price'         => '777',
+                'max_spots'     => 5,
+                'start_date'    => '2026-08-01',
+                'end_date'      => '2026-08-08',
+                'spot_id'       => 195,
+                'coach_post_id' => 0,
+                'check_stripe'  => false,
+            ] );
+
+            // Force shutdown actions (stock meta forcing) to run now.
+            do_action( 'shutdown' );
+        } finally {
+            $_REQUEST = $saved_request;
+        }
+
+        // Collect meta for both.
+        $dump = function ( $id ) {
+            $meta = get_post_meta( $id );
+            $flat = [];
+            foreach ( $meta as $k => $v ) {
+                $flat[ $k ] = ( is_array( $v ) && count( $v ) === 1 ) ? $v[0] : $v;
+            }
+            return $flat;
+        };
+
+        $response = [
+            'jfb_id'       => $jfb_id,
+            'payload_id'   => is_wp_error( $payload_id ) ? null : $payload_id,
+            'payload_err'  => is_wp_error( $payload_id ) ? $payload_id->get_error_message() : null,
+            'jfb_meta'     => $jfb_id     ? $dump( $jfb_id )     : [],
+            'payload_meta' => $payload_id && ! is_wp_error( $payload_id ) ? $dump( $payload_id ) : [],
+        ];
+
+        // Cleanup.
+        if ( $jfb_id ) {
+            wp_delete_post( $jfb_id, true );
+        }
+        if ( $payload_id && ! is_wp_error( $payload_id ) ) {
+            wp_delete_post( $payload_id, true );
+        }
+
+        return new WP_REST_Response( $response, 200 );
     }
 }
