@@ -33,6 +33,7 @@ add_action( 'plugins_loaded', function () {
         return;
     }
 
+    require_once RM_IMPORTER_DIR . 'includes/class-rm-importer-validator.php';
     require_once RM_IMPORTER_DIR . 'includes/class-rm-importer-endpoint.php';
     add_action( 'rest_api_init', [ 'RM_Importer_Endpoint', 'register_routes' ] );
 
