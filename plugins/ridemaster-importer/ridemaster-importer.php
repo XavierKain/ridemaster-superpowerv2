@@ -35,4 +35,7 @@ add_action( 'plugins_loaded', function () {
 
     require_once RM_IMPORTER_DIR . 'includes/class-rm-importer-endpoint.php';
     add_action( 'rest_api_init', [ 'RM_Importer_Endpoint', 'register_routes' ] );
+
+    require_once RM_IMPORTER_DIR . 'includes/class-rm-importer-debug.php';
+    add_action( 'rest_api_init', [ 'RM_Importer_Debug', 'register_routes' ] );
 }, 20 );
