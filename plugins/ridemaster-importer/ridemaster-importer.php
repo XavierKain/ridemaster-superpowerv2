@@ -18,17 +18,21 @@ define( 'RM_IMPORTER_URL', plugin_dir_url( __FILE__ ) );
 
 /**
  * Hard dependency check on the main ridemaster plugin.
- * If absent, deactivate self and show admin notice.
+ * Runs early (plugins_loaded) so it covers REST requests too — admin_init
+ * is not fired during REST API calls.
  */
-add_action( 'admin_init', function () {
+add_action( 'plugins_loaded', function () {
     if ( ! class_exists( 'RM_Camp' ) ) {
-        deactivate_plugins( plugin_basename( __FILE__ ) );
+        // Deactivate self + warn (admin context only — REST just won't have routes).
+        add_action( 'admin_init', function () {
+            deactivate_plugins( plugin_basename( __FILE__ ) );
+        } );
         add_action( 'admin_notices', function () {
             echo '<div class="notice notice-error"><p><strong>RideMaster Importer</strong> requires the <strong>RideMaster</strong> plugin to be active.</p></div>';
         } );
+        return;
     }
-} );
 
-require_once RM_IMPORTER_DIR . 'includes/class-rm-importer-endpoint.php';
-
-add_action( 'rest_api_init', [ 'RM_Importer_Endpoint', 'register_routes' ] );
+    require_once RM_IMPORTER_DIR . 'includes/class-rm-importer-endpoint.php';
+    add_action( 'rest_api_init', [ 'RM_Importer_Endpoint', 'register_routes' ] );
+}, 20 );
