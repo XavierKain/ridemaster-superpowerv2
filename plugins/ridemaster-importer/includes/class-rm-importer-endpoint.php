@@ -171,6 +171,14 @@ class RM_Importer_Endpoint {
             update_post_meta( $camp_id, '_product_image_gallery', implode( ',', $gallery_ids ) );
         }
 
+        // ----- Yoast SEO -----
+        if ( ! empty( $camp['yoast']['focus_keyword'] ) ) {
+            update_post_meta( $camp_id, '_yoast_wpseo_focuskw', sanitize_text_field( $camp['yoast']['focus_keyword'] ) );
+        }
+        if ( ! empty( $camp['yoast']['meta_description'] ) ) {
+            update_post_meta( $camp_id, '_yoast_wpseo_metadesc', sanitize_text_field( $camp['yoast']['meta_description'] ) );
+        }
+
         return new WP_REST_Response( [
             'status'    => 'success',
             'camp_id'   => $camp_id,
