@@ -137,6 +137,40 @@ class RM_Importer_Endpoint {
         // Flush deferred stock writes synchronously (without triggering unrelated shutdown handlers).
         self::flush_camp_stock_meta( $camp_id, (int) $camp['max_spots'] );
 
+        // ----- Images -----
+        $images_imported = 0;
+        $images_failed   = 0;
+
+        $featured = $camp['featured_image'] ?? null;
+        $gallery  = $camp['gallery']        ?? [];
+
+        if ( $featured ) {
+            $result = RM_Importer_Images::import( $featured, $camp_id );
+            if ( $result['attachment_id'] ) {
+                set_post_thumbnail( $camp_id, $result['attachment_id'] );
+                $images_imported++;
+            } else {
+                $images_failed++;
+                $warnings[] = "Featured image: {$result['error']}";
+            }
+        }
+
+        $gallery_ids = [];
+        foreach ( $gallery as $item ) {
+            $result = RM_Importer_Images::import( $item, $camp_id );
+            if ( $result['attachment_id'] ) {
+                $gallery_ids[] = $result['attachment_id'];
+                $images_imported++;
+            } else {
+                $images_failed++;
+                $warnings[] = "Gallery image: {$result['error']}";
+            }
+        }
+
+        if ( ! empty( $gallery_ids ) ) {
+            update_post_meta( $camp_id, '_product_image_gallery', implode( ',', $gallery_ids ) );
+        }
+
         return new WP_REST_Response( [
             'status'    => 'success',
             'camp_id'   => $camp_id,
@@ -158,7 +192,7 @@ class RM_Importer_Endpoint {
                 'hotel' => $hotel_result
                     ? [ 'id' => (int) $hotel_result['post_id'], 'was_new' => (bool) $hotel_result['was_new'] ]
                     : ( $hotel_id ? [ 'id' => $hotel_id, 'was_new' => false ] : null ),
-                'camp'  => [ 'id' => $camp_id, 'images_imported' => 0, 'images_failed' => 0 ],
+                'camp'  => [ 'id' => $camp_id, 'images_imported' => $images_imported, 'images_failed' => $images_failed ],
             ],
             'warnings'  => $warnings,
         ], 200 );
