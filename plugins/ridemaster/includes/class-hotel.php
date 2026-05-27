@@ -288,4 +288,53 @@ class RM_Hotel {
 		];
 		$query->set( 'meta_query', $meta_query );
 	}
+
+    /**
+     * Find or create a hotel CPT post from a payload.
+     *
+     * Match strategy: by exact title (case-insensitive).
+     *
+     * @param array $payload { match_by{name}, create_if_missing, data{name, description} }
+     * @return array|WP_Error { 'post_id' => int, 'was_new' => bool }
+     */
+    public static function create_from_payload( array $payload ) {
+
+        $data       = $payload['data'] ?? [];
+        $match      = $payload['match_by'] ?? [];
+        $can_create = ! empty( $payload['create_if_missing'] );
+
+        $name = $data['name'] ?? $match['name'] ?? '';
+        if ( empty( $name ) ) {
+            return new WP_Error( 'INVALID_PAYLOAD', 'hotel.data.name or hotel.match_by.name is required', [ 'status' => 400 ] );
+        }
+
+        $existing = get_posts( [
+            'post_type'      => 'hotel',
+            'post_status'    => 'any',
+            'posts_per_page' => 1,
+            'title'          => $name,
+            'fields'         => 'ids',
+        ] );
+
+        if ( ! empty( $existing ) ) {
+            return [ 'post_id' => (int) $existing[0], 'was_new' => false ];
+        }
+
+        if ( ! $can_create ) {
+            return new WP_Error( 'HOTEL_NOT_FOUND', "No hotel with name '$name'", [ 'status' => 404 ] );
+        }
+
+        $post_id = wp_insert_post( [
+            'post_type'    => 'hotel',
+            'post_title'   => sanitize_text_field( $name ),
+            'post_content' => isset( $data['description'] ) ? wp_kses_post( $data['description'] ) : '',
+            'post_status'  => 'publish',
+        ], true );
+
+        if ( is_wp_error( $post_id ) ) {
+            return $post_id;
+        }
+
+        return [ 'post_id' => $post_id, 'was_new' => true ];
+    }
 }

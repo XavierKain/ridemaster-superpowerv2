@@ -69,6 +69,14 @@ class RM_Importer_Debug {
                 return current_user_can( 'manage_options' );
             },
         ] );
+
+        register_rest_route( RM_Importer_Endpoint::NAMESPACE, '/__test_hotel_create', [
+            'methods'             => 'POST',
+            'callback'            => [ __CLASS__, 'test_hotel_create' ],
+            'permission_callback' => function () {
+                return current_user_can( 'manage_options' );
+            },
+        ] );
     }
 
     public static function dump_meta( WP_REST_Request $req ) {
@@ -246,6 +254,23 @@ class RM_Importer_Debug {
             return new WP_Error( 'RM_SPOT_MISSING', 'RM_Spot class not loaded', [ 'status' => 500 ] );
         }
         $result = RM_Spot::create_from_payload( $req->get_json_params() );
+        if ( is_wp_error( $result ) ) {
+            return $result;
+        }
+        return new WP_REST_Response( $result, 200 );
+    }
+
+    /**
+     * Test route: exercise RM_Hotel::create_from_payload with a JSON payload
+     * and return the result. Used by tests/importer/09-camp-with-hotel.sh.
+     *
+     * Temporary — removed in Task 16.
+     */
+    public static function test_hotel_create( WP_REST_Request $req ) {
+        if ( ! class_exists( 'RM_Hotel' ) ) {
+            return new WP_Error( 'RM_HOTEL_MISSING', 'RM_Hotel class not loaded', [ 'status' => 500 ] );
+        }
+        $result = RM_Hotel::create_from_payload( $req->get_json_params() );
         if ( is_wp_error( $result ) ) {
             return $result;
         }

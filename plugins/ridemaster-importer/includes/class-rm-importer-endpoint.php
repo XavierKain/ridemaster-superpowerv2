@@ -99,6 +99,24 @@ class RM_Importer_Endpoint {
             $spot_id = (int) $spot_result['post_id'];
         }
 
+        // ----- Resolve hotel -----
+        $hotel_id     = 0;
+        $hotel_result = null;
+
+        if ( ! empty( $payload['hotel']['existing_post_id'] ) ) {
+            $hotel_id = (int) $payload['hotel']['existing_post_id'];
+        } elseif ( ! empty( $payload['hotel']['data'] ) || ! empty( $payload['hotel']['match_by'] ) ) {
+            $hotel_result = RM_Hotel::create_from_payload( $payload['hotel'] );
+            if ( is_wp_error( $hotel_result ) ) {
+                return new WP_Error(
+                    'IMPORT_FAILED',
+                    'Hotel resolution failed: ' . $hotel_result->get_error_message(),
+                    [ 'status' => 500, 'step' => 'hotel' ]
+                );
+            }
+            $hotel_id = (int) $hotel_result['post_id'];
+        }
+
         // ----- Build camp payload -----
         // $resolved collects the IDs that subsequent tasks (spot, hotel)
         // will populate via the same inline-or-existing dispatch pattern.
@@ -106,7 +124,7 @@ class RM_Importer_Endpoint {
         $resolved = [
             'coach_post_id' => $coach_post_id,
             'spot_id'       => $spot_id,
-            'hotel_id'      => (int) ( $payload['hotel']['existing_post_id'] ?? 0 ),
+            'hotel_id'      => $hotel_id,
         ];
         $camp_payload = self::build_camp_payload( $camp, $payload, $resolved );
 
@@ -137,6 +155,9 @@ class RM_Importer_Endpoint {
                 'spot'  => $spot_result
                     ? [ 'id' => (int) $spot_result['post_id'], 'was_new' => (bool) $spot_result['was_new'] ]
                     : ( $spot_id ? [ 'id' => $spot_id, 'was_new' => false ] : null ),
+                'hotel' => $hotel_result
+                    ? [ 'id' => (int) $hotel_result['post_id'], 'was_new' => (bool) $hotel_result['was_new'] ]
+                    : ( $hotel_id ? [ 'id' => $hotel_id, 'was_new' => false ] : null ),
                 'camp'  => [ 'id' => $camp_id, 'images_imported' => 0, 'images_failed' => 0 ],
             ],
             'warnings'  => $warnings,
