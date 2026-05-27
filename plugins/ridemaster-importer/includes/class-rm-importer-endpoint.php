@@ -63,6 +63,8 @@ class RM_Importer_Endpoint {
 
         $warnings = [];
 
+        $rollback = new RM_Importer_Rollback();
+
         // ----- Resolve coach -----
         $coach_post_id = 0;
         $coach_result  = null;
@@ -79,6 +81,12 @@ class RM_Importer_Endpoint {
                 );
             }
             $coach_post_id = (int) $coach_result['post_id'];
+            if ( ! empty( $coach_result['was_new_post'] ) ) {
+                $rollback->track_coach_post( (int) $coach_result['post_id'] );
+            }
+            if ( ! empty( $coach_result['was_new_user'] ) ) {
+                $rollback->track_user( (int) $coach_result['user_id'] );
+            }
         }
 
         // ----- Resolve spot -----
@@ -97,6 +105,9 @@ class RM_Importer_Endpoint {
                 );
             }
             $spot_id = (int) $spot_result['post_id'];
+            if ( ! empty( $spot_result['was_new'] ) ) {
+                $rollback->track_spot( (int) $spot_result['post_id'] );
+            }
         }
 
         // ----- Resolve hotel -----
@@ -115,6 +126,9 @@ class RM_Importer_Endpoint {
                 );
             }
             $hotel_id = (int) $hotel_result['post_id'];
+            if ( ! empty( $hotel_result['was_new'] ) ) {
+                $rollback->track_hotel( (int) $hotel_result['post_id'] );
+            }
         }
 
         // ----- Build camp payload -----
@@ -131,8 +145,18 @@ class RM_Importer_Endpoint {
         // ----- Create the camp -----
         $camp_id = RM_Camp::create_from_payload( $camp_payload );
         if ( is_wp_error( $camp_id ) ) {
-            return new WP_Error( 'IMPORT_FAILED', 'Camp creation failed: ' . $camp_id->get_error_message(), [ 'status' => 500, 'step' => 'camp' ] );
+            $rolled = $rollback->rollback();
+            return new WP_Error(
+                'IMPORT_FAILED',
+                'Camp creation failed: ' . $camp_id->get_error_message(),
+                [ 'status' => 500, 'step' => 'camp', 'rolled_back' => $rolled ]
+            );
         }
+
+        // Camp itself is tracked AFTER the success check so it can be rolled
+        // back if a later step (image processing, Yoast) fatal-errors. Currently
+        // images and Yoast only emit warnings, not hard failures.
+        $rollback->track_camp( (int) $camp_id );
 
         // Flush deferred stock writes synchronously (without triggering unrelated shutdown handlers).
         self::flush_camp_stock_meta( $camp_id, (int) $camp['max_spots'] );
@@ -149,6 +173,7 @@ class RM_Importer_Endpoint {
             if ( $result['attachment_id'] ) {
                 set_post_thumbnail( $camp_id, $result['attachment_id'] );
                 $images_imported++;
+                $rollback->track_attachment( (int) $result['attachment_id'] );
             } else {
                 $images_failed++;
                 $warnings[] = "Featured image: {$result['error']}";
@@ -161,6 +186,7 @@ class RM_Importer_Endpoint {
             if ( $result['attachment_id'] ) {
                 $gallery_ids[] = $result['attachment_id'];
                 $images_imported++;
+                $rollback->track_attachment( (int) $result['attachment_id'] );
             } else {
                 $images_failed++;
                 $warnings[] = "Gallery image: {$result['error']}";

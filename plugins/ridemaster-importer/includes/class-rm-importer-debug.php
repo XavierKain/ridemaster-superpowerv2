@@ -77,6 +77,14 @@ class RM_Importer_Debug {
                 return current_user_can( 'manage_options' );
             },
         ] );
+
+        register_rest_route( RM_Importer_Endpoint::NAMESPACE, '/__test_rollback', [
+            'methods'             => 'POST',
+            'callback'            => [ __CLASS__, 'test_rollback' ],
+            'permission_callback' => function () {
+                return current_user_can( 'manage_options' );
+            },
+        ] );
     }
 
     public static function dump_meta( WP_REST_Request $req ) {
@@ -275,5 +283,68 @@ class RM_Importer_Debug {
             return $result;
         }
         return new WP_REST_Response( $result, 200 );
+    }
+
+    /**
+     * Test route: simulate a camp creation failure AFTER coach/spot/hotel are
+     * created, and verify the rollback tracker correctly deletes only the
+     * entities we created.
+     *
+     * Body must contain the coach/spot/hotel inline blocks (same shape as
+     * import-camp). Returns {created_ids, rolled_back, post_rollback_check}
+     * where post_rollback_check verifies (via WP API) that the tracked
+     * entities no longer exist.
+     *
+     * Temporary — removed in Task 16.
+     */
+    public static function test_rollback( WP_REST_Request $req ) {
+        $payload = $req->get_json_params();
+
+        if ( ! class_exists( 'RM_Importer_Rollback' ) || ! class_exists( 'RM_Coach' ) || ! class_exists( 'RM_Spot' ) || ! class_exists( 'RM_Hotel' ) ) {
+            return new WP_Error( 'MISSING_DEPS', 'one or more import classes are not loaded', [ 'status' => 500 ] );
+        }
+
+        $rollback = new RM_Importer_Rollback();
+        $created  = [];
+
+        if ( ! empty( $payload['coach'] ) ) {
+            $coach = RM_Coach::create_from_payload( $payload['coach'] );
+            if ( is_wp_error( $coach ) ) return $coach;
+            $created['coach_user_id'] = $coach['user_id'];
+            $created['coach_post_id'] = $coach['post_id'];
+            if ( ! empty( $coach['was_new_user'] ) ) $rollback->track_user( $coach['user_id'] );
+            if ( ! empty( $coach['was_new_post'] ) ) $rollback->track_coach_post( $coach['post_id'] );
+        }
+
+        if ( ! empty( $payload['spot'] ) ) {
+            $spot = RM_Spot::create_from_payload( $payload['spot'] );
+            if ( is_wp_error( $spot ) ) return $spot;
+            $created['spot_id'] = $spot['post_id'];
+            if ( ! empty( $spot['was_new'] ) ) $rollback->track_spot( $spot['post_id'] );
+        }
+
+        if ( ! empty( $payload['hotel'] ) ) {
+            $hotel = RM_Hotel::create_from_payload( $payload['hotel'] );
+            if ( is_wp_error( $hotel ) ) return $hotel;
+            $created['hotel_id'] = $hotel['post_id'];
+            if ( ! empty( $hotel['was_new'] ) ) $rollback->track_hotel( $hotel['post_id'] );
+        }
+
+        // Now roll back (no actual camp failure — we just want to verify cleanup).
+        $rolled = $rollback->rollback();
+
+        // Verify deletions by reading back.
+        $check = [
+            'coach_user_exists' => ! empty( $created['coach_user_id'] ) ? (bool) get_user_by( 'id', $created['coach_user_id'] ) : null,
+            'coach_post_exists' => ! empty( $created['coach_post_id'] ) ? (bool) get_post( $created['coach_post_id'] ) : null,
+            'spot_post_exists'  => ! empty( $created['spot_id'] )  ? (bool) get_post( $created['spot_id'] )  : null,
+            'hotel_post_exists' => ! empty( $created['hotel_id'] ) ? (bool) get_post( $created['hotel_id'] ) : null,
+        ];
+
+        return new WP_REST_Response( [
+            'created'             => $created,
+            'rolled_back'         => $rolled,
+            'post_rollback_check' => $check,
+        ], 200 );
     }
 }
