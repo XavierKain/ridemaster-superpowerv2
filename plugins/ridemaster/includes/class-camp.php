@@ -63,7 +63,11 @@ class RM_Camp {
      * ------------------------------------------------------------------ */
 
     /**
-     * Initialise a newly-created camp product.
+     * Initialise a newly-created camp product (JFB hook entrypoint).
+     *
+     * Maps $_REQUEST → normalized data array and delegates to apply_meta_from_data.
+     * This wrapper preserves the exact behavior of the previous monolithic
+     * implementation while enabling reuse from the importer plugin.
      *
      * @param int      $post_id Post ID.
      * @param \WP_Post $post    Post object.
@@ -96,11 +100,47 @@ class RM_Camp {
 
         self::log( 'RideMaster: init_new_camp fired for post ' . $post_id );
 
+        // Map $_REQUEST → normalized data array.
+        $data = [
+            'price'         => isset( $_REQUEST['camp_price'] )     ? sanitize_text_field( $_REQUEST['camp_price'] )     : '',
+            'max_spots'     => isset( $_REQUEST['camp_max_spots'] ) ? intval( $_REQUEST['camp_max_spots'] )              : ( isset( $_REQUEST['camp_stock'] ) ? intval( $_REQUEST['camp_stock'] ) : 0 ),
+            'start_date'    => isset( $_REQUEST['camp_start_date'] ) ? sanitize_text_field( $_REQUEST['camp_start_date'] ) : '',
+            'end_date'      => isset( $_REQUEST['camp_end_date'] )   ? sanitize_text_field( $_REQUEST['camp_end_date'] )   : '',
+            'coach_user_id' => get_current_user_id(),
+            'spot_id'       => isset( $_REQUEST['camp_spot'] ) ? intval( $_REQUEST['camp_spot'] ) : 0,
+            'check_stripe'  => true,  // JFB path always checks the current user's Stripe status.
+        ];
+
+        self::apply_meta_from_data( $post_id, $data );
+
+        $running = false;
+    }
+
+    /**
+     * Apply all camp meta + taxonomies + relations + Stripe-blocker logic from a normalized data array.
+     *
+     * Extracted from init_new_camp so the importer plugin can reuse it without
+     * relying on $_REQUEST.
+     *
+     * @param int   $post_id Camp product ID (must already exist).
+     * @param array $data    Normalized data:
+     *                       - price (string|int)
+     *                       - max_spots (int)
+     *                       - start_date (string YYYY-MM-DD)
+     *                       - end_date (string YYYY-MM-DD)
+     *                       - coach_user_id (int) — WP user whose Stripe status to check (optional)
+     *                       - coach_post_id (int) — explicit coach CPT ID. If 0/missing AND
+     *                         coach_user_id is set, falls back to that user's `coach_post_id` usermeta. (optional)
+     *                       - spot_id (int) — spot CPT ID to link. 0/missing = skip Spot→Camp link. (optional)
+     *                       - check_stripe (bool) — whether to apply Stripe blocker (true for JFB)
+     */
+    public static function apply_meta_from_data( $post_id, array $data ) {
+
         // ---------------------------------------------------------------
-        // A. Write _price meta from form data.
+        // A. Write _price meta.
         // ---------------------------------------------------------------
-        if ( ! empty( $_REQUEST['camp_price'] ) ) {
-            $price = sanitize_text_field( $_REQUEST['camp_price'] );
+        if ( ! empty( $data['price'] ) ) {
+            $price = $data['price'];
             update_post_meta( $post_id, '_price', $price );
             update_post_meta( $post_id, '_regular_price', $price );
             self::log( 'RideMaster: Set _price = ' . $price . ' for post ' . $post_id );
@@ -114,32 +154,27 @@ class RM_Camp {
 
         // ---------------------------------------------------------------
         // B2. Force stock values via shutdown hook.
-        //     JFB WooCommerce module runs after save_post and may
-        //     overwrite stock data, so we set it last.
         // ---------------------------------------------------------------
-        // JetFormBuilder field is named "camp_max_spots"; fall back to legacy "camp_stock".
-        $stock_qty = isset( $_REQUEST['camp_max_spots'] ) ? intval( $_REQUEST['camp_max_spots'] ) : ( isset( $_REQUEST['camp_stock'] ) ? intval( $_REQUEST['camp_stock'] ) : 0 );
+        $stock_qty = isset( $data['max_spots'] ) ? intval( $data['max_spots'] ) : 0;
         add_action( 'shutdown', function () use ( $post_id, $stock_qty ) {
             update_post_meta( $post_id, '_stock', $stock_qty );
             update_post_meta( $post_id, '_manage_stock', 'yes' );
-            update_post_meta( $post_id, '_stock_status', 'instock' );
+            update_post_meta( $post_id, '_stock_status', $stock_qty > 0 ? 'instock' : 'outofstock' );
             wc_delete_product_transients( $post_id );
             self::log( 'RideMaster: Forced stock values on shutdown for post ' . $post_id . ' (stock=' . $stock_qty . ')' );
         } );
 
         // ---------------------------------------------------------------
-        // C. Merge dates: individual metas + JetEngine advanced-date format.
+        // C. Merge dates.
         // ---------------------------------------------------------------
-        $start_date = isset( $_REQUEST['camp_start_date'] ) ? sanitize_text_field( $_REQUEST['camp_start_date'] ) : '';
-        $end_date   = isset( $_REQUEST['camp_end_date'] )   ? sanitize_text_field( $_REQUEST['camp_end_date'] )   : '';
+        $start_date = isset( $data['start_date'] ) ? $data['start_date'] : '';
+        $end_date   = isset( $data['end_date'] )   ? $data['end_date']   : '';
 
         if ( $start_date ) {
             update_post_meta( $post_id, 'camp_start_date', $start_date );
-            self::log( 'RideMaster: camp_start_date = ' . $start_date );
         }
         if ( $end_date ) {
             update_post_meta( $post_id, 'camp_end_date', $end_date );
-            self::log( 'RideMaster: camp_end_date = ' . $end_date );
         }
 
         if ( $start_date && $end_date ) {
@@ -151,10 +186,7 @@ class RM_Camp {
 
             $config = wp_json_encode( [
                 'dates' => [
-                    [
-                        'start' => $start_ts,
-                        'end'   => $end_ts,
-                    ],
+                    [ 'start' => $start_ts, 'end' => $end_ts ],
                 ],
             ] );
             update_post_meta( $post_id, 'full_date__config', $config );
@@ -163,29 +195,33 @@ class RM_Camp {
         }
 
         // ---------------------------------------------------------------
-        // D. Assign the "Camp" product category (slug: camp).
+        // D. Assign the "Camp" product category.
         // ---------------------------------------------------------------
         wp_set_object_terms( $post_id, 'camp', 'product_cat', true );
-        self::log( 'RideMaster: Assigned product category "camp" to post ' . $post_id );
 
         // ---------------------------------------------------------------
-        // E. Block if coach has not connected Stripe.
+        // E. Stripe blocker (only when explicitly requested).
         // ---------------------------------------------------------------
-        $current_user_id = get_current_user_id();
-        $stripe_complete = get_user_meta( $current_user_id, 'stripe_onboarding_complete', true );
-        if ( $stripe_complete !== '1' ) {
-            wp_update_post( [
-                'ID'          => $post_id,
-                'post_status' => 'draft',
-            ] );
-            update_post_meta( $post_id, '_rm_blocked_reason', 'stripe_not_connected' );
-            self::log( 'RideMaster: Camp ' . $post_id . ' set to draft — coach Stripe not connected.' );
+        if ( ! empty( $data['check_stripe'] ) ) {
+            $user_to_check   = isset( $data['coach_user_id'] ) ? intval( $data['coach_user_id'] ) : 0;
+            $stripe_complete = $user_to_check ? get_user_meta( $user_to_check, 'stripe_onboarding_complete', true ) : '';
+            if ( $stripe_complete !== '1' ) {
+                wp_update_post( [
+                    'ID'          => $post_id,
+                    'post_status' => 'draft',
+                ] );
+                update_post_meta( $post_id, '_rm_blocked_reason', 'stripe_not_connected' );
+                self::log( 'RideMaster: Camp ' . $post_id . ' set to draft — coach Stripe not connected.' );
+            }
         }
 
         // ---------------------------------------------------------------
-        // F. Create Coach → Camp relation.
+        // F1. Create Coach → Camp relation.
         // ---------------------------------------------------------------
-        $coach_post_id = get_user_meta( $current_user_id, 'coach_post_id', true );
+        $coach_post_id = isset( $data['coach_post_id'] ) ? intval( $data['coach_post_id'] ) : 0;
+        if ( ! $coach_post_id && ! empty( $data['coach_user_id'] ) ) {
+            $coach_post_id = (int) get_user_meta( $data['coach_user_id'], 'coach_post_id', true );
+        }
 
         if ( $coach_post_id ) {
             $coach_to_camps = self::find_relation( 'Coach to Camps' );
@@ -195,47 +231,128 @@ class RM_Camp {
             } else {
                 self::log( 'RideMaster: "Coach to Camps" relation not found.' );
             }
-
-            // Also store a direct meta reference on the product.
             update_post_meta( $post_id, '_coach_post_id', $coach_post_id );
-        } else {
-            self::log( 'RideMaster: No coach_post_id found for user ' . $current_user_id );
         }
 
         // ---------------------------------------------------------------
-        // F. Create Spot → Camp relation.
+        // F2. Create Spot → Camp relation.
         // ---------------------------------------------------------------
-        $camp_spot = isset( $_REQUEST['camp_spot'] ) ? intval( $_REQUEST['camp_spot'] ) : 0;
-
+        $camp_spot = isset( $data['spot_id'] ) ? intval( $data['spot_id'] ) : 0;
         if ( $camp_spot ) {
             $spot_to_camps = self::find_relation( 'Spot to Camps' );
             if ( $spot_to_camps ) {
                 $spot_to_camps->update( $camp_spot, $post_id );
                 self::log( 'RideMaster: Linked Spot ' . $camp_spot . ' → Camp ' . $post_id );
-            } else {
-                self::log( 'RideMaster: "Spot to Camps" relation not found.' );
             }
         }
 
         // ---------------------------------------------------------------
-        // G. Draft/publish control based on coach status (disabled).
-        // ---------------------------------------------------------------
-        // $coach_status = get_post_meta( $coach_post_id, 'coach_status', true );
-        // if ( $coach_status !== 'approved' ) {
-        //     wp_update_post( [
-        //         'ID'          => $post_id,
-        //         'post_status' => 'draft',
-        //     ] );
-        //     self::log( 'RideMaster: Coach not approved — camp set to draft.' );
-        // }
-
-        // ---------------------------------------------------------------
-        // H. Clear WooCommerce transients.
+        // H. Clear WC transients.
         // ---------------------------------------------------------------
         wc_delete_product_transients( $post_id );
-        self::log( 'RideMaster: Cleared WooCommerce transients for post ' . $post_id );
+    }
 
-        $running = false;
+    /**
+     * Create a new camp product from a structured payload (used by the importer).
+     *
+     * @param array $payload {
+     *     @type string $title             Post title.
+     *     @type string $description_html  Post content (HTML allowed via wp_kses_post).
+     *     @type string $price             Numeric string.
+     *     @type int    $max_spots         Capacity.
+     *     @type string $start_date        YYYY-MM-DD.
+     *     @type string $end_date          YYYY-MM-DD.
+     *     @type string $schedule          Optional textual schedule.
+     *     @type array  $included          Array of strings.
+     *     @type array  $not_included      Array of strings.
+     *     @type string $sport             Sport term slug.
+     *     @type array  $level             Array of level term slugs.
+     *     @type array  $languages         Array of language term slugs.
+     *     @type string $camp_status       Camp-status term slug (e.g. 'open').
+     *     @type int    $coach_post_id     Existing coach CPT ID to link.
+     *     @type int    $spot_id           Existing spot CPT ID to link.
+     *     @type int    $hotel_id          Existing hotel CPT ID to link (optional).
+     *     @type string $import_source_url URL for idempotency tracking.
+     *     @type bool   $check_stripe      Whether to apply Stripe blocker (default true).
+     * }
+     * @return int|WP_Error Camp product ID, or WP_Error on failure.
+     */
+    public static function create_from_payload( array $payload ) {
+
+        $post_id = wp_insert_post( [
+            'post_type'    => 'product',
+            'post_title'   => sanitize_text_field( $payload['title'] ?? '' ),
+            'post_content' => isset( $payload['description_html'] ) ? wp_kses_post( $payload['description_html'] ) : '',
+            'post_status'  => 'publish',
+        ], true );
+
+        if ( is_wp_error( $post_id ) || ! $post_id ) {
+            return is_wp_error( $post_id ) ? $post_id : new WP_Error( 'wp_insert_post_failed', 'wp_insert_post returned 0' );
+        }
+
+        // Convert payload format to internal data shape used by apply_meta_from_data.
+        $data = [
+            'price'         => $payload['price'] ?? '',
+            'max_spots'     => $payload['max_spots'] ?? 0,
+            'start_date'    => $payload['start_date'] ?? '',
+            'end_date'      => $payload['end_date'] ?? '',
+            'coach_post_id' => $payload['coach_post_id'] ?? 0,
+            'coach_user_id' => $payload['coach_user_id'] ?? 0,
+            'spot_id'       => $payload['spot_id'] ?? 0,
+            'check_stripe'  => $payload['check_stripe'] ?? true,
+        ];
+
+        self::apply_meta_from_data( $post_id, $data );
+
+        // Apply remaining metadata that is NOT handled by apply_meta_from_data.
+
+        // Schedule.
+        if ( ! empty( $payload['schedule'] ) ) {
+            update_post_meta( $post_id, 'camp_schedule', wp_kses_post( $payload['schedule'] ) );
+        }
+
+        // Repeater-format included.
+        if ( ! empty( $payload['included'] ) && is_array( $payload['included'] ) ) {
+            $rows = array_map( function ( $v ) {
+                return [ 'included_in_the_camp' => sanitize_text_field( $v ) ];
+            }, $payload['included'] );
+            update_post_meta( $post_id, 'camp_included', $rows );
+        }
+        if ( ! empty( $payload['not_included'] ) && is_array( $payload['not_included'] ) ) {
+            $rows = array_map( function ( $v ) {
+                return [ 'not_included_in_the_camp' => sanitize_text_field( $v ) ];
+            }, $payload['not_included'] );
+            update_post_meta( $post_id, 'camp_not_included', $rows );
+        }
+
+        // Taxonomies (slugs).
+        if ( ! empty( $payload['sport'] ) ) {
+            wp_set_object_terms( $post_id, [ sanitize_title( $payload['sport'] ) ], 'sport' );
+        }
+        if ( ! empty( $payload['level'] ) ) {
+            $slugs = array_map( 'sanitize_title', (array) $payload['level'] );
+            wp_set_object_terms( $post_id, $slugs, 'level' );
+        }
+        if ( ! empty( $payload['languages'] ) ) {
+            $slugs = array_map( 'sanitize_title', (array) $payload['languages'] );
+            wp_set_object_terms( $post_id, $slugs, 'language' );
+        }
+        if ( ! empty( $payload['camp_status'] ) ) {
+            wp_set_object_terms( $post_id, [ sanitize_title( $payload['camp_status'] ) ], 'camp-status' );
+        }
+
+        // Hotel linkage (simple meta, no JE relation for hotel).
+        if ( ! empty( $payload['hotel_id'] ) ) {
+            update_post_meta( $post_id, '_hotel_id', intval( $payload['hotel_id'] ) );
+        }
+
+        // Idempotency tracking.
+        if ( ! empty( $payload['import_source_url'] ) ) {
+            update_post_meta( $post_id, '_import_source_url', esc_url_raw( $payload['import_source_url'] ) );
+            update_post_meta( $post_id, '_import_imported_at', time() );
+        }
+
+        return $post_id;
     }
 
     /* ------------------------------------------------------------------
