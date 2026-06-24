@@ -1274,9 +1274,36 @@ class RM_Inline_Edit {
 					if ( ! taxonomy_exists( $taxonomy ) ) {
 						continue 2;
 					}
-					$term_ids = array_map( 'intval', (array) $value );
-					$term_ids = array_filter( $term_ids );
+					$term_ids = array_filter( array_map( 'intval', (array) $value ) );
+					// Translate each term to the post's language so we don't end
+					// up with both FR and EN variants on the same post (WPML
+					// keeps trid-linked term pairs across languages).
+					global $sitepress;
+					$post_lang = null;
+					if ( $sitepress ) {
+						$post_lang = $sitepress->get_language_for_element( $post_id, 'post_' . get_post_type( $post_id ) );
+						if ( $post_lang ) {
+							$term_ids = array_map( function ( $tid ) use ( $taxonomy, $post_lang ) {
+								return (int) apply_filters( 'wpml_object_id', (int) $tid, $taxonomy, true, $post_lang );
+							}, $term_ids );
+							$term_ids = array_values( array_unique( array_filter( $term_ids ) ) );
+						}
+					}
+					// Briefly switch WPML language context so wp_set_object_terms
+					// doesn't re-translate term IDs to the request's default language.
+					$switched = false;
+					$current_lang = null;
+					if ( $sitepress && $post_lang ) {
+						$current_lang = $sitepress->get_current_language();
+						if ( $current_lang !== $post_lang ) {
+							$sitepress->switch_lang( $post_lang );
+							$switched = true;
+						}
+					}
 					wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+					if ( $switched ) {
+						$sitepress->switch_lang( $current_lang );
+					}
 					$terms = get_terms( [
 						'taxonomy'   => $taxonomy,
 						'include'    => $term_ids,
