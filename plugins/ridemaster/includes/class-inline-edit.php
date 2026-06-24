@@ -224,6 +224,46 @@ class RM_Inline_Edit {
 	 * 2. JetEngine Relations API (relation ID 20)
 	 * 3. Post author match (fallback)
 	 */
+	/**
+	 * Replace a post's terms in a taxonomy via direct SQL — bypasses WPML's
+	 * `wp_set_object_terms` filter which silently re-translates term IDs to
+	 * the current request language, dropping unmapped term IDs.
+	 *
+	 * @param int    $post_id  Post to update.
+	 * @param int[]  $term_ids Term IDs to set (must already be in $taxonomy).
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	private function set_terms_direct( $post_id, $term_ids, $taxonomy ) {
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare(
+			"DELETE tr FROM {$wpdb->term_relationships} tr
+			 JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+			 WHERE tr.object_id = %d AND tt.taxonomy = %s",
+			$post_id, $taxonomy
+		) );
+		$valid_term_ids = [];
+		foreach ( $term_ids as $tid ) {
+			$tt_id = $wpdb->get_var( $wpdb->prepare(
+				"SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id = %d AND taxonomy = %s",
+				(int) $tid, $taxonomy
+			) );
+			if ( $tt_id && $wpdb->insert( $wpdb->term_relationships, [ 'object_id' => $post_id, 'term_taxonomy_id' => $tt_id ] ) ) {
+				$valid_term_ids[] = (int) $tid;
+			}
+		}
+		if ( $valid_term_ids ) {
+			wp_update_term_count_now( $valid_term_ids, $taxonomy );
+		}
+		clean_object_term_cache( $post_id, $taxonomy );
+		// Call our mirror sync directly without firing the WP action, since
+		// firing set_object_terms triggers OTHER plugins' hooks (WPML term
+		// translation manager, WC product term sync, JetEngine relations)
+		// which may rewrite this post's terms or apply unwanted side effects.
+		if ( function_exists( 'rm_mirror_terms_directly' ) ) {
+			rm_mirror_terms_directly( $post_id, $valid_term_ids, $taxonomy );
+		}
+	}
+
 	private function coach_owns_camp( $user_id, $product_id ) {
 		$user_coach_id = (int) get_user_meta( $user_id, 'coach_post_id', true );
 
@@ -1275,11 +1315,10 @@ class RM_Inline_Edit {
 						continue 2;
 					}
 					$term_ids = array_filter( array_map( 'intval', (array) $value ) );
-					// Translate each term to the post's language so we don't end
-					// up with both FR and EN variants on the same post (WPML
-					// keeps trid-linked term pairs across languages).
+					// Translate term IDs to the post's language (WPML keeps FR↔EN
+					// term pairs linked via trid; we want to apply only the
+					// post-language variants).
 					global $sitepress;
-					$post_lang = null;
 					if ( $sitepress ) {
 						$post_lang = $sitepress->get_language_for_element( $post_id, 'post_' . get_post_type( $post_id ) );
 						if ( $post_lang ) {
@@ -1289,21 +1328,10 @@ class RM_Inline_Edit {
 							$term_ids = array_values( array_unique( array_filter( $term_ids ) ) );
 						}
 					}
-					// Briefly switch WPML language context so wp_set_object_terms
-					// doesn't re-translate term IDs to the request's default language.
-					$switched = false;
-					$current_lang = null;
-					if ( $sitepress && $post_lang ) {
-						$current_lang = $sitepress->get_current_language();
-						if ( $current_lang !== $post_lang ) {
-							$sitepress->switch_lang( $post_lang );
-							$switched = true;
-						}
-					}
-					wp_set_object_terms( $post_id, $term_ids, $taxonomy );
-					if ( $switched ) {
-						$sitepress->switch_lang( $current_lang );
-					}
+					// Direct SQL — bypass WPML's wp_set_object_terms filters
+					// which re-translate term IDs to the request's default
+					// language (the silent drop / shuffle bug).
+					$this->set_terms_direct( $post_id, $term_ids, $taxonomy );
 					$terms = get_terms( [
 						'taxonomy'   => $taxonomy,
 						'include'    => $term_ids,
