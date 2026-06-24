@@ -131,9 +131,19 @@ class RM_Coach {
 			return;
 		}
 
-		if ( $post->post_author ) {
-			update_user_meta( $post->post_author, 'coach_post_id', $post_id );
+		if ( ! $post->post_author ) {
+			return;
 		}
+
+		// Skip if the user already has a coach_post_id — this prevents WPML
+		// translation duplicates from overwriting the master language ID. The
+		// first insert (master) sets it; subsequent inserts (duplicates) skip.
+		$existing = (int) get_user_meta( $post->post_author, 'coach_post_id', true );
+		if ( $existing ) {
+			return;
+		}
+
+		update_user_meta( $post->post_author, 'coach_post_id', $post_id );
 	}
 
 	/* ------------------------------------------------------------------
@@ -200,10 +210,13 @@ class RM_Coach {
 			return;
 		}
 
-		// Match the /coach-dashboard/profile URL.
+		// Match the /coach-dashboard/profile URL (with optional language prefix like /fr/).
 		$request_uri = trim( wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
 
-		if ( 'coach-dashboard/profile' !== $request_uri ) {
+		// Strip any leading language code (fr, en, de, etc.) from the path.
+		$path = preg_replace( '#^[a-z]{2}/#', '', $request_uri );
+
+		if ( 'coach-dashboard/profile' !== $path ) {
 			return;
 		}
 

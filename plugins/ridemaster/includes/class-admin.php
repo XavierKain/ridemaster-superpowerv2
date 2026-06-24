@@ -440,15 +440,32 @@ class RM_Admin {
 			return;
 		}
 
-		$subject = 'Your Ridemaster Coach account is now active!';
-		$message  = "Hi {$first_name},\n\n";
-		$message .= "Great news! Your coach account has been approved.\n\n";
-		$message .= "You can now log in and complete your profile:\n";
-		$message .= "https://ridemaster.eu/coach-dashboard/\n\n";
-		$message .= "See you on Ridemaster!\n";
-		$message .= 'The Ridemaster Team';
+		$lang = get_user_meta( $author->ID, 'rm_signup_lang', true );
 
-		wp_mail( $email, $subject, $message );
+		if ( $lang === 'fr' ) {
+			$subject  = 'Votre compte coach Ridemaster est désormais actif !';
+			$message  = "Bonjour {$first_name},\n\n";
+			$message .= "Bonne nouvelle ! Votre compte coach a été approuvé.\n\n";
+			$message .= "Vous pouvez désormais vous connecter et compléter votre profil :\n";
+			$message .= "https://ridemaster.eu/fr/coach-dashboard/\n\n";
+			$message .= "À bientôt sur Ridemaster !\n";
+			$message .= "L'équipe Ridemaster";
+		} else {
+			$subject  = 'Your Ridemaster Coach account is now active!';
+			$message  = "Hi {$first_name},\n\n";
+			$message .= "Great news! Your coach account has been approved.\n\n";
+			$message .= "You can now log in and complete your profile:\n";
+			$message .= "https://ridemaster.eu/coach-dashboard/\n\n";
+			$message .= "See you on Ridemaster!\n";
+			$message .= 'The Ridemaster Team';
+		}
+
+		$headers = [
+			'From: Ridemaster <ridemaster.coaching@gmail.com>',
+			'Content-Type: text/plain; charset=UTF-8',
+		];
+
+		wp_mail( $email, $subject, $message, $headers );
 	}
 
 	/* -------------------------------------------------------------------------
