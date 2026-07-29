@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RideMaster UI Tweaks
  * Description: WooCommerce UI customizations and JetFormBuilder form styling for RideMaster.
- * Version: 1.2.5
+ * Version: 1.2.6
  * Author: RideMaster
  * Text Domain: ridemaster-ui-tweaks
  */
@@ -1119,8 +1119,16 @@ add_action( 'wp_head', function() {
 
 	/*
 	 * Hide the certifications upload widget — we manage docs independently.
+	 *
+	 * ONLY on the profile page, where fixCertificationDocPreview() builds the
+	 * .rm-doc-list replacement UI (it bails out when rmCertNonce is undefined).
+	 * On /coach-register the native widget is what the guest uploader binds to,
+	 * so hiding it left the label with no button and no way to attach documents.
+	 *
+	 * Mirrors the fix in plugins/ridemaster/includes/ui-tweaks.php.
 	 */
 	document.addEventListener('DOMContentLoaded', function() {
+		if (typeof window.rmCertNonce === 'undefined') return;
 		var rows = document.querySelectorAll('.jet-form-builder-row');
 		for (var i = 0; i < rows.length; i++) {
 			var upload = rows[i].querySelector('.jet-form-builder-file-upload');

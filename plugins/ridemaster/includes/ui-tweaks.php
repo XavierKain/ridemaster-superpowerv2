@@ -1227,8 +1227,23 @@ add_action( 'wp_head', function() {
 
 	/*
 	 * Hide the certifications upload widget — we manage docs independently.
+	 *
+	 * ONLY on the profile page, where fixCertificationDocPreview() builds the
+	 * .rm-doc-list replacement UI. That function bails out when rmCertNonce is
+	 * undefined (see the same guard in the wp_footer block), and the nonce is
+	 * only injected on /coach-dashboard/profile by RM_Coach::inject_certification_doc_info().
+	 *
+	 * On /coach-register (and /inscription-coach), no replacement exists: the
+	 * native widget is what RM_Auth::guest_upload_js() binds its uploader to.
+	 * Hiding it there left the label and the "Max 10 MB" hint with no button
+	 * at all — coaches could not attach any certification document.
+	 *
+	 * Gate on the same condition the replacement UI uses, so the two can never
+	 * drift apart again. rmCertNonce is printed in wp_footer, which the browser
+	 * has already parsed by the time DOMContentLoaded fires.
 	 */
 	document.addEventListener('DOMContentLoaded', function() {
+		if (typeof window.rmCertNonce === 'undefined') return;
 		var rows = document.querySelectorAll('.jet-form-builder-row');
 		for (var i = 0; i < rows.length; i++) {
 			var upload = rows[i].querySelector('.jet-form-builder-file-upload');
