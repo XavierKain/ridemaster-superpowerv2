@@ -25,6 +25,7 @@ server.log
 # Temporary files
 *.tmp
 *.temp
+*.bak
 
 # Node modules (if you add Node.js later)
 node_modules/
@@ -36,3 +37,10 @@ build/
 .env.local
 .env.*.local
 plugins/ridemaster/vendor/stripe/stripe-php/README.md
+
+# Plugin build artifacts (versioned zips are release outputs, not sources)
+plugins/*.zip
+
+# Debug screenshots dropped at the repo root during Playwright sessions
+/*.png
+.playwright-mcp/
