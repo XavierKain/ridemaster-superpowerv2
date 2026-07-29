@@ -1,7 +1,26 @@
-(function ($) {
+/* Wrap our setup in a function that retries until window.rmInlineEdit is set.
+   Complianz GDPR consent plugin defers `var rmInlineEdit` execution until the
+   user accepts cookies, so we cannot assume it's defined at script load time. */
+(function () {
+	function _rmInlineEditBoot() {
+		if (typeof window.rmInlineEdit === 'undefined') return false;
+		_rmInlineEditMain(window.jQuery);
+		return true;
+	}
+	if (!_rmInlineEditBoot()) {
+		var retries = 0;
+		var interval = setInterval(function () {
+			if (_rmInlineEditBoot() || ++retries > 100) clearInterval(interval);
+		}, 100);
+		// Also listen for Complianz consent events (fires when user accepts)
+		document.addEventListener('cmplz-fire-categories', function () { setTimeout(_rmInlineEditBoot, 50); });
+		document.addEventListener('cmplz-status-change', function () { setTimeout(_rmInlineEditBoot, 50); });
+	}
+})();
+function _rmInlineEditMain($) {
 	'use strict';
-
-	if (typeof rmInlineEdit === 'undefined') return;
+	if (window._rmInlineEditStarted) return;
+	window._rmInlineEditStarted = true;
 
 	const config = rmInlineEdit;
 	let isEditMode = false;
@@ -29,9 +48,10 @@
 		showInitialPlaceholders();
 		bindEvents();
 
-		// Auto-enter edit mode if profile is empty (new coach onboarding)
+		// For new (empty) profiles: show the welcome banner so the user knows
+		// what to do, but DO NOT auto-enter edit mode — keep the Edit FAB visible
+		// so the user can choose when to start editing.
 		if (config.isProfileEmpty) {
-			enterEditMode();
 			showWelcomeBanner();
 		}
 	}
@@ -287,17 +307,27 @@
 		fab.addEventListener('click', enterEditMode);
 
 		// Place FAB inside a visual container:
-		// - Coach context: single FAB inside cover photo
+		// - Coach context: sticky FAB on body + optional in-cover FAB if cover visible
 		// - Camp context: two FABs — one in gallery (top-left) + one sticky (bottom-right, content-aligned)
 		// - Spot context: FAB in thumbnail (top-left) + sticky (bottom-right)
 		var coverContainer = document.querySelector('.rm-edit-coach_cover_photo');
 		var galleryContainer = document.querySelector('.rm-edit-camp_gallery');
 		var spotThumb = document.querySelector('.rm-edit-spot_thumbnail');
 		var spotGallery = document.querySelector('.rm-edit-spot_gallery');
-		if (coverContainer) {
-			coverContainer.style.position = 'relative';
-			coverContainer.appendChild(fab);
-			fab.classList.add('rm-edit-fab--in-cover');
+		if (config.context === 'coach') {
+			// Always show a sticky FAB on coach pages so the user can always edit
+			fab.classList.add('rm-edit-fab--sticky');
+			document.body.appendChild(fab);
+
+			// Bonus: also place an in-cover FAB when cover is visible (better UX)
+			if (coverContainer && coverContainer.offsetParent !== null && coverContainer.offsetHeight > 40) {
+				var coverFab = document.createElement('button');
+				coverFab.className = 'rm-edit-fab rm-edit-fab--in-cover';
+				coverFab.innerHTML = fab.innerHTML;
+				coverFab.addEventListener('click', enterEditMode);
+				coverContainer.style.position = 'relative';
+				coverContainer.appendChild(coverFab);
+			}
 		} else if (galleryContainer) {
 			// Gallery FAB (top-left inside gallery)
 			var galleryFab = document.createElement('button');
@@ -508,14 +538,14 @@
 				'<circle cx="8.5" cy="8.5" r="1.5"/>' +
 				'<path d="m21 15-5-5L5 21"/>' +
 			'</svg>' +
-			'<span>Change main photo</span>';
+			'<span>' + escapeHtml(config.i18n.changeMainPhoto || 'Change main photo') + '</span>';
 
 		overlay.addEventListener('click', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 			if (typeof wp !== 'undefined' && wp.media) {
 				var frame = wp.media({
-					title: 'Select Main Spot Photo',
+					title: config.i18n.selectMainPhoto || 'Select Main Spot Photo',
 					multiple: false,
 					library: { type: 'image' }
 				});
@@ -528,7 +558,7 @@
 							? attachment.sizes.large.url
 							: attachment.url;
 					}
-					overlay.querySelector('span').textContent = 'Photo changed!';
+					overlay.querySelector('span').textContent = config.i18n.photoChanged || 'Photo changed!';
 				});
 				frame.open();
 			}
@@ -2647,4 +2677,4 @@
 	$(document).ready(function () {
 		init();
 	});
-})(jQuery);
+}

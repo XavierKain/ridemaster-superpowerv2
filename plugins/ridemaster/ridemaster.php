@@ -18,7 +18,7 @@ if ( file_exists( $rm_autoload ) ) {
 }
 
 // Constants
-define( 'RM_VERSION', '2.5.0' );
+define( 'RM_VERSION', '2.6.2' );
 define( 'RM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 

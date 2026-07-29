@@ -200,18 +200,17 @@ class RM_Camp {
         wp_set_object_terms( $post_id, 'camp', 'product_cat', true );
 
         // ---------------------------------------------------------------
-        // E. Stripe blocker (only when explicitly requested).
+        // E. Stripe flag (camp still publishes; payout blocked until coach
+        //    connects Stripe — see payment gateway / payout flow).
         // ---------------------------------------------------------------
         if ( ! empty( $data['check_stripe'] ) ) {
             $user_to_check   = isset( $data['coach_user_id'] ) ? intval( $data['coach_user_id'] ) : 0;
             $stripe_complete = $user_to_check ? get_user_meta( $user_to_check, 'stripe_onboarding_complete', true ) : '';
             if ( $stripe_complete !== '1' ) {
-                wp_update_post( [
-                    'ID'          => $post_id,
-                    'post_status' => 'draft',
-                ] );
                 update_post_meta( $post_id, '_rm_blocked_reason', 'stripe_not_connected' );
-                self::log( 'RideMaster: Camp ' . $post_id . ' set to draft — coach Stripe not connected.' );
+                self::log( 'RideMaster: Camp ' . $post_id . ' published with stripe_not_connected flag — coach needs to connect Stripe to receive payouts.' );
+            } else {
+                delete_post_meta( $post_id, '_rm_blocked_reason' );
             }
         }
 

@@ -169,9 +169,30 @@ class RM_Inline_Edit {
 			return false;
 		}
 
-		// Check ownership: the logged-in coach's coach_post_id must match the displayed post
-		$user_coach_id = get_user_meta( $user_id, 'coach_post_id', true );
-		return $user_coach_id && intval( $user_coach_id ) === intval( get_the_ID() );
+		// Check ownership: the logged-in coach's coach_post_id must match the displayed
+		// post — OR any of its WPML translations (FR/EN duplicates share a trid).
+		$user_coach_id = (int) get_user_meta( $user_id, 'coach_post_id', true );
+		$current_id    = (int) get_the_ID();
+		if ( ! $user_coach_id || ! $current_id ) {
+			return false;
+		}
+		if ( $user_coach_id === $current_id ) {
+			return true;
+		}
+		return $this->ids_share_wpml_trid( $user_coach_id, $current_id, 'post_coach' );
+	}
+
+	/**
+	 * Returns true if two post IDs share the same WPML trid (i.e. are translations).
+	 */
+	private function ids_share_wpml_trid( $id_a, $id_b, $element_type ) {
+		global $sitepress;
+		if ( ! $sitepress ) {
+			return false;
+		}
+		$trid_a = $sitepress->get_element_trid( $id_a, $element_type );
+		$trid_b = $sitepress->get_element_trid( $id_b, $element_type );
+		return $trid_a && $trid_b && $trid_a === $trid_b;
 	}
 
 	/**
@@ -203,20 +224,74 @@ class RM_Inline_Edit {
 	 * 2. JetEngine Relations API (relation ID 20)
 	 * 3. Post author match (fallback)
 	 */
+	/**
+	 * Replace a post's terms in a taxonomy via direct SQL — bypasses WPML's
+	 * `wp_set_object_terms` filter which silently re-translates term IDs to
+	 * the current request language, dropping unmapped term IDs.
+	 *
+	 * @param int    $post_id  Post to update.
+	 * @param int[]  $term_ids Term IDs to set (must already be in $taxonomy).
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	private function set_terms_direct( $post_id, $term_ids, $taxonomy ) {
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare(
+			"DELETE tr FROM {$wpdb->term_relationships} tr
+			 JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+			 WHERE tr.object_id = %d AND tt.taxonomy = %s",
+			$post_id, $taxonomy
+		) );
+		$valid_term_ids = [];
+		foreach ( $term_ids as $tid ) {
+			$tt_id = $wpdb->get_var( $wpdb->prepare(
+				"SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id = %d AND taxonomy = %s",
+				(int) $tid, $taxonomy
+			) );
+			if ( $tt_id && $wpdb->insert( $wpdb->term_relationships, [ 'object_id' => $post_id, 'term_taxonomy_id' => $tt_id ] ) ) {
+				$valid_term_ids[] = (int) $tid;
+			}
+		}
+		if ( $valid_term_ids ) {
+			wp_update_term_count_now( $valid_term_ids, $taxonomy );
+		}
+		clean_object_term_cache( $post_id, $taxonomy );
+		// Call our mirror sync directly without firing the WP action, since
+		// firing set_object_terms triggers OTHER plugins' hooks (WPML term
+		// translation manager, WC product term sync, JetEngine relations)
+		// which may rewrite this post's terms or apply unwanted side effects.
+		if ( function_exists( 'rm_mirror_terms_directly' ) ) {
+			rm_mirror_terms_directly( $post_id, $valid_term_ids, $taxonomy );
+		}
+	}
+
 	private function coach_owns_camp( $user_id, $product_id ) {
-		$user_coach_id = get_user_meta( $user_id, 'coach_post_id', true );
+		$user_coach_id = (int) get_user_meta( $user_id, 'coach_post_id', true );
+
+		// Build the set of IDs that count as "the user's coach" — the coach post
+		// and any WPML translations of it (FR↔EN duplicates share a trid).
+		$user_coach_ids = [ $user_coach_id ];
+		global $sitepress;
+		if ( $sitepress && $user_coach_id ) {
+			$trid = $sitepress->get_element_trid( $user_coach_id, 'post_coach' );
+			if ( $trid ) {
+				$translations = $sitepress->get_element_translations( $trid, 'post_coach', false, true );
+				foreach ( $translations as $t ) {
+					$user_coach_ids[] = (int) $t->element_id;
+				}
+			}
+		}
+		$user_coach_ids = array_unique( array_filter( $user_coach_ids ) );
 
 		// Method 1: Direct meta _coach_post_id on product
-		$camp_coach_id = get_post_meta( $product_id, '_coach_post_id', true );
-		if ( $camp_coach_id && $user_coach_id && intval( $camp_coach_id ) === intval( $user_coach_id ) ) {
+		$camp_coach_id = (int) get_post_meta( $product_id, '_coach_post_id', true );
+		if ( $camp_coach_id && in_array( $camp_coach_id, $user_coach_ids, true ) ) {
 			return true;
 		}
 
-		// Method 2: JetEngine Relations API
-		if ( $user_coach_id && function_exists( 'jet_engine' ) && isset( jet_engine()->relations ) ) {
+		// Method 2: JetEngine Relations API — check against any of the user's coach IDs
+		if ( ! empty( $user_coach_ids ) && function_exists( 'jet_engine' ) && isset( jet_engine()->relations ) ) {
 			try {
 				$relations_manager = jet_engine()->relations;
-				// Try to get the relation by ID 20
 				if ( method_exists( $relations_manager, 'get_active_relations' ) ) {
 					$active = $relations_manager->get_active_relations();
 					if ( ! empty( $active ) ) {
@@ -224,10 +299,9 @@ class RM_Inline_Edit {
 							if ( method_exists( $relation, 'get_args' ) ) {
 								$args = $relation->get_args();
 								if ( isset( $args['id'] ) && intval( $args['id'] ) === 20 ) {
-									// Found the coach-camp relation — check parents
 									if ( method_exists( $relation, 'get_parents' ) ) {
-										$parents = $relation->get_parents( $product_id, 'ids' );
-										if ( is_array( $parents ) && in_array( intval( $user_coach_id ), array_map( 'intval', $parents ), true ) ) {
+										$parents = array_map( 'intval', (array) $relation->get_parents( $product_id, 'ids' ) );
+										if ( array_intersect( $parents, $user_coach_ids ) ) {
 											return true;
 										}
 									}
@@ -466,12 +540,12 @@ class RM_Inline_Edit {
 	 */
 	private function get_field_config( $context ) {
 		if ( $context === 'camp' ) {
-			return $this->camp_field_config;
+			return $this->translate_field_config( $this->camp_field_config );
 		}
 		if ( $context === 'spot' ) {
-			return $this->spot_field_config;
+			return $this->translate_field_config( $this->spot_field_config );
 		}
-		return $this->coach_field_config;
+		return $this->translate_field_config( $this->coach_field_config );
 	}
 
 	/**
@@ -479,6 +553,124 @@ class RM_Inline_Edit {
 	 */
 	private function get_all_field_configs() {
 		return array_merge( $this->coach_field_config, $this->camp_field_config, $this->spot_field_config );
+	}
+
+	/**
+	 * Translate label + placeholder of a field config when current WPML language is FR.
+	 * Returns the config unchanged for other languages.
+	 */
+	private function translate_field_config( $config ) {
+		if ( apply_filters( 'wpml_current_language', null ) !== 'fr' ) {
+			return $config;
+		}
+		static $map = null;
+		if ( $map === null ) {
+			$map = [
+				// Labels
+				'First Name'              => 'Prénom',
+				'Last Name'               => 'Nom',
+				'Bio'                     => 'Bio',
+				'Location'                => 'Lieu',
+				'Years of Experience'     => 'Années d\'expérience',
+				'Certifications'          => 'Certifications',
+				'Experience'              => 'Expérience',
+				'Instagram'               => 'Instagram',
+				'YouTube'                 => 'YouTube',
+				'Website'                 => 'Site Web',
+				'Profile Photo'           => 'Photo de profil',
+				'Cover Photo'             => 'Photo de couverture',
+				'Sports'                  => 'Sports',
+				'Sport'                   => 'Sport',
+				'Languages'               => 'Langues',
+				'Language'                => 'Langue',
+				'Level'                   => 'Niveau',
+				'Local Language'          => 'Langue locale',
+				'Spot Name'               => 'Nom du spot',
+				'Description'             => 'Description',
+				'Spot Photo'              => 'Photo du spot',
+				'Gallery'                 => 'Galerie',
+				'Country'                 => 'Pays',
+				'Region'                  => 'Région',
+				'Wind Direction'          => 'Direction du vent',
+				'Best Season'             => 'Meilleure saison',
+				'Nearest Airport'         => 'Aéroport le plus proche',
+				'Timezone'                => 'Fuseau horaire',
+				'Currency'                => 'Monnaie',
+				'Wetsuit'                 => 'Combinaison',
+				'Water Temperature'       => 'Température de l\'eau',
+				'Water Type'              => 'Type d\'eau',
+				'Camp Title'              => 'Titre du camp',
+				'Camp Image'              => 'Image du camp',
+				'Price (€)'               => 'Prix (€)',
+				'Max Spots'               => 'Places max',
+				'Full Date'               => 'Dates',
+				'Spot'                    => 'Spot',
+				'Schedule'                => 'Programme',
+				'Included'                => 'Inclus',
+				'Not Included'            => 'Non inclus',
+				'Accommodation'           => 'Hébergement',
+				'Accommodation Description' => 'Description de l\'hébergement',
+				'Accommodation Photos'    => 'Photos de l\'hébergement',
+				// Placeholders
+				'Your first name'                    => 'Votre prénom',
+				'Your last name'                     => 'Votre nom',
+				'Describe yourself, your background, your passion...' => 'Décrivez-vous, votre parcours, votre passion...',
+				'City, Country (e.g. Tarifa, Spain)' => 'Ville, Pays (ex. Tarifa, Espagne)',
+				'e.g. 10'                            => 'ex. 10',
+				'e.g. 990'                           => 'ex. 990',
+				'e.g. 12'                            => 'ex. 12',
+				'Add your certifications (e.g. IKO Level 3)' => 'Ajoutez vos certifications (ex. IKO Niveau 3)',
+				'Describe your experience in the sport...' => 'Décrivez votre expérience dans le sport...',
+				'https://instagram.com/your-account' => 'https://instagram.com/votre-compte',
+				'https://youtube.com/your-channel'   => 'https://youtube.com/votre-chaine',
+				'https://your-website.com'           => 'https://votre-site.com',
+				'Add your profile photo'             => 'Ajoutez votre photo de profil',
+				'Add a cover photo'                  => 'Ajoutez une photo de couverture',
+				'Select your sports'                 => 'Sélectionnez vos sports',
+				'Select your languages'              => 'Sélectionnez vos langues',
+				'Spot name'                          => 'Nom du spot',
+				'Describe this spot...'              => 'Décrivez ce spot...',
+				'Main spot image'                    => 'Image principale du spot',
+				'Add spot photos'                    => 'Ajoutez des photos du spot',
+				'e.g. Spain'                         => 'ex. Espagne',
+				'e.g. Andalusia'                     => 'ex. Andalousie',
+				'e.g. North-East'                    => 'ex. Nord-Est',
+				'e.g. May - September'               => 'ex. Mai - Septembre',
+				'e.g. Malaga (AGP)'                  => 'ex. Malaga (AGP)',
+				'e.g. UTC+1'                         => 'ex. UTC+1',
+				'e.g. EUR'                           => 'ex. EUR',
+				'e.g. Spanish'                       => 'ex. Espagnol',
+				'e.g. 3/2mm in winter'               => 'ex. 3/2mm en hiver',
+				'e.g. 18-24°C'                       => 'ex. 18-24°C',
+				'Select sports'                      => 'Sélectionnez les sports',
+				'Select level'                       => 'Sélectionnez le niveau',
+				'Select water type'                  => 'Sélectionnez le type d\'eau',
+				'Camp name'                          => 'Nom du camp',
+				'Describe your camp...'              => 'Décrivez votre camp...',
+				'Main camp image'                    => 'Image principale du camp',
+				'Add camp photos'                    => 'Ajoutez des photos du camp',
+				'Select camp dates'                  => 'Sélectionnez les dates du camp',
+				'Select the spot'                    => 'Sélectionnez le spot',
+				'Describe the daily schedule...'     => 'Décrivez le programme quotidien...',
+				'What is included in the camp'       => 'Ce qui est inclus dans le camp',
+				'What is not included'               => 'Ce qui n\'est pas inclus',
+				'Select the sport'                   => 'Sélectionnez le sport',
+				'Select the level'                   => 'Sélectionnez le niveau',
+				'Select the language'                => 'Sélectionnez la langue',
+				'Select an accommodation'            => 'Sélectionnez un hébergement',
+				'Describe the accommodation...'      => 'Décrivez l\'hébergement...',
+				'Add accommodation photos'           => 'Ajoutez des photos de l\'hébergement',
+			];
+		}
+		foreach ( $config as $key => &$field ) {
+			if ( isset( $field['label'] ) && isset( $map[ $field['label'] ] ) ) {
+				$field['label'] = $map[ $field['label'] ];
+			}
+			if ( isset( $field['placeholder'] ) && isset( $map[ $field['placeholder'] ] ) ) {
+				$field['placeholder'] = $map[ $field['placeholder'] ];
+			}
+		}
+		return $config;
 	}
 
 	// =========================================================================
@@ -734,33 +926,69 @@ class RM_Inline_Edit {
 			}
 		}
 
-		// i18n — context-aware labels
-		$edit_labels = [ 'coach' => 'Edit Profile', 'camp' => 'Edit Camp', 'spot' => 'Edit Spot' ];
-		$i18n = [
-			'editProfile'    => isset( $edit_labels[ $context ] ) ? $edit_labels[ $context ] : 'Edit',
-			'save'           => 'Save Changes',
-			'cancel'         => 'Cancel',
-			'saving'         => 'Saving...',
-			'saved'          => 'Saved!',
-			'error'          => 'Error. Please try again.',
-			'changeImage'    => 'Change',
-			'selectImage'    => 'Select Image',
-			'editGallery'    => 'Edit Gallery',
-			'selectImages'   => 'Select Images',
-			'clickToEdit'    => 'Click to edit',
-			'emptyField'     => 'Click to add...',
-			'done'           => 'Done',
-			'addItem'        => '+ Add',
-			'unsavedChanges' => 'You have unsaved changes. Save or cancel before leaving.',
-			'welcomeTitle'   => 'Welcome! Complete your coach profile',
-			'welcomeText'    => 'Click on each field to fill it in. Don\'t forget to save your changes.',
-			'deleteCamp'     => $context === 'spot' ? 'Delete Spot' : 'Delete Camp',
-			'confirmDelete'  => $context === 'spot'
-				? 'Are you sure you want to delete this spot? This action cannot be undone.'
-				: 'Are you sure you want to delete this camp? This action cannot be undone.',
-			'deleting'       => 'Deleting...',
-			'deleted'        => $context === 'spot' ? 'Spot deleted!' : 'Camp deleted!',
-		];
+		// i18n — context-aware labels (FR translations when WPML current lang is fr)
+		$is_fr = apply_filters( 'wpml_current_language', null ) === 'fr';
+		if ( $is_fr ) {
+			$edit_labels = [ 'coach' => 'Modifier le profil', 'camp' => 'Modifier le camp', 'spot' => 'Modifier le spot' ];
+			$i18n = [
+				'editProfile'    => $edit_labels[ $context ] ?? 'Modifier',
+				'save'           => 'Enregistrer',
+				'cancel'         => 'Annuler',
+				'saving'         => 'Enregistrement...',
+				'saved'          => 'Enregistré !',
+				'error'          => 'Erreur. Veuillez réessayer.',
+				'changeImage'    => 'Changer',
+				'selectImage'    => 'Choisir une image',
+				'editGallery'    => 'Modifier la galerie',
+				'selectImages'   => 'Choisir des images',
+				'clickToEdit'    => 'Cliquer pour modifier',
+				'emptyField'     => 'Cliquer pour ajouter...',
+				'done'           => 'Terminé',
+				'addItem'        => '+ Ajouter',
+				'unsavedChanges' => 'Vous avez des modifications non sauvegardées. Enregistrez ou annulez avant de quitter.',
+				'welcomeTitle'   => 'Bienvenue ! Complétez votre profil de coach',
+				'welcomeText'    => 'Cliquez sur chaque champ pour le remplir. N\'oubliez pas d\'enregistrer vos modifications.',
+				'deleteCamp'     => $context === 'spot' ? 'Supprimer le spot' : 'Supprimer le camp',
+				'confirmDelete'  => $context === 'spot'
+					? 'Êtes-vous sûr de vouloir supprimer ce spot ? Cette action est irréversible.'
+					: 'Êtes-vous sûr de vouloir supprimer ce camp ? Cette action est irréversible.',
+				'deleting'       => 'Suppression...',
+				'deleted'        => $context === 'spot' ? 'Spot supprimé !' : 'Camp supprimé !',
+				'changeMainPhoto'   => 'Changer la photo principale',
+				'selectMainPhoto'   => 'Choisir la photo principale du spot',
+				'photoChanged'      => 'Photo modifiée !',
+			];
+		} else {
+			$edit_labels = [ 'coach' => 'Edit Profile', 'camp' => 'Edit Camp', 'spot' => 'Edit Spot' ];
+			$i18n = [
+				'editProfile'    => isset( $edit_labels[ $context ] ) ? $edit_labels[ $context ] : 'Edit',
+				'save'           => 'Save Changes',
+				'cancel'         => 'Cancel',
+				'saving'         => 'Saving...',
+				'saved'          => 'Saved!',
+				'error'          => 'Error. Please try again.',
+				'changeImage'    => 'Change',
+				'selectImage'    => 'Select Image',
+				'editGallery'    => 'Edit Gallery',
+				'selectImages'   => 'Select Images',
+				'clickToEdit'    => 'Click to edit',
+				'emptyField'     => 'Click to add...',
+				'done'           => 'Done',
+				'addItem'        => '+ Add',
+				'unsavedChanges' => 'You have unsaved changes. Save or cancel before leaving.',
+				'welcomeTitle'   => 'Welcome! Complete your coach profile',
+				'welcomeText'    => 'Click on each field to fill it in. Don\'t forget to save your changes.',
+				'deleteCamp'     => $context === 'spot' ? 'Delete Spot' : 'Delete Camp',
+				'confirmDelete'  => $context === 'spot'
+					? 'Are you sure you want to delete this spot? This action cannot be undone.'
+					: 'Are you sure you want to delete this camp? This action cannot be undone.',
+				'deleting'       => 'Deleting...',
+				'deleted'        => $context === 'spot' ? 'Spot deleted!' : 'Camp deleted!',
+				'changeMainPhoto'   => 'Change main photo',
+				'selectMainPhoto'   => 'Select Main Spot Photo',
+				'photoChanged'      => 'Photo changed!',
+			];
+		}
 
 		// Camp-specific data: check if camp has orders (to show/hide delete button).
 		// Spots can always be deleted (no order check needed) unless linked to active camps.
@@ -884,7 +1112,9 @@ class RM_Inline_Edit {
 			if ( ! empty( $config['target_post_via'] ) ) {
 				$linked = intval( get_post_meta( $post_id, $config['target_post_via'], true ) );
 				if ( ! $linked ) {
-					$errors[ $key ] = sprintf( 'No linked %s.', $config['label'] );
+					// No linked target — silently skip this field (e.g. user edited
+					// something else but the hotel-description field is in the payload
+					// even though no hotel has been selected).
 					continue;
 				}
 				$linked_coach = get_post_meta( $linked, '_coach_post_id', true );
@@ -1084,9 +1314,24 @@ class RM_Inline_Edit {
 					if ( ! taxonomy_exists( $taxonomy ) ) {
 						continue 2;
 					}
-					$term_ids = array_map( 'intval', (array) $value );
-					$term_ids = array_filter( $term_ids );
-					wp_set_object_terms( $post_id, $term_ids, $taxonomy );
+					$term_ids = array_filter( array_map( 'intval', (array) $value ) );
+					// Translate term IDs to the post's language (WPML keeps FR↔EN
+					// term pairs linked via trid; we want to apply only the
+					// post-language variants).
+					global $sitepress;
+					if ( $sitepress ) {
+						$post_lang = $sitepress->get_language_for_element( $post_id, 'post_' . get_post_type( $post_id ) );
+						if ( $post_lang ) {
+							$term_ids = array_map( function ( $tid ) use ( $taxonomy, $post_lang ) {
+								return (int) apply_filters( 'wpml_object_id', (int) $tid, $taxonomy, true, $post_lang );
+							}, $term_ids );
+							$term_ids = array_values( array_unique( array_filter( $term_ids ) ) );
+						}
+					}
+					// Direct SQL — bypass WPML's wp_set_object_terms filters
+					// which re-translate term IDs to the request's default
+					// language (the silent drop / shuffle bug).
+					$this->set_terms_direct( $post_id, $term_ids, $taxonomy );
 					$terms = get_terms( [
 						'taxonomy'   => $taxonomy,
 						'include'    => $term_ids,

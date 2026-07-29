@@ -219,6 +219,7 @@ add_action( 'wp_head', function() {
 } );
 
 add_action( 'wp_footer', function() {
+	$qty_label = apply_filters( 'wpml_current_language', null ) === 'fr' ? 'personnes' : 'Guests';
 	?>
 	<script>
 	(function() {
@@ -241,7 +242,7 @@ add_action( 'wp_footer', function() {
 
 				var label = document.createElement('span');
 				label.className = 'qty-label';
-				label.textContent = 'Guests';
+				label.textContent = <?php echo wp_json_encode( $qty_label ); ?>;
 
 				var controls = document.createElement('div');
 				controls.className = 'qty-controls';
@@ -371,11 +372,11 @@ add_action( 'wp_footer', function() {
 // =========================================================================
 
 add_filter( 'woocommerce_product_single_add_to_cart_text', function( $text ) {
-	return '⚡ Book Now';
+	return apply_filters( 'wpml_current_language', null ) === 'fr' ? '⚡ Réserver' : '⚡ Book Now';
 } );
 
 add_filter( 'woocommerce_product_add_to_cart_text', function( $text ) {
-	return '⚡ Book Now';
+	return apply_filters( 'wpml_current_language', null ) === 'fr' ? '⚡ Réserver' : '⚡ Book Now';
 } );
 
 // =========================================================================
@@ -1035,6 +1036,13 @@ add_action( 'wp_footer', function() {
 	if ( $stripe_complete === '1' ) {
 		return;
 	}
+	$is_fr           = apply_filters( 'wpml_current_language', null ) === 'fr';
+	$dashboard_href  = $is_fr ? '/fr/coach-dashboard/' : '/coach-dashboard/';
+	$title           = $is_fr ? 'Stripe non connecté' : 'Stripe not connected';
+	$body            = $is_fr
+		? "Vous pouvez publier votre camp, mais vous ne pourrez pas recevoir de paiements tant que votre compte Stripe n'est pas connecté."
+		: "You can still publish your camp, but you won't be able to receive payments until your Stripe account is connected.";
+	$cta             = $is_fr ? 'Connecter mon compte Stripe' : 'Connect my Stripe account';
 	?>
 	<script>
 	(function() {
@@ -1043,7 +1051,7 @@ add_action( 'wp_footer', function() {
 			if ( ! form ) return;
 			var warning = document.createElement('div');
 			warning.style.cssText = 'background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:16px;margin-bottom:20px;font-size:14px;color:#92400e;';
-			warning.innerHTML = '<strong>&#9888; Stripe not connected</strong> — You need to connect your Stripe account before you can publish a camp. <a href="/coach-dashboard/" style="color:#92400e;font-weight:600;">Go to Dashboard to connect Stripe</a>';
+			warning.innerHTML = '<strong>&#9888; <?php echo esc_js( $title ); ?></strong> — <?php echo esc_js( $body ); ?> <a href="<?php echo esc_js( $dashboard_href ); ?>" style="color:#92400e;font-weight:600;text-decoration:underline;"><?php echo esc_js( $cta ); ?></a>';
 			form.parentNode.insertBefore(warning, form);
 		}
 		if ( document.readyState === 'complete' ) { setTimeout(init, 300); }
@@ -1105,8 +1113,12 @@ add_action( 'wp_enqueue_scripts', function() {
  * when at least one in the same group is checked.
  */
 add_action( 'wp_footer', function() {
-	if ( ! is_page( 'coach-register' )
-		&& strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
+	$uri = $_SERVER['REQUEST_URI'] ?? '';
+	$on_jfb = is_page( 'coach-register' )
+		|| strpos( $uri, '/coach-dashboard/' ) !== false
+		|| strpos( $uri, '/coach-register' ) !== false
+		|| strpos( $uri, '/inscription-coach' ) !== false;
+	if ( ! $on_jfb ) {
 		return;
 	}
 	?>
@@ -1164,7 +1176,11 @@ add_action( 'wp_footer', function() {
  * We patch the error by adding a safety wrapper that catches the crash.
  */
 add_action( 'wp_head', function() {
-	if ( strpos( $_SERVER['REQUEST_URI'], '/coach-dashboard/' ) === false ) {
+	$uri = $_SERVER['REQUEST_URI'] ?? '';
+	$is_jfb_page = strpos( $uri, '/coach-dashboard/' ) !== false
+		|| strpos( $uri, '/coach-register' ) !== false
+		|| strpos( $uri, '/inscription-coach' ) !== false;
+	if ( ! $is_jfb_page ) {
 		return;
 	}
 	?>
@@ -2052,18 +2068,22 @@ add_shortcode( 'rm_stripe_connect', function() {
 	.rm-stripe-disconnect { display:inline-block; margin-top:10px; font-size:13px; color:#9ca3af; cursor:pointer; border:none; background:none; text-decoration:underline; font-family:'DM Sans',sans-serif; }
 	.rm-stripe-disconnect:hover { color:#ef4444; }
 	</style>
+	<?php
+	$rm_is_fr = apply_filters( 'wpml_current_language', null ) === 'fr';
+	$rm_t = function( $en, $fr ) use ( $rm_is_fr ) { return $rm_is_fr ? $fr : $en; };
+	?>
 	<div class="rm-stripe-widget" id="rm-stripe-widget">
-		<h3>Stripe Payments</h3>
+		<h3><?php echo $rm_t( 'Stripe Payments', 'Paiements Stripe' ); ?></h3>
 		<?php if ( $stripe_account_id && $stripe_complete ) : ?>
-			<span class="rm-stripe-status rm-stripe-status--active">&#10003; Stripe Connected</span>
-			<br><button type="button" class="rm-stripe-disconnect" id="rm-stripe-disconnect">Disconnect</button>
+			<span class="rm-stripe-status rm-stripe-status--active">&#10003; <?php echo $rm_t( 'Stripe Connected', 'Stripe connecté' ); ?></span>
+			<br><button type="button" class="rm-stripe-disconnect" id="rm-stripe-disconnect"><?php echo $rm_t( 'Disconnect', 'Se déconnecter' ); ?></button>
 		<?php elseif ( $stripe_account_id ) : ?>
-			<span class="rm-stripe-status rm-stripe-status--pending">&#9888; Setup incomplete</span>
-			<br><button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Complete Stripe Setup</button>
+			<span class="rm-stripe-status rm-stripe-status--pending">&#9888; <?php echo $rm_t( 'Setup incomplete', 'Configuration incomplète' ); ?></span>
+			<br><button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn"><?php echo $rm_t( 'Complete Stripe Setup', 'Terminer la configuration Stripe' ); ?></button>
 		<?php else : ?>
-			<span class="rm-stripe-status rm-stripe-status--disconnected">Not connected</span>
-			<p style="margin:8px 0 0;font-size:13px;color:#6b7280;">Connect your Stripe account to receive payments from your camps.</p>
-			<button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn">Connect with Stripe</button>
+			<span class="rm-stripe-status rm-stripe-status--disconnected"><?php echo $rm_t( 'Not connected', 'Non connecté' ); ?></span>
+			<p style="margin:8px 0 0;font-size:13px;color:#6b7280;"><?php echo $rm_t( 'Connect your Stripe account to receive payments from your camps.', 'Connectez votre compte Stripe pour recevoir les paiements de vos camps.' ); ?></p>
+			<button type="button" class="rm-stripe-connect-btn" id="rm-stripe-connect-btn"><?php echo $rm_t( 'Connect with Stripe', 'Se connecter avec Stripe' ); ?></button>
 		<?php endif; ?>
 	</div>
 	<script>
@@ -2071,11 +2091,18 @@ add_shortcode( 'rm_stripe_connect', function() {
 		var nonce = <?php echo wp_json_encode( $nonce ); ?>;
 		var ajaxUrl = <?php echo wp_json_encode( $ajax_url ); ?>;
 
+		var t = {
+			redirecting:     <?php echo wp_json_encode( $rm_t( 'Redirecting...', 'Redirection...' ) ); ?>,
+			errorConnect:    <?php echo wp_json_encode( $rm_t( 'Error connecting to Stripe.', 'Erreur de connexion à Stripe.' ) ); ?>,
+			connectLabel:    <?php echo wp_json_encode( $rm_t( 'Connect with Stripe', 'Se connecter avec Stripe' ) ); ?>,
+			networkError:    <?php echo wp_json_encode( $rm_t( 'Network error. Please try again.', 'Erreur réseau. Veuillez réessayer.' ) ); ?>,
+			confirmDisco:    <?php echo wp_json_encode( $rm_t( 'Are you sure you want to disconnect your Stripe account?', 'Voulez-vous vraiment déconnecter votre compte Stripe ?' ) ); ?>,
+		};
 		var connectBtn = document.getElementById('rm-stripe-connect-btn');
 		if ( connectBtn ) {
 			connectBtn.addEventListener('click', function() {
 				connectBtn.disabled = true;
-				connectBtn.textContent = 'Redirecting...';
+				connectBtn.textContent = t.redirecting;
 				var fd = new FormData();
 				fd.append('action', 'rm_stripe_connect');
 				fd.append('nonce', nonce);
@@ -2085,15 +2112,15 @@ add_shortcode( 'rm_stripe_connect', function() {
 						if ( resp.success && resp.data.url ) {
 							window.location.href = resp.data.url;
 						} else {
-							alert(resp.data || 'Error connecting to Stripe.');
+							alert(resp.data || t.errorConnect);
 							connectBtn.disabled = false;
-							connectBtn.textContent = 'Connect with Stripe';
+							connectBtn.textContent = t.connectLabel;
 						}
 					})
 					.catch(function() {
-						alert('Network error. Please try again.');
+						alert(t.networkError);
 						connectBtn.disabled = false;
-						connectBtn.textContent = 'Connect with Stripe';
+						connectBtn.textContent = t.connectLabel;
 					});
 			});
 		}
@@ -2101,7 +2128,7 @@ add_shortcode( 'rm_stripe_connect', function() {
 		var disconnectBtn = document.getElementById('rm-stripe-disconnect');
 		if ( disconnectBtn ) {
 			disconnectBtn.addEventListener('click', function() {
-				if ( ! confirm('Are you sure you want to disconnect your Stripe account?') ) return;
+				if ( ! confirm(t.confirmDisco) ) return;
 				var fd = new FormData();
 				fd.append('action', 'rm_stripe_disconnect');
 				fd.append('nonce', nonce);
@@ -2247,10 +2274,12 @@ add_shortcode( 'rm_my_earnings', function() {
 		return '';
 	}
 
+	$rm_is_fr = apply_filters( 'wpml_current_language', null ) === 'fr';
+	$rm_t = function( $en, $fr ) use ( $rm_is_fr ) { return $rm_is_fr ? $fr : $en; };
 	$fmt = function( $v ) { return number_format( $v, 0, ',', ' ' ) . '&nbsp;&euro;'; };
 	$next = $data['next_payout']
-		? $fmt( $data['next_payout']['amount'] ) . ' on ' . esc_html( $data['next_payout']['date'] )
-		: 'None scheduled';
+		? $fmt( $data['next_payout']['amount'] ) . ' ' . $rm_t( 'on', 'le' ) . ' ' . esc_html( $data['next_payout']['date'] )
+		: $rm_t( 'None scheduled', 'Aucun programmé' );
 
 	ob_start();
 	?>
@@ -2264,12 +2293,12 @@ add_shortcode( 'rm_my_earnings', function() {
 	.rm-earnings-card .rm-amount--teal { color:#0d9488; }
 	</style>
 	<div class="rm-earnings-widget">
-		<h3>My Earnings</h3>
+		<h3><?php echo $rm_t( 'My Earnings', 'Mes Revenus' ); ?></h3>
 		<div class="rm-earnings-grid">
-			<div class="rm-earnings-card"><div class="rm-amount rm-amount--teal"><?php echo $fmt( $data['available'] ); ?></div><div class="rm-label">Available (paid out)</div></div>
-			<div class="rm-earnings-card"><div class="rm-amount"><?php echo $fmt( $data['escrow'] ); ?></div><div class="rm-label">In escrow</div></div>
-			<div class="rm-earnings-card"><div class="rm-amount"><?php echo $fmt( $data['total'] ); ?></div><div class="rm-label">Total earned</div></div>
-			<div class="rm-earnings-card"><div class="rm-amount" style="font-size:14px;"><?php echo $next; ?></div><div class="rm-label">Next payout</div></div>
+			<div class="rm-earnings-card"><div class="rm-amount rm-amount--teal"><?php echo $fmt( $data['available'] ); ?></div><div class="rm-label"><?php echo $rm_t( 'Available (paid out)', 'Disponible (versé)' ); ?></div></div>
+			<div class="rm-earnings-card"><div class="rm-amount"><?php echo $fmt( $data['escrow'] ); ?></div><div class="rm-label"><?php echo $rm_t( 'In escrow', 'En séquestre' ); ?></div></div>
+			<div class="rm-earnings-card"><div class="rm-amount"><?php echo $fmt( $data['total'] ); ?></div><div class="rm-label"><?php echo $rm_t( 'Total earned', 'Total gagné' ); ?></div></div>
+			<div class="rm-earnings-card"><div class="rm-amount" style="font-size:14px;"><?php echo $next; ?></div><div class="rm-label"><?php echo $rm_t( 'Next payout', 'Prochain versement' ); ?></div></div>
 		</div>
 	</div>
 	<?php
@@ -2321,16 +2350,20 @@ add_shortcode( 'rm_my_payments', function() {
 	.rm-tx-chevron { display:inline-block; width:16px; text-align:center; color:#9ca3af; transition:transform 0.2s ease; font-size:12px; margin-right:8px; }
 	.rm-tx-row.rm-expanded .rm-tx-chevron { transform:rotate(90deg); color:#0d9488; }
 	</style>
+	<?php
+	$rm_is_fr = apply_filters( 'wpml_current_language', null ) === 'fr';
+	$rm_t = function( $en, $fr ) use ( $rm_is_fr ) { return $rm_is_fr ? $fr : $en; };
+	?>
 	<?php if ( empty( $data['transactions'] ) ) : ?>
-		<p style="color:#6b7280;font-family:'DM Sans',sans-serif;font-size:14px;">No transactions yet. Your payments will appear here when riders book your camps.</p>
+		<p style="color:#6b7280;font-family:'DM Sans',sans-serif;font-size:14px;"><?php echo $rm_t( 'No transactions yet. Your payments will appear here when riders book your camps.', 'Aucune transaction pour le moment. Vos paiements apparaîtront ici quand des riders réserveront vos camps.' ); ?></p>
 	<?php else : ?>
 		<table class="rm-payments-table">
-			<thead><tr><th>Date</th><th>Camp</th><th>Rider</th><th>Total</th><th>My Share</th><th>Hotel</th><th>Status</th></tr></thead>
+			<thead><tr><th><?php echo $rm_t( 'Date', 'Date' ); ?></th><th><?php echo $rm_t( 'Camp', 'Camp' ); ?></th><th><?php echo $rm_t( 'Rider', 'Rider' ); ?></th><th><?php echo $rm_t( 'Total', 'Total' ); ?></th><th><?php echo $rm_t( 'My Share', 'Ma part' ); ?></th><th><?php echo $rm_t( 'Hotel', 'Hôtel' ); ?></th><th><?php echo $rm_t( 'Status', 'Statut' ); ?></th></tr></thead>
 			<tbody>
 			<?php foreach ( $data['transactions'] as $i => $tx ) :
-				$status_label = $tx['status'] === 'escrow' ? 'In escrow' :
-								( $tx['status'] === 'paid' ? 'Paid' . ( $tx['payout_date'] ? ' ' . esc_html( $tx['payout_date'] ) : '' ) :
-								( $tx['status'] === 'cancelled' ? 'Cancelled' . ( $tx['refund_pct'] ? ' (' . $tx['refund_pct'] . '%)' : '' ) : 'Error' ) );
+				$status_label = $tx['status'] === 'escrow' ? $rm_t( 'In escrow', 'En séquestre' ) :
+								( $tx['status'] === 'paid' ? $rm_t( 'Paid', 'Versé' ) . ( $tx['payout_date'] ? ' ' . esc_html( $tx['payout_date'] ) : '' ) :
+								( $tx['status'] === 'cancelled' ? $rm_t( 'Cancelled', 'Annulé' ) . ( $tx['refund_pct'] ? ' (' . $tx['refund_pct'] . '%)' : '' ) : $rm_t( 'Error', 'Erreur' ) ) );
 				$camp_url = $tx['camp_id'] ? get_permalink( $tx['camp_id'] ) : '';
 			?>
 				<tr class="rm-tx-row" data-tx="<?php echo $i; ?>">
@@ -2346,45 +2379,45 @@ add_shortcode( 'rm_my_payments', function() {
 					<td colspan="7">
 						<div class="rm-tx-detail-inner">
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Order</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Order', 'Commande' ); ?></div>
 								<div class="rm-detail-value">#<?php echo esc_html( $tx['order_number'] ); ?></div>
 							</div>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Rider</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Rider', 'Rider' ); ?></div>
 								<div class="rm-detail-value"><?php echo esc_html( $tx['rider_full'] ); ?></div>
 							</div>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Email</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Email', 'Email' ); ?></div>
 								<div class="rm-detail-value"><?php echo esc_html( $tx['rider_email'] ); ?></div>
 							</div>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Participants</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Participants', 'Participants' ); ?></div>
 								<div class="rm-detail-value"><?php echo esc_html( $tx['participants'] ); ?></div>
 							</div>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Total order</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Total order', 'Total commande' ); ?></div>
 								<div class="rm-detail-value"><?php echo $fmt( $tx['total'] ); ?></div>
 							</div>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">My share</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'My share', 'Ma part' ); ?></div>
 								<div class="rm-detail-value" style="color:#0d9488;"><?php echo $fmt( $tx['coach_amount'] ); ?></div>
 							</div>
 							<?php if ( $tx['hotel_amount'] > 0 ) : ?>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Hotel share</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Hotel share', 'Part hôtel' ); ?></div>
 								<div class="rm-detail-value"><?php echo $fmt( $tx['hotel_amount'] ); ?></div>
 							</div>
 							<?php endif; ?>
 							<?php if ( $tx['payout_date'] ) : ?>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Payout date</div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Payout date', 'Date versement' ); ?></div>
 								<div class="rm-detail-value"><?php echo esc_html( $tx['payout_date'] ); ?></div>
 							</div>
 							<?php endif; ?>
 							<?php if ( $camp_url ) : ?>
 							<div class="rm-tx-detail-item">
-								<div class="rm-detail-label">Camp</div>
-								<div class="rm-detail-value"><a href="<?php echo esc_url( $camp_url ); ?>" style="color:#0d9488;text-decoration:none;" target="_blank">View camp &rarr;</a></div>
+								<div class="rm-detail-label"><?php echo $rm_t( 'Camp', 'Camp' ); ?></div>
+								<div class="rm-detail-value"><a href="<?php echo esc_url( $camp_url ); ?>" style="color:#0d9488;text-decoration:none;" target="_blank"><?php echo $rm_t( 'View camp', 'Voir le camp' ); ?> &rarr;</a></div>
 							</div>
 							<?php endif; ?>
 						</div>
