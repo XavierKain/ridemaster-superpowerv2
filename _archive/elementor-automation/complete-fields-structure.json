@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-01-18T15:46:40.951Z",
+  "metaFields": [
+    {
+      "name": "camp_start_date",
+      "type": "hidden",
+      "value": "2026-03-01",
+      "label": ""
+    },
+    {
+      "name": "camp_end_date",
+      "type": "hidden",
+      "value": "2026-03-08",
+      "label": ""
+    },
+    {
+      "name": "camp_price",
+      "type": "number",
+      "value": "1500",
+      "label": ""
+    },
+    {
+      "name": "camp_currency",
+      "type": "select-one",
+      "value": "0",
+      "label": ""
+    },
+    {
+      "name": "camp_max_spots",
+      "type": "number",
+      "value": "10",
+      "label": ""
+    },
+    {
+      "name": "camp_booked_spots",
+      "type": "number",
+      "value": "2",
+      "label": ""
+    },
+    {
+      "name": "camp_included",
+      "type": "textarea",
+      "value": "5 days of professional coaching\nFull equipment rental (kites, boards, harness)\nBeachfront accommodation (shared room)\nVideo analysis sessions\nAirport transfers (Malaga/Gibraltar)",
+      "label": ""
+    },
+    {
+      "name": "camp_not_included",
+      "type": "textarea",
+      "value": "Flights to/from destination\nMeals and refreshments\nTravel insurance",
+      "label": ""
+    },
+    {
+      "name": "camp_schedule",
+      "type": "textarea",
+      "value": "",
+      "label": ""
+    },
+    {
+      "name": "camp_gallery",
+      "type": "hidden",
+      "value": "193,192",
+      "label": ""
+    }
+  ],
+  "taxonomies": []
+}

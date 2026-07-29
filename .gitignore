@@ -44,3 +44,9 @@ plugins/*.zip
 # Debug screenshots dropped at the repo root during Playwright sessions
 /*.png
 .playwright-mcp/
+
+# _archive/ is tracked (see _archive/README.md) except these two heavy folders,
+# which stay on disk but out of git: 32 MB of comparison screenshots and
+# reinstallable npm dependencies.
+_archive/elementor-automation/screenshots/
+_archive/elementor-automation/node_modules/

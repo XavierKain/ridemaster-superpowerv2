@@ -1,0 +1,284 @@
+{
+  "content": [
+    {
+      "id": "hero1a2b",
+      "settings": {
+        "flex_direction": "column",
+        "flex_align_items": "center",
+        "flex_justify_content": "center",
+        "min_height": {
+          "unit": "vh",
+          "size": 85,
+          "sizes": []
+        },
+        "min_height_tablet": {
+          "unit": "vh",
+          "size": 70,
+          "sizes": []
+        },
+        "min_height_mobile": {
+          "unit": "vh",
+          "size": 60,
+          "sizes": []
+        },
+        "background_background": "classic",
+        "background_image": {
+          "url": "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1920",
+          "id": "",
+          "size": "",
+          "alt": "",
+          "source": "library"
+        },
+        "background_position": "center center",
+        "background_size": "cover",
+        "background_overlay_background": "gradient",
+        "background_overlay_gradient_type": "linear",
+        "background_overlay_gradient_angle": {
+          "unit": "deg",
+          "size": 180,
+          "sizes": []
+        },
+        "padding": {
+          "unit": "px",
+          "top": "100",
+          "right": "20",
+          "bottom": "100",
+          "left": "20",
+          "isLinked": false
+        },
+        "padding_tablet": {
+          "unit": "px",
+          "top": "80",
+          "right": "20",
+          "bottom": "80",
+          "left": "20",
+          "isLinked": false
+        },
+        "padding_mobile": {
+          "unit": "px",
+          "top": "60",
+          "right": "16",
+          "bottom": "60",
+          "left": "16",
+          "isLinked": false
+        },
+        "jet_parallax_layout_list": [],
+        "jedv_conditions": [
+          {
+            "_id": "hero001"
+          }
+        ],
+        "__globals__": {
+          "background_overlay_color": "globals/colors?id=rm_slate_900",
+          "background_overlay_color_b": "globals/colors?id=rm_slate_800"
+        }
+      },
+      "elements": [
+        {
+          "id": "hero2b3c",
+          "settings": {
+            "title": "Find Your Next Camp",
+            "header_size": "h1",
+            "align": "center",
+            "text_shadow_text_shadow_type": "yes",
+            "text_shadow_text_shadow": {
+              "horizontal": 0,
+              "vertical": 2,
+              "blur": 8,
+              "color": "rgba(0,0,0,0.3)"
+            },
+            "jedv_conditions": [
+              {
+                "_id": "title001"
+              }
+            ],
+            "__globals__": {
+              "typography_typography": "globals/typography?id=rm_hero_title",
+              "title_color": "globals/colors?id=e-global-color-ffffff"
+            }
+          },
+          "elements": [],
+          "isInner": false,
+          "widgetType": "heading",
+          "elType": "widget"
+        },
+        {
+          "id": "hero3c4d",
+          "settings": {
+            "editor": "<p>Discover world-class camps with expert coaches at stunning destinations</p>",
+            "align": "center",
+            "text_shadow_text_shadow_type": "yes",
+            "text_shadow_text_shadow": {
+              "horizontal": 0,
+              "vertical": 1,
+              "blur": 4,
+              "color": "rgba(0,0,0,0.25)"
+            },
+            "jedv_conditions": [
+              {
+                "_id": "subtitle001"
+              }
+            ],
+            "__globals__": {
+              "typography_typography": "globals/typography?id=rm_lead_text",
+              "text_color": "globals/colors?id=e-global-color-ffffff"
+            }
+          },
+          "elements": [],
+          "isInner": false,
+          "widgetType": "text-editor",
+          "elType": "widget"
+        },
+        {
+          "id": "hero4d5e",
+          "settings": {
+            "html": "<!-- Search Bar Placeholder - Configure with JetSearch -->\n<div style=\"background: white; padding: 20px 24px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-width: 900px; width: 100%; text-align: center; color: #64748B; font-family: 'DM Sans', sans-serif; margin: 24px auto;\">\n  <p style=\"margin: 0; font-size: 14px;\">🔍 Search Bar - À configurer avec JetSearch</p>\n</div>",
+            "jedv_conditions": [
+              {
+                "_id": "search001"
+              }
+            ]
+          },
+          "elements": [],
+          "isInner": false,
+          "widgetType": "html",
+          "elType": "widget"
+        },
+        {
+          "id": "hero5e6f",
+          "settings": {
+            "content_width": "full",
+            "flex_direction": "row",
+            "flex_justify_content": "center",
+            "flex_align_items": "center",
+            "flex_wrap": "wrap",
+            "flex_gap": {
+              "column": "32",
+              "row": "16",
+              "unit": "px"
+            },
+            "flex_gap_tablet": {
+              "column": "24",
+              "row": "12",
+              "unit": "px"
+            },
+            "flex_gap_mobile": {
+              "column": "20",
+              "row": "10",
+              "unit": "px"
+            },
+            "jet_parallax_layout_list": [],
+            "jedv_conditions": [
+              {
+                "_id": "trust001"
+              }
+            ]
+          },
+          "elements": [
+            {
+              "id": "trust1a",
+              "settings": {
+                "title_text": "Insurance included",
+                "description_text": "",
+                "position": "left",
+                "title_bottom_space": {
+                  "unit": "px",
+                  "size": 0,
+                  "sizes": []
+                },
+                "icon": {
+                  "value": "fas fa-shield-alt",
+                  "library": "fa-solid"
+                },
+                "jedv_conditions": [
+                  {
+                    "_id": "trust1a001"
+                  }
+                ],
+                "__globals__": {
+                  "typography_typography": "globals/typography?id=rm_small",
+                  "title_color": "globals/colors?id=e-global-color-ffffff",
+                  "icon_primary_color": "globals/colors?id=e-global-color-ffffff"
+                }
+              },
+              "elements": [],
+              "isInner": false,
+              "widgetType": "icon-box",
+              "elType": "widget"
+            },
+            {
+              "id": "trust2b",
+              "settings": {
+                "title_text": "Secure payment",
+                "description_text": "",
+                "position": "left",
+                "title_bottom_space": {
+                  "unit": "px",
+                  "size": 0,
+                  "sizes": []
+                },
+                "icon": {
+                  "value": "fas fa-lock",
+                  "library": "fa-solid"
+                },
+                "jedv_conditions": [
+                  {
+                    "_id": "trust2b001"
+                  }
+                ],
+                "__globals__": {
+                  "typography_typography": "globals/typography?id=rm_small",
+                  "title_color": "globals/colors?id=e-global-color-ffffff",
+                  "icon_primary_color": "globals/colors?id=e-global-color-ffffff"
+                }
+              },
+              "elements": [],
+              "isInner": false,
+              "widgetType": "icon-box",
+              "elType": "widget"
+            },
+            {
+              "id": "trust3c",
+              "settings": {
+                "title_text": "Free cancellation",
+                "description_text": "",
+                "position": "left",
+                "title_bottom_space": {
+                  "unit": "px",
+                  "size": 0,
+                  "sizes": []
+                },
+                "icon": {
+                  "value": "fas fa-sync-alt",
+                  "library": "fa-solid"
+                },
+                "jedv_conditions": [
+                  {
+                    "_id": "trust3c001"
+                  }
+                ],
+                "__globals__": {
+                  "typography_typography": "globals/typography?id=rm_small",
+                  "title_color": "globals/colors?id=e-global-color-ffffff",
+                  "icon_primary_color": "globals/colors?id=e-global-color-ffffff"
+                }
+              },
+              "elements": [],
+              "isInner": false,
+              "widgetType": "icon-box",
+              "elType": "widget"
+            }
+          ],
+          "isInner": true,
+          "elType": "container"
+        }
+      ],
+      "isInner": false,
+      "elType": "container"
+    }
+  ],
+  "page_settings": [],
+  "version": "0.4",
+  "title": "Homepage Hero - CORRECT",
+  "type": "container"
+}

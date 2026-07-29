@@ -1,0 +1,451 @@
+{
+  "version": "0.4",
+  "title": "Camp Detail - Single Template",
+  "type": "jet-engine",
+  "content": [
+    {
+      "id": "specs-detail",
+      "elType": "widget",
+      "widgetType": "html",
+      "settings": {
+        "html": "<!--\n═══════════════════════════════════════════════════════════════\nCAMP DETAIL PAGE - DESIGN SPECIFICATIONS\n═══════════════════════════════════════════════════════════════\n\nPAGE STRUCTURE:\n───────────────────────────────────────────────────────────────\n1. Breadcrumb (optional - depends on theme)\n2. Image Gallery (5 images grid)\n3. Main Content (2 columns):\n   - Left Column: Title, Description, Included, Spot, Reviews\n   - Right Column: Booking Card (sticky)\n4. Similar Camps Section\n\n═══════════════════════════════════════════════════════════════\n1. IMAGE GALLERY\n═══════════════════════════════════════════════════════════════\n\nLayout: CSS Grid\n• Grid template: 2fr 1fr 1fr (columns) × 2 rows\n• Main image: 2 rows tall (left side)\n• 4 smaller thumbnails (right side, 2×2)\n• Gap: 12px\n• Border radius: 24px (container)\n• Height: 400px total (desktop), 300px (tablet), 240px (mobile)\n\nImages:\n• Source: Featured image + gallery meta field\n• Object fit: cover\n• Dynamic tags: [jet-engine-dynamic-field field=\"gallery\"]\n\nGallery Actions (overlay on main image):\n• Position: absolute, top-right\n• Share button (icon)\n• Favorite button (heart icon)\n• Background: White, rounded, shadow\n\n═══════════════════════════════════════════════════════════════\n2. MAIN CONTENT - LEFT COLUMN\n═══════════════════════════════════════════════════════════════\n\n2.1 BADGES & TITLE\n───────────────────────────────────────────────────────────────\nBadges (inline):\n• Sport badge: Dynamic from sport taxonomy\n  - Background: Color based on sport\n  - Padding: 4px 12px\n  - Border radius: 16px\n  - Font: DM Sans 500, 12px\n• Level badge: Dynamic from level field\n  - Background: Light gray\n  - Color: Dark gray\n\nTitle:\n• Source: Post title\n• Typography: DM Sans 700, 36px (desktop), 30px (tablet), 24px (mobile)\n• Color: Slate 900\n• Line height: 1.2\n• Margin bottom: 16px\n\nMeta Row:\n• Display: Flex row, wrap\n• Gap: 24px\n• Border bottom: 1px solid #E2E8F0\n• Padding bottom: 24px\n• Margin bottom: 24px\n\nMeta Items:\n• Location: [map-pin icon] + location field\n• Dates: [calendar icon] + start_date - end_date\n• Duration: [clock icon] + duration field\n• Group size: [users icon] + group_size field\n• Rating: [star icon] + rating + (reviews_count)\n\n2.2 COACH PREVIEW\n───────────────────────────────────────────────────────────────\n• Container with light background (#F8FAFC)\n• Padding: 20px\n• Border radius: 16px\n• Margin bottom: 32px\n\nLayout:\n• Avatar (left, 64px circle)\n• Info (middle): Name, Bio snippet\n• View Profile button (right)\n\nDynamic Tags:\n• Avatar: coach relation → _thumbnail_id\n• Name: coach relation → post_title\n• Bio: coach relation → bio field (truncated to 100 chars)\n\n2.3 DESCRIPTION\n───────────────────────────────────────────────────────────────\n• Heading: \"About This Camp\" (DM Sans 700, 24px)\n• Content: WYSIWYG field \"description\"\n• Typography: DM Sans 400, 16px, line-height 1.625\n• Color: Slate 700\n• Margin bottom: 32px\n\n2.4 WHAT'S INCLUDED\n───────────────────────────────────────────────────────────────\n• Heading: \"What's Included\" (DM Sans 700, 24px)\n• List from \"included_items\" repeater field\n• Each item: [check icon] + text\n• Display: Grid 2 columns (desktop), 1 column (mobile)\n• Gap: 16px\n• Icon color: Teal (#14B8A6)\n• Margin bottom: 32px\n\n2.5 THE SPOT\n───────────────────────────────────────────────────────────────\n• Heading: \"The Spot\" (DM Sans 700, 24px)\n• Spot relation data:\n  - Image (from spot CPT)\n  - Name (h4)\n  - Description\n  - Conditions (wind, waves, etc.)\n• Link to spot single page\n• Margin bottom: 32px\n\n2.6 REVIEWS\n───────────────────────────────────────────────────────────────\n• Heading: \"Reviews\" (DM Sans 700, 24px)\n• Average rating display (large)\n• Reviews list (from reviews CPT relation)\n• Each review:\n  - Avatar + Name + Rating stars\n  - Date\n  - Review text\n• Pagination if > 5 reviews\n\n═══════════════════════════════════════════════════════════════\n3. BOOKING CARD (Right Column - Sticky)\n═══════════════════════════════════════════════════════════════\n\nContainer:\n• Background: White\n• Border: 1px solid #E2E8F0\n• Border radius: 24px\n• Padding: 24px\n• Box shadow: 0 4px 12px rgba(0,0,0,0.08)\n• Position: Sticky, top: 100px\n• Max width: 380px\n\nElements:\n1. Price Display:\n   • Amount: [price field] (DM Sans 700, 32px)\n   • Unit: \"/person\" (gray, 16px)\n   • Margin bottom: 16px\n\n2. Dates Display:\n   • Icon + text\n   • Source: start_date - end_date\n   • Margin bottom: 12px\n\n3. Spots Available:\n   • Text: \"spots_available / group_size spots left\"\n   • Color: Teal if available, Orange if low (<3)\n   • Margin bottom: 20px\n\n4. Book Now Button:\n   • Full width\n   • Background: Teal (#14B8A6)\n   • Padding: 16px\n   • Border radius: 12px\n   • Typography: DM Sans 600, 16px\n   • Link to booking/checkout page with camp ID\n\n5. Trust Badges (below button):\n   • Free cancellation\n   • Secure payment\n   • Money back guarantee\n   • Small icons + text\n   • Gray color\n   • Font size: 12px\n\n6. Contact Coach:\n   • Link to contact form or email\n   • Icon + text\n   • Border top: 1px\n   • Padding top: 20px\n   • Margin top: 20px\n\n═══════════════════════════════════════════════════════════════\n4. SIMILAR CAMPS SECTION\n═══════════════════════════════════════════════════════════════\n\n• Heading: \"Similar Camps\" (DM Sans 700, 32px)\n• Layout: Grid 4 columns (desktop), 2 (tablet), 1 (mobile)\n• Gap: 24px\n• Uses JetEngine Listing Grid\n• Query: Same sport taxonomy, exclude current post\n• Limit: 4 camps\n• Uses same camp-card-loop-item template\n\n═══════════════════════════════════════════════════════════════\nDYNAMIC TAGS REFERENCE:\n═══════════════════════════════════════════════════════════════\n\nCamp Fields:\n• title → post_title\n• description → description (WYSIWYG)\n• price → price (number)\n• location → location (text)\n• start_date → start_date (date)\n• end_date → end_date (date)\n• duration → duration (text, e.g. \"7 days\")\n• group_size → group_size (number)\n• spots_available → spots_available (number)\n• level → level (select)\n• rating → rating (number)\n• reviews_count → reviews_count (number)\n• included_items → included_items (repeater)\n• gallery → gallery (gallery)\n\nRelations:\n• coach → coach (relation to coach CPT)\n• spot → spot (relation to spot CPT)\n• sport → sport (taxonomy)\n\nCoach Fields (via relation):\n• coach → post_title\n• coach → bio\n• coach → _thumbnail_id\n\nSpot Fields (via relation):\n• spot → post_title\n• spot → description\n• spot → conditions\n• spot → _thumbnail_id\n\n═══════════════════════════════════════════════════════════════\nEND OF SPECIFICATIONS\n═══════════════════════════════════════════════════════════════\n-->"
+      },
+      "elements": []
+    },
+    {
+      "id": "detail-main",
+      "elType": "container",
+      "isInner": false,
+      "settings": {
+        "content_width": "boxed",
+        "flex_direction": "column",
+        "padding": {
+          "top": "40",
+          "right": "16",
+          "bottom": "80",
+          "left": "16",
+          "unit": "px",
+          "isLinked": false
+        }
+      },
+      "elements": [
+        {
+          "id": "gallery-section",
+          "elType": "widget",
+          "widgetType": "jet-engine-listing-dynamic-image",
+          "settings": {
+            "dynamic_image_source": "featured_image",
+            "dynamic_image_size": "large",
+            "image_width": {
+              "unit": "%",
+              "size": "100"
+            },
+            "image_height": {
+              "unit": "px",
+              "size": "400"
+            },
+            "image_border_radius": {
+              "top": "24",
+              "right": "24",
+              "bottom": "24",
+              "left": "24",
+              "unit": "px",
+              "isLinked": true
+            },
+            "object-fit": "cover",
+            "_margin": {
+              "top": "0",
+              "right": "0",
+              "bottom": "32",
+              "left": "0",
+              "unit": "px",
+              "isLinked": false
+            }
+          },
+          "elements": []
+        },
+        {
+          "id": "content-grid",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+            "flex_direction": "row",
+            "flex_gap": {
+              "column": "48",
+              "row": "0",
+              "unit": "px"
+            },
+            "flex_align_items": "flex-start"
+          },
+          "elements": [
+            {
+              "id": "left-column",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "flex_direction": "column",
+                "flex_gap": {
+                  "column": "32",
+                  "row": "0",
+                  "unit": "px"
+                },
+                "width": {
+                  "unit": "%",
+                  "size": "65"
+                }
+              },
+              "elements": [
+                {
+                  "id": "title-section",
+                  "elType": "container",
+                  "isInner": true,
+                  "settings": {
+                    "flex_direction": "column",
+                    "flex_gap": {
+                      "column": "16",
+                      "row": "0",
+                      "unit": "px"
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "badges-row",
+                      "elType": "container",
+                      "isInner": true,
+                      "settings": {
+                        "flex_direction": "row",
+                        "flex_gap": {
+                          "column": "8",
+                          "row": "0",
+                          "unit": "px"
+                        }
+                      },
+                      "elements": [
+                        {
+                          "id": "sport-badge",
+                          "elType": "widget",
+                          "widgetType": "jet-engine-listing-dynamic-terms",
+                          "settings": {
+                            "from_tax": "sport",
+                            "show_all_terms": "yes",
+                            "terms_num": 1
+                          },
+                          "elements": []
+                        },
+                        {
+                          "id": "level-badge",
+                          "elType": "widget",
+                          "widgetType": "jet-engine-listing-dynamic-field",
+                          "settings": {
+                            "dynamic_field_source": "level"
+                          },
+                          "elements": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "title",
+                      "elType": "widget",
+                      "widgetType": "jet-engine-listing-dynamic-field",
+                      "settings": {
+                        "dynamic_field_source": "post_title",
+                        "dynamic_field_tag": "h1",
+                        "color": "#0F172A",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "700",
+                        "typography_font_size": {
+                          "unit": "px",
+                          "size": "36"
+                        },
+                        "typography_line_height": {
+                          "unit": "em",
+                          "size": "1.2"
+                        }
+                      },
+                      "elements": []
+                    },
+                    {
+                      "id": "meta-row",
+                      "elType": "container",
+                      "isInner": true,
+                      "settings": {
+                        "flex_direction": "row",
+                        "flex_wrap": "wrap",
+                        "flex_gap": {
+                          "column": "24",
+                          "row": "12",
+                          "unit": "px"
+                        },
+                        "border_border": "solid",
+                        "border_width": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "1",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": false
+                        },
+                        "border_color": "#E2E8F0",
+                        "padding": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "24",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": false
+                        }
+                      },
+                      "elements": []
+                    }
+                  ]
+                },
+                {
+                  "id": "description-section",
+                  "elType": "container",
+                  "isInner": true,
+                  "settings": {
+                    "flex_direction": "column",
+                    "flex_gap": {
+                      "column": "16",
+                      "row": "0",
+                      "unit": "px"
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "desc-heading",
+                      "elType": "widget",
+                      "widgetType": "heading",
+                      "settings": {
+                        "title": "About This Camp",
+                        "header_size": "h2"
+                      },
+                      "elements": []
+                    },
+                    {
+                      "id": "desc-content",
+                      "elType": "widget",
+                      "widgetType": "jet-engine-listing-dynamic-field",
+                      "settings": {
+                        "dynamic_field_source": "description",
+                        "color": "#475569",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "400",
+                        "typography_font_size": {
+                          "unit": "px",
+                          "size": "16"
+                        },
+                        "typography_line_height": {
+                          "unit": "em",
+                          "size": "1.625"
+                        }
+                      },
+                      "elements": []
+                    }
+                  ]
+                },
+                {
+                  "id": "included-section",
+                  "elType": "container",
+                  "isInner": true,
+                  "settings": {
+                    "flex_direction": "column",
+                    "flex_gap": {
+                      "column": "16",
+                      "row": "0",
+                      "unit": "px"
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "included-heading",
+                      "elType": "widget",
+                      "widgetType": "heading",
+                      "settings": {
+                        "title": "What's Included",
+                        "header_size": "h2"
+                      },
+                      "elements": []
+                    },
+                    {
+                      "id": "included-list",
+                      "elType": "widget",
+                      "widgetType": "jet-engine-listing-dynamic-repeater",
+                      "settings": {
+                        "dynamic_field_source": "included_items",
+                        "repeater_layout": "grid",
+                        "columns": 2
+                      },
+                      "elements": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "right-column",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "flex_direction": "column",
+                "width": {
+                  "unit": "%",
+                  "size": "35"
+                },
+                "position": "sticky",
+                "position_top": {
+                  "unit": "px",
+                  "size": "100"
+                }
+              },
+              "elements": [
+                {
+                  "id": "booking-card",
+                  "elType": "container",
+                  "isInner": true,
+                  "settings": {
+                    "flex_direction": "column",
+                    "flex_gap": {
+                      "column": "20",
+                      "row": "0",
+                      "unit": "px"
+                    },
+                    "background_background": "classic",
+                    "background_color": "#FFFFFF",
+                    "border_border": "solid",
+                    "border_width": {
+                      "top": "1",
+                      "right": "1",
+                      "bottom": "1",
+                      "left": "1",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "border_color": "#E2E8F0",
+                    "border_radius": {
+                      "top": "24",
+                      "right": "24",
+                      "bottom": "24",
+                      "left": "24",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "padding": {
+                      "top": "24",
+                      "right": "24",
+                      "bottom": "24",
+                      "left": "24",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "box_shadow_box_shadow_type": "yes",
+                    "box_shadow_box_shadow": {
+                      "horizontal": 0,
+                      "vertical": 4,
+                      "blur": 12,
+                      "spread": 0,
+                      "color": "rgba(0,0,0,0.08)"
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "price-display",
+                      "elType": "container",
+                      "isInner": true,
+                      "settings": {
+                        "flex_direction": "row",
+                        "flex_align_items": "baseline",
+                        "flex_gap": {
+                          "column": "4",
+                          "row": "0",
+                          "unit": "px"
+                        }
+                      },
+                      "elements": [
+                        {
+                          "id": "price-amount",
+                          "elType": "widget",
+                          "widgetType": "jet-engine-listing-dynamic-field",
+                          "settings": {
+                            "dynamic_field_source": "price",
+                            "field_before_template": "€",
+                            "color": "#0F172A",
+                            "typography_typography": "custom",
+                            "typography_font_family": "DM Sans",
+                            "typography_font_weight": "700",
+                            "typography_font_size": {
+                              "unit": "px",
+                              "size": "32"
+                            }
+                          },
+                          "elements": []
+                        },
+                        {
+                          "id": "price-unit",
+                          "elType": "widget",
+                          "widgetType": "text-editor",
+                          "settings": {
+                            "editor": "<p>/person</p>",
+                            "color": "#64748B",
+                            "typography_font_size": {
+                              "unit": "px",
+                              "size": "16"
+                            }
+                          },
+                          "elements": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "book-button",
+                      "elType": "widget",
+                      "widgetType": "button",
+                      "settings": {
+                        "text": "Book Now",
+                        "align": "center",
+                        "button_type": "primary",
+                        "link": {
+                          "url": "/checkout?camp_id={{post_id}}",
+                          "is_external": false
+                        },
+                        "background_color": "#14B8A6",
+                        "button_text_color": "#FFFFFF",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_weight": "600",
+                        "typography_font_size": {
+                          "unit": "px",
+                          "size": "16"
+                        },
+                        "button_border_radius": {
+                          "top": "12",
+                          "right": "12",
+                          "bottom": "12",
+                          "left": "12",
+                          "unit": "px",
+                          "isLinked": true
+                        },
+                        "button_padding": {
+                          "top": "16",
+                          "right": "32",
+                          "bottom": "16",
+                          "left": "32",
+                          "unit": "px",
+                          "isLinked": false
+                        }
+                      },
+                      "elements": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "page_settings": []
+}

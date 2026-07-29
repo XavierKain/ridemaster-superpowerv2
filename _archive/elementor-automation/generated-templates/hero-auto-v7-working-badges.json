@@ -1,0 +1,224 @@
+{
+  "version": "0.4",
+  "title": "Homepage Hero - v7 Working Badges",
+  "type": "page",
+  "content": [
+    {
+      "id": "hero-main",
+      "elType": "container",
+      "isInner": false,
+      "settings": {
+        "content_width": "boxed",
+        "width": {
+          "unit": "px",
+          "size": "800",
+          "sizes": []
+        },
+        "flex_direction": "column",
+        "flex_justify_content": "center",
+        "flex_align_items": "flex-start",
+        "flex_gap": {
+          "column": "0",
+          "row": "0",
+          "unit": "px"
+        },
+        "min_height": {
+          "unit": "vh",
+          "size": "80",
+          "sizes": []
+        },
+        "min_height_tablet": {
+          "unit": "vh",
+          "size": "70",
+          "sizes": []
+        },
+        "min_height_mobile": {
+          "unit": "vh",
+          "size": "60",
+          "sizes": []
+        },
+        "padding": {
+          "top": "120",
+          "right": "20",
+          "bottom": "120",
+          "left": "20",
+          "unit": "px",
+          "isLinked": false
+        },
+        "padding_tablet": {
+          "top": "80",
+          "right": "20",
+          "bottom": "80",
+          "left": "20",
+          "unit": "px",
+          "isLinked": false
+        },
+        "padding_mobile": {
+          "top": "60",
+          "right": "16",
+          "bottom": "60",
+          "left": "16",
+          "unit": "px",
+          "isLinked": false
+        },
+        "background_background": "classic",
+        "background_image": {
+          "url": "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1920",
+          "id": ""
+        },
+        "background_position": "center center",
+        "background_size": "cover",
+        "background_overlay_background": "gradient",
+        "background_overlay_color": "rgba(15, 23, 42, 0.85)",
+        "background_overlay_color_stop": {
+          "unit": "%",
+          "size": 0
+        },
+        "background_overlay_color_b": "rgba(15, 23, 42, 0.4)",
+        "background_overlay_color_b_stop": {
+          "unit": "%",
+          "size": 100
+        },
+        "background_overlay_gradient_type": "linear",
+        "background_overlay_gradient_angle": {
+          "unit": "deg",
+          "size": 135
+        }
+      },
+      "elements": [
+        {
+          "id": "hero-title",
+          "elType": "widget",
+          "widgetType": "heading",
+          "settings": {
+            "title": "Find Your Next Camp",
+            "header_size": "h1",
+            "align": "left",
+            "title_color": "#FFFFFF",
+            "typography_typography": "custom",
+            "typography_font_family": "DM Sans",
+            "typography_font_size": {
+              "unit": "px",
+              "size": "56",
+              "sizes": []
+            },
+            "typography_font_size_tablet": {
+              "unit": "px",
+              "size": "42",
+              "sizes": []
+            },
+            "typography_font_size_mobile": {
+              "unit": "px",
+              "size": "32",
+              "sizes": []
+            },
+            "typography_font_weight": "700",
+            "typography_line_height": {
+              "unit": "px",
+              "size": "60",
+              "sizes": []
+            },
+            "typography_line_height_tablet": {
+              "unit": "px",
+              "size": "48",
+              "sizes": []
+            },
+            "typography_line_height_mobile": {
+              "unit": "px",
+              "size": "40",
+              "sizes": []
+            },
+            "text_shadow_text_shadow_type": "yes",
+            "text_shadow_text_shadow": {
+              "horizontal": 0,
+              "vertical": 2,
+              "blur": 8,
+              "color": "rgba(0,0,0,0.3)"
+            },
+            "_margin": {
+              "top": "0",
+              "right": "0",
+              "bottom": "24",
+              "left": "0",
+              "unit": "px",
+              "isLinked": false
+            }
+          }
+        },
+        {
+          "id": "hero-subtitle",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "settings": {
+            "editor": "<p>Discover world-class camps with expert coaches at stunning destinations</p>",
+            "align": "left",
+            "text_color": "#FFFFFF",
+            "typography_typography": "custom",
+            "typography_font_family": "DM Sans",
+            "typography_font_size": {
+              "unit": "px",
+              "size": "20",
+              "sizes": []
+            },
+            "typography_font_size_tablet": {
+              "unit": "px",
+              "size": "18",
+              "sizes": []
+            },
+            "typography_font_size_mobile": {
+              "unit": "px",
+              "size": "16",
+              "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+              "unit": "em",
+              "size": "1.625",
+              "sizes": []
+            },
+            "text_shadow_text_shadow_type": "yes",
+            "text_shadow_text_shadow": {
+              "horizontal": 0,
+              "vertical": 1,
+              "blur": 4,
+              "color": "rgba(0,0,0,0.25)"
+            },
+            "_margin": {
+              "top": "0",
+              "right": "0",
+              "bottom": "32",
+              "left": "0",
+              "unit": "px",
+              "isLinked": false
+            },
+            "_padding": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "unit": "px",
+              "isLinked": true
+            }
+          }
+        },
+        {
+          "id": "search-placeholder",
+          "elType": "widget",
+          "widgetType": "html",
+          "settings": {
+            "html": "<div style=\"background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 16px; padding: 48px 24px; margin-bottom: 32px; text-align: center; color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif;\">🔍 Search Bar Placeholder - To be configured by user</div>"
+          }
+        },
+        {
+          "id": "trust-badges",
+          "elType": "widget",
+          "widgetType": "html",
+          "settings": {
+            "html": "<div style=\"display: flex; flex-wrap: wrap; gap: 32px; align-items: center; font-family: 'DM Sans', sans-serif;\"><div style=\"display: flex; align-items: center; gap: 8px;\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" style=\"flex-shrink: 0;\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\" stroke=\"#0D9488\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M9 12l2 2 4-4\" stroke=\"#0D9488\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span style=\"color: #475569; font-size: 14px; font-weight: 400; white-space: nowrap;\">Insurance included</span></div><div style=\"display: flex; align-items: center; gap: 8px;\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" style=\"flex-shrink: 0;\"><rect x=\"3\" y=\"11\" width=\"18\" height=\"11\" rx=\"2\" ry=\"2\" stroke=\"#0D9488\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M7 11V7a5 5 0 0110 0v4\" stroke=\"#0D9488\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span style=\"color: #475569; font-size: 14px; font-weight: 400; white-space: nowrap;\">Secure payment</span></div><div style=\"display: flex; align-items: center; gap: 8px;\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" style=\"flex-shrink: 0;\"><path d=\"M1 4v6h6\" stroke=\"#0D9488\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M23 20v-6h-6\" stroke=\"#0D9488\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15\" stroke=\"#0D9488\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span style=\"color: #475569; font-size: 14px; font-weight: 400; white-space: nowrap;\">Free cancellation</span></div></div>"
+          }
+        }
+      ]
+    }
+  ],
+  "page_settings": {}
+}

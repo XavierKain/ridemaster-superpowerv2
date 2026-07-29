@@ -1,0 +1,1281 @@
+/* ==========================================================================
+   RideMaster Inline Edit - Frontend Styles
+   ========================================================================== */
+
+:root {
+	--rm-primary: #0D9488;
+	--rm-primary-dark: #0F766E;
+	--rm-primary-light: #CCFBF1;
+	--rm-error: #EF4444;
+	--rm-success: #10B981;
+	--rm-slate-50: #F8FAFC;
+	--rm-slate-100: #F1F5F9;
+	--rm-slate-200: #E2E8F0;
+	--rm-slate-500: #64748B;
+	--rm-slate-700: #334155;
+	--rm-slate-800: #1E293B;
+	--rm-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+	--rm-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+	--rm-radius: 8px;
+}
+
+/* ==========================================================================
+   Floating Edit Button (FAB)
+   ========================================================================== */
+
+.rm-edit-fab {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	z-index: 9999;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 20px;
+	background: var(--rm-primary);
+	color: #fff;
+	border: none;
+	border-radius: 50px;
+	font-size: 14px;
+	font-weight: 600;
+	font-family: 'DM Sans', sans-serif;
+	cursor: pointer;
+	box-shadow: var(--rm-shadow-lg);
+	transition: all 0.2s ease;
+}
+
+.rm-edit-fab:hover {
+	background: var(--rm-primary-dark);
+	transform: translateY(-2px);
+	box-shadow: 0 12px 28px rgba(13, 148, 136, 0.35);
+}
+
+.rm-edit-fab:active {
+	transform: translateY(0);
+}
+
+.rm-edit-fab svg {
+	flex-shrink: 0;
+}
+
+/* FAB positioned inside cover image container */
+.rm-edit-fab--in-cover {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	bottom: auto;
+	left: auto;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.95);
+	color: var(--rm-primary);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rm-edit-fab--in-cover:hover {
+	background: var(--rm-primary);
+	color: #fff;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+}
+
+.rm-edit-fab--in-cover svg {
+	stroke: currentColor;
+}
+
+/* FAB positioned inside gallery container (camp context — top-left) */
+.rm-edit-fab--in-gallery {
+	position: absolute;
+	top: 16px;
+	left: 16px;
+	right: auto;
+	bottom: auto;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.95);
+	color: var(--rm-primary);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rm-edit-fab--in-gallery:hover {
+	background: var(--rm-primary);
+	color: #fff;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+}
+
+.rm-edit-fab--in-gallery svg {
+	stroke: currentColor;
+}
+
+/* Sticky FAB — content-aligned on wide screens (bottom-right) */
+.rm-edit-fab--sticky {
+	position: fixed;
+	bottom: 24px;
+	/* Align with right edge of 1200px content area, min 24px from viewport edge */
+	right: max(24px, calc((100vw - 1200px) / 2 + 24px));
+	left: auto;
+	z-index: 9999;
+}
+
+/* ==========================================================================
+   Bottom Toolbar (Save/Cancel)
+   ========================================================================== */
+
+.rm-edit-toolbar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10000;
+	background: #fff;
+	border-top: 1px solid var(--rm-slate-200);
+	box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+	transition: transform 0.3s ease;
+}
+
+.rm-edit-toolbar.rm-hidden {
+	transform: translateY(100%);
+	pointer-events: none;
+}
+
+.rm-toolbar-inner {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 12px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.rm-toolbar-status {
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-500);
+}
+
+.rm-status-success {
+	color: var(--rm-success) !important;
+	font-weight: 600;
+}
+
+.rm-status-error {
+	color: var(--rm-error) !important;
+	font-weight: 600;
+}
+
+.rm-toolbar-actions {
+	display: flex;
+	gap: 8px;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.rm-btn {
+	padding: 8px 20px;
+	border: none;
+	border-radius: 6px;
+	font-size: 14px;
+	font-weight: 600;
+	font-family: 'DM Sans', sans-serif;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.rm-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.rm-btn-save {
+	background: var(--rm-primary);
+	color: #fff;
+}
+
+.rm-btn-save:hover:not(:disabled) {
+	background: var(--rm-primary-dark);
+}
+
+.rm-btn-cancel {
+	background: var(--rm-slate-100);
+	color: var(--rm-slate-700);
+}
+
+.rm-btn-cancel:hover {
+	background: var(--rm-slate-200);
+}
+
+.rm-btn-done {
+	background: var(--rm-primary);
+	color: #fff;
+	width: 100%;
+}
+
+.rm-btn-done:hover {
+	background: var(--rm-primary-dark);
+}
+
+/* ==========================================================================
+   Edit Mode - Editable Elements
+   ========================================================================== */
+
+/* Subtle indicator that elements are editable */
+.rm-edit-mode .rm-editable {
+	position: relative;
+	transition: all 0.15s ease;
+	border-radius: 4px;
+}
+
+.rm-edit-mode .rm-editable:hover {
+	outline: 2px dashed var(--rm-primary);
+	outline-offset: 4px;
+}
+
+/* Contenteditable text fields */
+.rm-edit-mode [contenteditable="true"] {
+	cursor: text;
+	min-height: 1.2em;
+	padding: 2px 4px;
+	border-radius: 4px;
+	transition: background-color 0.15s ease;
+}
+
+.rm-edit-mode [contenteditable="true"]:focus {
+	outline: none;
+	background-color: var(--rm-primary-light);
+	box-shadow: 0 0 0 2px var(--rm-primary);
+}
+
+/* URL editable elements - show pointer cursor */
+.rm-edit-mode .rm-editable[data-rm-type="url"] {
+	cursor: pointer;
+}
+
+/* Placeholder text for empty fields */
+.rm-placeholder,
+.rm-edit-mode .rm-editable .rm-placeholder,
+.rm-edit-mode .elementor-widget .rm-placeholder,
+.rm-edit-mode .elementor-text-editor .rm-placeholder {
+	color: #9ca3af !important;
+	font-family: 'DM Sans', sans-serif !important;
+	font-size: 14px !important;
+	font-style: italic !important;
+	font-weight: 400 !important;
+	line-height: 1.6 !important;
+	opacity: 1 !important;
+	pointer-events: none;
+	user-select: none;
+}
+
+.rm-edit-mode .rm-empty-field {
+	min-height: 2.5em;
+	cursor: pointer;
+}
+
+.rm-edit-mode .rm-editable[data-rm-type="textarea"].rm-empty-field,
+.rm-edit-mode .rm-editable[data-rm-type="wysiwyg"].rm-empty-field {
+	min-height: 4em;
+}
+
+/* Force Elementor containers inside empty fields to be visible.
+   Do NOT use > * with display:block — it breaks .rm-wysiwyg-toolbar (needs flex). */
+.rm-edit-mode .rm-empty-field .elementor-widget-container,
+.rm-edit-mode .rm-empty-field .elementor-text-editor {
+	min-height: 3em !important;
+	display: block !important;
+}
+
+/* Force visibility on any element marked by JS (including ancestors above el) */
+.rm-edit-mode [data-rm-forced-visible] {
+	min-height: 3em !important;
+}
+
+/* Ensure WYSIWYG toolbar always displays as flex row */
+.rm-edit-mode .rm-wysiwyg-toolbar {
+	display: flex !important;
+}
+
+/* ==========================================================================
+   Image Overlay
+   ========================================================================== */
+
+.rm-image-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0);
+	transition: background 0.2s ease;
+	cursor: pointer;
+	z-index: 10;
+	border-radius: inherit;
+}
+
+.rm-image-overlay:hover {
+	background: rgba(0, 0, 0, 0.45);
+}
+
+.rm-image-btn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 16px;
+	background: #fff;
+	color: var(--rm-slate-800);
+	border: none;
+	border-radius: 6px;
+	font-size: 13px;
+	font-weight: 600;
+	font-family: 'DM Sans', sans-serif;
+	cursor: pointer;
+	opacity: 0;
+	transform: translateY(4px);
+	transition: all 0.2s ease;
+	box-shadow: var(--rm-shadow);
+}
+
+.rm-image-overlay:hover .rm-image-btn {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.rm-image-btn:hover {
+	background: var(--rm-primary);
+	color: #fff;
+}
+
+.rm-image-btn:hover svg {
+	stroke: #fff;
+}
+
+/* ==========================================================================
+   Gallery Overlay
+   ========================================================================== */
+
+.rm-gallery-overlay {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 10;
+}
+
+.rm-gallery-edit-btn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px;
+	background: rgba(255, 255, 255, 0.92);
+	color: var(--rm-primary);
+	border: none;
+	border-radius: 50px;
+	font-size: 13px;
+	font-weight: 600;
+	font-family: 'DM Sans', sans-serif;
+	cursor: pointer;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	transition: all 0.2s ease;
+}
+
+.rm-gallery-edit-btn:hover {
+	background: var(--rm-primary);
+	color: #fff;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 16px rgba(13, 148, 136, 0.4);
+}
+
+.rm-gallery-edit-btn svg {
+	stroke: currentColor;
+	flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Date Input (flatpickr)
+   ========================================================================== */
+
+.rm-date-input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+	outline: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	box-sizing: border-box;
+	background: #fff;
+}
+
+.rm-date-input:focus {
+	border-color: var(--rm-primary);
+	box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+/* ==========================================================================
+   Number Input (overlay for number fields)
+   ========================================================================== */
+
+.rm-number-input {
+	display: inline-block;
+	vertical-align: middle;
+	width: 120px;
+	padding: 8px 12px;
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+	outline: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	box-sizing: border-box;
+	background: #fff;
+	-moz-appearance: textfield;
+}
+
+.rm-number-input:focus {
+	border-color: var(--rm-primary);
+	box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+.rm-number-input::-webkit-inner-spin-button,
+.rm-number-input::-webkit-outer-spin-button {
+	opacity: 1;
+}
+
+/* Prevent number/date inputs from expanding their parent container */
+.rm-edit-mode .rm-editable[data-rm-type="number"],
+.rm-edit-mode .rm-editable[data-rm-type="date_range"] {
+	overflow: visible;
+}
+
+/* ==========================================================================
+   Date Range Container (start + end date inputs)
+   ========================================================================== */
+
+.rm-date-range-container {
+	display: inline-flex;
+	vertical-align: middle;
+	align-items: flex-end;
+	gap: 8px;
+	padding: 4px 0;
+}
+
+.rm-date-range-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	flex: 1;
+}
+
+.rm-date-range-label {
+	font-size: 11px;
+	font-weight: 600;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-500);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.rm-date-range-sep {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	color: var(--rm-slate-500);
+	padding-bottom: 8px;
+}
+
+/* Flatpickr altInput inherits .rm-date-input styling */
+.rm-date-input.flatpickr-input + .form-control,
+.rm-date-input + input.flatpickr-input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+	outline: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	box-sizing: border-box;
+	background: #fff;
+}
+
+.rm-date-input + input.flatpickr-input:focus {
+	border-color: var(--rm-primary);
+	box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+/* ==========================================================================
+   Flatpickr Teal Theme
+   ========================================================================== */
+
+.flatpickr-calendar {
+	border-radius: 12px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+	border: 1px solid #e5e7eb;
+	font-family: inherit;
+}
+
+.flatpickr-months .flatpickr-month {
+	background: var(--rm-primary);
+	color: #fff;
+	border-radius: 12px 12px 0 0;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+	color: #fff;
+	font-weight: 600;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+	background: rgba(255, 255, 255, 0.15);
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+	color: #fff;
+	fill: #fff;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+	color: var(--rm-primary-light);
+}
+
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+	fill: #fff;
+}
+
+.flatpickr-weekdays {
+	background: var(--rm-primary);
+}
+
+span.flatpickr-weekday {
+	color: rgba(255, 255, 255, 0.85);
+	font-weight: 600;
+	font-size: 12px;
+	background: transparent;
+}
+
+.flatpickr-day {
+	border-radius: 8px;
+	color: #374151;
+	font-weight: 500;
+	transition: all 0.15s ease;
+}
+
+.flatpickr-day:hover {
+	background: #f0fdfa;
+	border-color: var(--rm-primary);
+	color: var(--rm-primary);
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.startRange.prevMonthDay,
+.flatpickr-day.endRange.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay,
+.flatpickr-day.startRange.nextMonthDay,
+.flatpickr-day.endRange.nextMonthDay {
+	background: var(--rm-primary);
+	border-color: var(--rm-primary);
+	color: #fff;
+}
+
+.flatpickr-day.today {
+	border-color: var(--rm-primary);
+	color: var(--rm-primary);
+	font-weight: 700;
+}
+
+.flatpickr-day.today:hover {
+	background: var(--rm-primary);
+	color: #fff;
+}
+
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+	color: #d1d5db;
+}
+
+/* ==========================================================================
+   Taxonomy Popup
+   ========================================================================== */
+
+.rm-tax-edit-btn {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--rm-primary);
+	color: #fff;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	box-shadow: var(--rm-shadow);
+	transition: all 0.15s ease;
+	z-index: 10;
+}
+
+.rm-tax-edit-btn:hover {
+	background: var(--rm-primary-dark);
+	transform: scale(1.1);
+}
+
+.rm-tax-edit-btn svg {
+	stroke: #fff;
+}
+
+.rm-tax-popup {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	z-index: 10001;
+	min-width: 220px;
+	max-width: 300px;
+	background: #fff;
+	border-radius: var(--rm-radius);
+	box-shadow: var(--rm-shadow-lg);
+	border: 1px solid var(--rm-slate-200);
+	margin-top: 8px;
+	overflow: hidden;
+}
+
+.rm-tax-popup-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--rm-slate-200);
+	font-weight: 600;
+	font-size: 13px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+}
+
+.rm-tax-popup-close {
+	background: none;
+	border: none;
+	font-size: 18px;
+	color: var(--rm-slate-500);
+	cursor: pointer;
+	padding: 0 2px;
+	line-height: 1;
+}
+
+.rm-tax-popup-close:hover {
+	color: var(--rm-slate-800);
+}
+
+.rm-tax-popup-body {
+	padding: 8px 14px;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.rm-tax-empty {
+	padding: 12px 0;
+	text-align: center;
+	color: var(--rm-slate-500);
+	font-style: italic;
+	font-size: 13px;
+	font-family: 'DM Sans', sans-serif;
+}
+
+.rm-tax-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 0;
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-700);
+	cursor: pointer;
+	transition: color 0.1s ease;
+}
+
+.rm-tax-option:hover {
+	color: var(--rm-primary);
+}
+
+.rm-tax-option input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	accent-color: var(--rm-primary);
+	cursor: pointer;
+}
+
+.rm-tax-popup-footer {
+	padding: 8px 14px 10px;
+	border-top: 1px solid var(--rm-slate-200);
+}
+
+/* ==========================================================================
+   CPT Select Popup (radio buttons for JetEngine relation CPT)
+   ========================================================================== */
+
+.rm-cpt-popup {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	z-index: 10001;
+	min-width: 220px;
+	max-width: 300px;
+	background: #fff;
+	border-radius: var(--rm-radius);
+	box-shadow: var(--rm-shadow-lg);
+	border: 1px solid var(--rm-slate-200);
+	margin-top: 8px;
+	overflow: hidden;
+}
+
+.rm-cpt-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 0;
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-700);
+	cursor: pointer;
+	transition: color 0.1s ease;
+}
+
+.rm-cpt-option:hover {
+	color: var(--rm-primary);
+}
+
+.rm-cpt-option input[type="radio"] {
+	width: 16px;
+	height: 16px;
+	accent-color: var(--rm-primary);
+	cursor: pointer;
+}
+
+/* ==========================================================================
+   URL Popup
+   ========================================================================== */
+
+.rm-url-popup {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 10001;
+	min-width: 280px;
+	background: #fff;
+	border-radius: var(--rm-radius);
+	box-shadow: var(--rm-shadow-lg);
+	border: 1px solid var(--rm-slate-200);
+	margin-top: 8px;
+	overflow: hidden;
+}
+
+.rm-url-popup-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--rm-slate-200);
+	font-weight: 600;
+	font-size: 13px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+}
+
+.rm-url-popup-close {
+	background: none;
+	border: none;
+	font-size: 18px;
+	color: var(--rm-slate-500);
+	cursor: pointer;
+	padding: 0 2px;
+	line-height: 1;
+}
+
+.rm-url-popup-close:hover {
+	color: var(--rm-slate-800);
+}
+
+.rm-url-popup-body {
+	padding: 12px 14px;
+}
+
+.rm-url-input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+	outline: none;
+	transition: border-color 0.15s ease;
+	box-sizing: border-box;
+}
+
+.rm-url-input:focus {
+	border-color: var(--rm-primary);
+	box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+.rm-url-popup-footer {
+	padding: 8px 14px 10px;
+	border-top: 1px solid var(--rm-slate-200);
+}
+
+/* ==========================================================================
+   WYSIWYG Toolbar
+   ========================================================================== */
+
+.rm-wysiwyg-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	padding: 4px 6px;
+	margin-bottom: 6px;
+	background: var(--rm-slate-50);
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+}
+
+.rm-wysiwyg-toolbar button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 28px;
+	padding: 0;
+	background: none;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	color: var(--rm-slate-700);
+	font-size: 14px;
+	transition: all 0.1s ease;
+}
+
+.rm-wysiwyg-toolbar button:hover {
+	background: var(--rm-slate-200);
+	color: var(--rm-slate-800);
+}
+
+.rm-wysiwyg-toolbar button.rm-wysiwyg-active {
+	background: var(--rm-primary);
+	color: #fff;
+}
+
+.rm-wysiwyg-sep {
+	width: 1px;
+	height: 20px;
+	background: var(--rm-slate-200);
+	margin: 0 4px;
+}
+
+/* ==========================================================================
+   Fallback Editor Card (for empty fields hidden by Elementor)
+   ========================================================================== */
+
+.rm-fallback-editor {
+	background: #fff;
+	border: 2px dashed var(--rm-primary);
+	border-radius: var(--rm-radius);
+	padding: 16px;
+	margin: 16px 0;
+	position: relative;
+}
+
+.rm-fallback-editor-label {
+	font-size: 12px;
+	font-weight: 700;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-primary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 8px;
+}
+
+.rm-fallback-editor-area {
+	min-height: 4em;
+	padding: 8px 12px;
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+	font-size: 15px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+	line-height: 1.6;
+	outline: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rm-fallback-editor-area:empty::before {
+	content: attr(data-placeholder);
+	color: var(--rm-slate-500);
+	font-style: italic;
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.rm-fallback-editor-area:focus {
+	border-color: var(--rm-primary);
+	box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+.rm-fallback-editor .rm-wysiwyg-toolbar {
+	margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   Repeater Popup
+   ========================================================================== */
+
+.rm-repeater-popup {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	z-index: 10001;
+	min-width: 300px;
+	max-width: 420px;
+	background: #fff;
+	border-radius: var(--rm-radius);
+	box-shadow: var(--rm-shadow-lg);
+	border: 1px solid var(--rm-slate-200);
+	margin-top: 8px;
+	overflow: hidden;
+}
+
+.rm-repeater-popup-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--rm-slate-200);
+	font-weight: 600;
+	font-size: 13px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+}
+
+.rm-repeater-popup-close {
+	background: none;
+	border: none;
+	font-size: 18px;
+	color: var(--rm-slate-500);
+	cursor: pointer;
+	padding: 0 2px;
+	line-height: 1;
+}
+
+.rm-repeater-popup-close:hover {
+	color: var(--rm-slate-800);
+}
+
+.rm-repeater-popup-body {
+	padding: 10px 14px;
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.rm-repeater-items {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.rm-repeater-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.rm-repeater-num {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	background: var(--rm-slate-100);
+	border-radius: 50%;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--rm-slate-500);
+	flex-shrink: 0;
+}
+
+.rm-repeater-input {
+	flex: 1;
+	padding: 7px 10px;
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-800);
+	outline: none;
+	transition: border-color 0.15s ease;
+	box-sizing: border-box;
+}
+
+.rm-repeater-input:focus {
+	border-color: var(--rm-primary);
+	box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+.rm-repeater-remove {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	background: none;
+	border: 1px solid var(--rm-slate-200);
+	border-radius: 6px;
+	color: var(--rm-slate-500);
+	font-size: 16px;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: all 0.15s ease;
+}
+
+.rm-repeater-remove:hover {
+	background: var(--rm-error);
+	border-color: var(--rm-error);
+	color: #fff;
+}
+
+.rm-repeater-add {
+	display: block;
+	width: 100%;
+	margin-top: 8px;
+	padding: 7px 10px;
+	background: none;
+	border: 1px dashed var(--rm-slate-200);
+	border-radius: 6px;
+	color: var(--rm-primary);
+	font-size: 13px;
+	font-weight: 600;
+	font-family: 'DM Sans', sans-serif;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.rm-repeater-add:hover {
+	background: var(--rm-primary-light);
+	border-color: var(--rm-primary);
+}
+
+.rm-repeater-popup-footer {
+	padding: 8px 14px 10px;
+	border-top: 1px solid var(--rm-slate-200);
+}
+
+/* ==========================================================================
+   Utility
+   ========================================================================== */
+
+.rm-hidden {
+	display: none !important;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+	.rm-edit-fab {
+		bottom: 16px;
+		right: 16px;
+		padding: 10px 16px;
+		font-size: 13px;
+	}
+
+	.rm-edit-fab--in-cover {
+		top: 10px;
+		right: 10px;
+		bottom: auto;
+		padding: 8px 14px;
+	}
+
+	.rm-edit-fab--in-gallery {
+		top: 10px;
+		left: 10px;
+		padding: 8px 14px;
+	}
+
+	.rm-edit-fab--sticky {
+		right: 16px;
+	}
+
+	.rm-toolbar-inner {
+		padding: 10px 16px;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.rm-toolbar-actions {
+		width: 100%;
+	}
+
+	.rm-toolbar-actions .rm-btn {
+		flex: 1;
+	}
+
+	.rm-tax-popup,
+	.rm-url-popup,
+	.rm-repeater-popup,
+	.rm-cpt-popup {
+		position: fixed;
+		top: auto;
+		bottom: 60px;
+		left: 16px;
+		right: 16px;
+		max-width: none;
+	}
+}
+
+/* ==========================================================================
+   Welcome Banner (new coach onboarding)
+   ========================================================================== */
+
+.rm-welcome-banner {
+	margin: 16px auto 24px;
+	max-width: 900px;
+	padding: 0 16px;
+}
+
+.rm-welcome-banner-inner {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	padding: 20px 24px;
+	background: linear-gradient(135deg, var(--rm-primary-light), #e0f7f5);
+	border: 2px solid var(--rm-primary);
+	border-radius: var(--rm-radius);
+	box-shadow: var(--rm-shadow);
+}
+
+.rm-welcome-banner-content {
+	flex: 1;
+}
+
+.rm-welcome-banner-title {
+	font-size: 18px;
+	font-weight: 700;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-primary-dark);
+	margin-bottom: 4px;
+}
+
+.rm-welcome-banner-text {
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-700);
+	line-height: 1.5;
+}
+
+.rm-welcome-banner-close {
+	background: none;
+	border: none;
+	font-size: 22px;
+	color: var(--rm-slate-500);
+	cursor: pointer;
+	padding: 0 4px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.rm-welcome-banner-close:hover {
+	color: var(--rm-slate-800);
+}
+
+/* ==========================================================================
+   Image Placeholder (empty image fields)
+   ========================================================================== */
+
+.rm-image-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 120px;
+	padding: 24px;
+	border: 2px dashed var(--rm-slate-200);
+	border-radius: var(--rm-radius);
+	background: var(--rm-slate-50);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.rm-image-placeholder:hover {
+	border-color: var(--rm-primary);
+	background: var(--rm-primary-light);
+}
+
+.rm-image-placeholder svg {
+	color: var(--rm-slate-500);
+	opacity: 0.6;
+}
+
+.rm-image-placeholder:hover svg {
+	color: var(--rm-primary);
+	opacity: 1;
+}
+
+.rm-image-placeholder span {
+	font-size: 14px;
+	font-family: 'DM Sans', sans-serif;
+	color: var(--rm-slate-500);
+	font-style: italic;
+}
+
+.rm-image-placeholder:hover span {
+	color: var(--rm-primary-dark);
+}
+
+/* ==========================================================================
+   Hide in non-edit mode (safety)
+   ========================================================================== */
+
+body:not(.rm-edit-mode) .rm-image-overlay,
+body:not(.rm-edit-mode) .rm-image-placeholder,
+body:not(.rm-edit-mode) .rm-tax-edit-btn,
+body:not(.rm-edit-mode) .rm-wysiwyg-toolbar,
+body:not(.rm-edit-mode) .rm-welcome-banner,
+body:not(.rm-edit-mode) .rm-fallback-editor,
+body:not(.rm-edit-mode) .rm-gallery-overlay,
+body:not(.rm-edit-mode) .rm-date-input,
+body:not(.rm-edit-mode) .rm-date-range-container,
+body:not(.rm-edit-mode) .rm-number-input,
+body:not(.rm-edit-mode) .rm-cpt-popup {
+	display: none !important;
+}

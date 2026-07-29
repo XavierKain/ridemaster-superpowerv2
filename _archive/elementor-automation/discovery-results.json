@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-01-18T15:38:02.059Z",
+  "elementor": {
+    "existingTemplates": [
+      {
+        "title": "Sport Categories Section – Structure with Specs",
+        "type": ""
+      },
+      {
+        "title": "Homepage Hero – Structure with Specs",
+        "type": ""
+      },
+      {
+        "title": "Homepage Hero – CORRECT v2",
+        "type": ""
+      },
+      {
+        "title": "Homepage Hero – CORRECT",
+        "type": ""
+      },
+      {
+        "title": "hero exemple",
+        "type": ""
+      },
+      {
+        "title": "Homepage Hero – FIXED",
+        "type": ""
+      },
+      {
+        "title": "Camp Card – Loop Item",
+        "type": ""
+      },
+      {
+        "title": "Camp Detail – Single Template",
+        "type": ""
+      },
+      {
+        "title": "RideMaster Homepage",
+        "type": ""
+      },
+      {
+        "title": "Single Camp V2 – Enhanced Design",
+        "type": ""
+      },
+      {
+        "title": "Maintenance",
+        "type": ""
+      },
+      {
+        "title": "Single Camp",
+        "type": ""
+      },
+      {
+        "title": "Archive Camps",
+        "type": ""
+      },
+      {
+        "title": "Header",
+        "type": ""
+      },
+      {
+        "title": "RideMaster Site Kit",
+        "type": ""
+      },
+      {
+        "title": "RideMaster Site Kit",
+        "type": ""
+      },
+      {
+        "title": "RideMaster Site Kit",
+        "type": ""
+      },
+      {
+        "title": "RideMaster – Homepage",
+        "type": ""
+      },
+      {
+        "title": "Kit par défaut",
+        "type": ""
+      }
+    ]
+  },
+  "jetengine": {
+    "postTypes": []
+  },
+  "postTypes": {
+    "camp": {
+      "count": 1,
+      "titles": [
+        "Tarifa camp"
+      ]
+    }
+  },
+  "taxonomies": {}
+}

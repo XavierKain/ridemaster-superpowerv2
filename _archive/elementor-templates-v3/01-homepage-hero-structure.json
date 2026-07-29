@@ -1,0 +1,132 @@
+{
+  "version": "0.4",
+  "title": "Homepage Hero - Structure with Specs",
+  "type": "page",
+  "content": [
+    {
+      "id": "specs-hero",
+      "elType": "widget",
+      "widgetType": "html",
+      "settings": {
+        "html": "<!--\n═══════════════════════════════════════════════════════════════\nHOMEPAGE HERO SECTION - DESIGN SPECIFICATIONS\n═══════════════════════════════════════════════════════════════\n\nCONTAINER SETTINGS:\n───────────────────────────────────────────────────────────────\n• Layout: Flexbox Column, Center aligned\n• Min Height: 85vh (desktop), 70vh (tablet), 60vh (mobile)\n• Padding: 100px top/bottom, 20px left/right (desktop)\n           80px top/bottom, 20px left/right (tablet)\n           60px top/bottom, 16px left/right (mobile)\n\nBACKGROUND:\n───────────────────────────────────────────────────────────────\n• Type: Classic with image\n• Image URL: https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1920\n• Position: center center\n• Size: cover\n• Overlay: Gradient linear 180deg\n  - Color A: rgba(15, 23, 42, 0.85) at 0%\n  - Color B: rgba(15, 23, 42, 0.4) at 100%\n  - OR use globals: rm_slate_900 (0.4 opacity) → rm_slate_800 (0.7 opacity)\n\nELEMENTS:\n───────────────────────────────────────────────────────────────\n\n1. HEADING WIDGET - Main Title\n   • Text: \"Find Your Next Camp\"\n   • Tag: H1\n   • Align: Center\n   • Color: White (#FFFFFF)\n   • Typography: \n     - Family: DM Sans\n     - Weight: 700 (Bold)\n     - Size: 48px (desktop), 36px (tablet), 30px (mobile)\n     - Line height: 1.25em\n     - Letter spacing: -0.025em\n   • Text Shadow: 0px 2px 8px rgba(0,0,0,0.3)\n   • Global Typography: rm_hero_title (if available)\n\n2. TEXT EDITOR WIDGET - Subtitle\n   • Text: \"<p>Discover world-class camps with expert coaches at stunning destinations</p>\"\n   • Align: Center\n   • Color: White (#FFFFFF)\n   • Typography:\n     - Family: DM Sans\n     - Weight: 400 (Regular)\n     - Size: 18px (desktop), 16px (tablet/mobile)\n     - Line height: 1.625em\n   • Text Shadow: 0px 1px 4px rgba(0,0,0,0.25)\n   • Global Typography: rm_lead_text (if available)\n\n3. HTML WIDGET - Search Bar Placeholder\n   • HTML: See search bar specs below\n   • Margin: 24px top (desktop), 20px (tablet), 16px (mobile)\n\n4. CONTAINER - Trust Badges Row\n   • Layout: Flexbox Row, Center aligned, Wrap enabled\n   • Gap: 32px column/16px row (desktop)\n          24px column/12px row (tablet)\n          20px column/10px row (mobile)\n   • Contains 3 icon-box widgets (see specs below)\n\n───────────────────────────────────────────────────────────────\nSEARCH BAR HTML (Placeholder for JetSearch configuration):\n───────────────────────────────────────────────────────────────\n<div style=\"background: white; padding: 20px 24px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-width: 900px; width: 100%; text-align: center; color: #64748B; font-family: 'DM Sans', sans-serif; margin: 24px auto;\">\n  <p style=\"margin: 0; font-size: 14px;\">🔍 Search Bar - Configure with JetSearch widget</p>\n  <p style=\"margin: 8px 0 0 0; font-size: 12px; opacity: 0.7;\">Fields: Location (map-pin icon), Sport (dropdown), Level (dropdown), Dates (calendar)</p>\n</div>\n\n───────────────────────────────────────────────────────────────\nTRUST BADGES (3x icon-box widgets):\n───────────────────────────────────────────────────────────────\n\nBadge 1 - Insurance:\n• Icon: fas fa-shield-alt (FontAwesome Solid)\n• Icon Size: 20px\n• Icon Color: White (#FFFFFF)\n• Icon Space: 10px\n• Position: Left (icon before text)\n• Title: \"Insurance included\"\n• Title Color: White (#FFFFFF)\n• Typography: DM Sans, 400, 14px\n• No description text\n\nBadge 2 - Payment:\n• Icon: fas fa-lock (FontAwesome Solid)\n• Icon Size: 20px\n• Icon Color: White (#FFFFFF)\n• Icon Space: 10px\n• Position: Left\n• Title: \"Secure payment\"\n• Title Color: White (#FFFFFF)\n• Typography: DM Sans, 400, 14px\n• No description text\n\nBadge 3 - Cancellation:\n• Icon: fas fa-sync-alt (FontAwesome Solid)\n• Icon Size: 20px\n• Icon Color: White (#FFFFFF)\n• Icon Space: 10px\n• Position: Left\n• Title: \"Free cancellation\"\n• Title Color: White (#FFFFFF)\n• Typography: DM Sans, 400, 14px\n• No description text\n\n───────────────────────────────────────────────────────────────\nGLOBAL STYLES TO USE (if configured in Site Kit):\n───────────────────────────────────────────────────────────────\nColors:\n• rm_primary_500 - Teal accent\n• rm_slate_900 - Dark overlay\n• rm_slate_800 - Medium dark overlay\n• e-global-color-ffffff - White\n\nTypography:\n• rm_hero_title - Hero heading style\n• rm_lead_text - Large body text\n• rm_small - Small text (14px)\n\n═══════════════════════════════════════════════════════════════\nEND OF SPECIFICATIONS\n═══════════════════════════════════════════════════════════════\n-->"
+      },
+      "elements": []
+    },
+    {
+      "id": "hero-main",
+      "elType": "container",
+      "isInner": false,
+      "settings": {
+        "flex_direction": "column",
+        "flex_align_items": "center",
+        "flex_justify_content": "center",
+        "min_height": {
+          "unit": "vh",
+          "size": "85"
+        },
+        "padding": {
+          "top": "100",
+          "right": "20",
+          "bottom": "100",
+          "left": "20",
+          "unit": "px",
+          "isLinked": false
+        },
+        "background_background": "classic"
+      },
+      "elements": [
+        {
+          "id": "hero-title",
+          "elType": "widget",
+          "widgetType": "heading",
+          "settings": {
+            "title": "Find Your Next Camp",
+            "header_size": "h1",
+            "align": "center"
+          },
+          "elements": []
+        },
+        {
+          "id": "hero-subtitle",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "settings": {
+            "editor": "<p>Discover world-class camps with expert coaches at stunning destinations</p>",
+            "align": "center"
+          },
+          "elements": []
+        },
+        {
+          "id": "hero-search",
+          "elType": "widget",
+          "widgetType": "html",
+          "settings": {
+            "html": "<div style=\"background: white; padding: 20px 24px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-width: 900px; width: 100%; text-align: center; color: #64748B; font-family: 'DM Sans', sans-serif; margin: 24px auto;\">\n  <p style=\"margin: 0; font-size: 14px;\">🔍 Search Bar - Configure with JetSearch widget</p>\n  <p style=\"margin: 8px 0 0 0; font-size: 12px; opacity: 0.7;\">Fields: Location (map-pin), Sport (dropdown), Level (dropdown), Dates (calendar)</p>\n</div>"
+          },
+          "elements": []
+        },
+        {
+          "id": "hero-trust",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+            "flex_direction": "row",
+            "flex_justify_content": "center",
+            "flex_align_items": "center",
+            "flex_wrap": "wrap",
+            "flex_gap": {
+              "column": "32",
+              "row": "16",
+              "unit": "px"
+            }
+          },
+          "elements": [
+            {
+              "id": "trust-insurance",
+              "elType": "widget",
+              "widgetType": "icon-box",
+              "settings": {
+                "title_text": "Insurance included",
+                "position": "left",
+                "icon": {
+                  "value": "fas fa-shield-alt",
+                  "library": "fa-solid"
+                }
+              },
+              "elements": []
+            },
+            {
+              "id": "trust-payment",
+              "elType": "widget",
+              "widgetType": "icon-box",
+              "settings": {
+                "title_text": "Secure payment",
+                "position": "left",
+                "icon": {
+                  "value": "fas fa-lock",
+                  "library": "fa-solid"
+                }
+              },
+              "elements": []
+            },
+            {
+              "id": "trust-cancel",
+              "elType": "widget",
+              "widgetType": "icon-box",
+              "settings": {
+                "title_text": "Free cancellation",
+                "position": "left",
+                "icon": {
+                  "value": "fas fa-sync-alt",
+                  "library": "fa-solid"
+                }
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "page_settings": []
+}

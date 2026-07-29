@@ -1,0 +1,454 @@
+/* ============================================
+   RIDEMASTER — Camp Creation Form Polish
+   Add to: Appearance > Customize > Additional CSS
+   or child theme style.css
+   ============================================ */
+
+/* --- 1. FILE UPLOAD — Styled Dropzone --- */
+
+/* Hide native file input visually */
+.jet-form-builder-file-upload__input {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+}
+
+/* Style the upload wrapper as a dropzone */
+.jet-form-builder-file-upload__fields {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 140px !important;
+  border: 2px dashed #d1d5db !important;
+  border-radius: 12px !important;
+  background: #f9fafb !important;
+  padding: 24px !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer !important;
+}
+
+.jet-form-builder-file-upload__fields:hover {
+  border-color: #0D9488 !important;
+  background: #f0fdfa !important;
+}
+
+/* Upload icon via ::before */
+.jet-form-builder-file-upload__fields::before {
+  content: '' !important;
+  display: block !important;
+  width: 48px !important;
+  height: 48px !important;
+  margin-bottom: 12px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%230D9488'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5'/%3E%3C/svg%3E") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  pointer-events: none !important;
+}
+
+/* Helper text via ::after */
+.jet-form-builder-file-upload__fields::after {
+  content: 'Click or drag files here to upload' !important;
+  display: block !important;
+  font-size: 14px !important;
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+  pointer-events: none !important;
+}
+
+/* File size message — subtle */
+.jet-form-builder-file-upload__message {
+  font-size: 12px !important;
+  color: #9ca3af !important;
+  margin-top: 8px !important;
+  text-align: center !important;
+}
+
+/* File upload overall wrapper */
+.jet-form-builder-file-upload {
+  position: relative !important;
+}
+
+
+/* --- 2. REPEATER FIELDS — Better Alignment --- */
+
+/* Repeater row: card style */
+.jet-form-builder-repeater__row {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+  padding: 12px !important;
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.jet-form-builder-repeater__row:hover {
+  border-color: #0D9488 !important;
+}
+
+/* Row fields fill remaining space */
+.jet-form-builder-repeater__row-fields {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+/* Hide redundant inner label */
+.jet-form-builder-repeater__row-fields .jet-form-builder__label {
+  display: none !important;
+}
+
+/* Input inside repeater */
+.jet-form-builder-repeater__row-fields .jet-form-builder__field-wrap {
+  width: 100% !important;
+}
+
+.jet-form-builder-repeater__row-fields input[type="text"] {
+  width: 100% !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  transition: border-color 0.2s ease !important;
+  background: #fff !important;
+}
+
+.jet-form-builder-repeater__row-fields input[type="text"]:focus {
+  border-color: #0D9488 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1) !important;
+}
+
+/* Remove button (×) — round red pill */
+.jet-form-builder-repeater__remove {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  border: none !important;
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+  border-radius: 50% !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  margin-top: 2px !important;
+}
+
+.jet-form-builder-repeater__remove:hover {
+  background: #dc2626 !important;
+  color: #fff !important;
+  transform: scale(1.1) !important;
+}
+
+/* Remove wrapper alignment */
+.jet-form-builder-repeater__row-remove {
+  display: flex !important;
+  align-items: flex-start !important;
+  padding-top: 0 !important;
+}
+
+/* "Add new" button — teal dashed style */
+.jet-form-builder-repeater__new {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 18px !important;
+  background: transparent !important;
+  border: 2px dashed #0D9488 !important;
+  color: #0D9488 !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin-top: 4px !important;
+}
+
+.jet-form-builder-repeater__new:hover {
+  background: #f0fdfa !important;
+  border-style: solid !important;
+}
+
+.jet-form-builder-repeater__new::before {
+  content: '+' !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+/* Repeater row spacing cleanup */
+.jet-form-builder-row.field-type-repeater-field {
+  margin-bottom: 0 !important;
+  align-items: center !important;
+}
+
+/* When items exist, label stays at top */
+.jet-form-builder-row.field-type-repeater-field:has(.jet-form-builder-repeater__row) {
+  align-items: flex-start !important;
+}
+
+.jet-form-builder-repeater__row .jet-form-builder-row {
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+}
+
+.jet-form-builder-repeater__items {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+
+
+/* --- 3. CHECKBOXES — Custom Styled --- */
+
+/* Custom checkbox appearance */
+.jet-form-builder__field.checkboxes-field.checkradio-field {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  border: 2px solid #d1d5db !important;
+  border-radius: 5px !important;
+  background: #fff !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  margin: 0 !important;
+  vertical-align: middle !important;
+}
+
+.jet-form-builder__field.checkboxes-field.checkradio-field:hover {
+  border-color: #0D9488 !important;
+}
+
+/* Checked state — teal fill + white checkmark */
+.jet-form-builder__field.checkboxes-field.checkradio-field:checked {
+  background: #0D9488 !important;
+  border-color: #0D9488 !important;
+}
+
+.jet-form-builder__field.checkboxes-field.checkradio-field:checked::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 5px !important;
+  top: 1px !important;
+  width: 6px !important;
+  height: 11px !important;
+  border: solid #fff !important;
+  border-width: 0 2.5px 2.5px 0 !important;
+  transform: rotate(45deg) !important;
+}
+
+/* Checkbox label — pill hover */
+.jet-form-builder__field-label.for-checkbox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  transition: background 0.15s ease !important;
+}
+
+.jet-form-builder__field-label.for-checkbox:hover {
+  background: #f0fdfa !important;
+}
+
+/* Checkbox group — 4-column grid for vertical alignment */
+.jet-form-builder__fields-group.checkradio-wrap {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px 0 !important;
+}
+
+
+/* --- 4. DATE PICKER — Teal Colors --- */
+
+/* Teal accent for native date picker popup (Chrome/Edge) */
+.jet-form-builder,
+.jet-form-builder * {
+  accent-color: #0D9488 !important;
+}
+
+input.date-field,
+input[type="date"].jet-form-builder__field {
+  color-scheme: light !important;
+}
+
+/* Teal-tinted calendar icon */
+input.date-field::-webkit-calendar-picker-indicator,
+input[type="date"].jet-form-builder__field::-webkit-calendar-picker-indicator {
+  cursor: pointer !important;
+  opacity: 0.7 !important;
+  transition: opacity 0.2s ease !important;
+  filter: invert(43%) sepia(72%) saturate(500%) hue-rotate(140deg) brightness(92%) contrast(92%) !important;
+}
+
+input.date-field::-webkit-calendar-picker-indicator:hover,
+input[type="date"].jet-form-builder__field::-webkit-calendar-picker-indicator:hover {
+  opacity: 1 !important;
+}
+
+/* Focus ring for date inputs */
+input.date-field:focus,
+input[type="date"].jet-form-builder__field:focus {
+  border-color: #0D9488 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1) !important;
+}
+
+
+/* --- 5. SELECT DROPDOWN — Arrow spacing --- */
+
+/* Custom teal arrow, properly spaced from the rounded border */
+select.jet-form-builder__field.select-field {
+  padding-right: 36px !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='%230D9488'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 16px !important;
+}
+
+
+/* --- 6. FLATPICKR CALENDAR — Teal Theme --- */
+/* Requires the flatpickr PHP snippet to be active */
+
+/* Calendar container */
+.flatpickr-calendar {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid #e5e7eb !important;
+  font-family: inherit !important;
+}
+
+/* Month navigation header */
+.flatpickr-months .flatpickr-month {
+  background: #0D9488 !important;
+  color: #fff !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Prev/Next arrows */
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: #fff !important;
+  fill: #fff !important;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+  color: #ccfbf1 !important;
+}
+
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+  fill: #fff !important;
+}
+
+/* Weekday headers */
+.flatpickr-weekdays {
+  background: #0D9488 !important;
+}
+
+span.flatpickr-weekday {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  background: transparent !important;
+}
+
+/* Day cells */
+.flatpickr-day {
+  border-radius: 8px !important;
+  color: #374151 !important;
+  font-weight: 500 !important;
+  transition: all 0.15s ease !important;
+}
+
+.flatpickr-day:hover {
+  background: #f0fdfa !important;
+  border-color: #0D9488 !important;
+  color: #0D9488 !important;
+}
+
+/* Selected day */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.startRange.prevMonthDay,
+.flatpickr-day.endRange.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay,
+.flatpickr-day.startRange.nextMonthDay,
+.flatpickr-day.endRange.nextMonthDay {
+  background: #0D9488 !important;
+  border-color: #0D9488 !important;
+  color: #fff !important;
+}
+
+/* Today indicator */
+.flatpickr-day.today {
+  border-color: #0D9488 !important;
+  color: #0D9488 !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day.today:hover {
+  background: #0D9488 !important;
+  color: #fff !important;
+}
+
+/* Disabled / other month days */
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  color: #d1d5db !important;
+}
+
+
+/* --- 7. DESCRIPTIONS & MISC --- */
+
+/* Description text styling */
+.jet-form-builder__desc {
+  font-size: 13px !important;
+  color: #9ca3af !important;
+  margin-top: 4px !important;
+  line-height: 1.4 !important;
+}

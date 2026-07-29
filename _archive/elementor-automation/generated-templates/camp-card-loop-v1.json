@@ -1,0 +1,1010 @@
+{
+  "version": "0.4",
+  "title": "Camp Card - Loop Item v1",
+  "type": "loop-item",
+  "content": [
+    {
+      "id": "camp-card-main",
+      "elType": "container",
+      "isInner": false,
+      "settings": {
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_justify_content": "flex-start",
+        "flex_align_items": "stretch",
+        "flex_gap": {
+          "column": "0",
+          "row": "0",
+          "unit": "px"
+        },
+        "background_background": "classic",
+        "background_color": "#FFFFFF",
+        "border_radius": {
+          "unit": "px",
+          "top": "12",
+          "right": "12",
+          "bottom": "12",
+          "left": "12",
+          "isLinked": true
+        },
+        "box_shadow_box_shadow_type": "yes",
+        "box_shadow_box_shadow": {
+          "horizontal": 0,
+          "vertical": 1,
+          "blur": 3,
+          "spread": 0,
+          "color": "rgba(0,0,0,0.08)"
+        },
+        "box_shadow_box_shadow_position": " ",
+        "_padding": {
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "_margin": {
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "__globals__": {
+          "background_color": "globals/colors?id=rm_white"
+        }
+      },
+      "elements": [
+        {
+          "id": "camp-card-image-wrapper",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+            "content_width": "full",
+            "position": "relative",
+            "height": {
+              "unit": "px",
+              "size": "0",
+              "sizes": []
+            },
+            "padding_bottom": {
+              "unit": "%",
+              "size": "75"
+            },
+            "border_radius": {
+              "unit": "px",
+              "top": "12",
+              "right": "12",
+              "bottom": "0",
+              "left": "0",
+              "isLinked": false
+            },
+            "_margin": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "unit": "px",
+              "isLinked": true
+            },
+            "_padding": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "unit": "px",
+              "isLinked": true
+            }
+          },
+          "elements": [
+            {
+              "id": "camp-card-image",
+              "elType": "widget",
+              "widgetType": "image",
+              "settings": {
+                "image": {
+                  "url": "{{featured_image_url}}",
+                  "id": ""
+                },
+                "image_size": "large",
+                "object_fit": "cover",
+                "width": {
+                  "unit": "%",
+                  "size": "100"
+                },
+                "height": {
+                  "unit": "%",
+                  "size": "100"
+                },
+                "position": "absolute",
+                "z_index": "0",
+                "_position": "absolute",
+                "_offset_x": {
+                  "unit": "px",
+                  "size": "0"
+                },
+                "_offset_y": {
+                  "unit": "px",
+                  "size": "0"
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "_padding": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                }
+              }
+            },
+            {
+              "id": "camp-card-favorite-btn",
+              "elType": "widget",
+              "widgetType": "button",
+              "settings": {
+                "text": "",
+                "selected_icon": {
+                  "value": "far fa-heart",
+                  "library": "fa-regular"
+                },
+                "icon_align": "left",
+                "size": "xs",
+                "button_type": "default",
+                "background_color": "rgba(255,255,255,0.9)",
+                "border_radius": {
+                  "unit": "px",
+                  "top": "9999",
+                  "right": "9999",
+                  "bottom": "9999",
+                  "left": "9999",
+                  "isLinked": true
+                },
+                "button_text_padding": {
+                  "top": "10",
+                  "right": "10",
+                  "bottom": "10",
+                  "left": "10",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "icon_size": {
+                  "unit": "px",
+                  "size": "18"
+                },
+                "button_text_color": "#94A3B8",
+                "position": "absolute",
+                "z_index": "1",
+                "_position": "absolute",
+                "_offset_orientation_h": "end",
+                "_offset_x": {
+                  "unit": "px",
+                  "size": "12"
+                },
+                "_offset_y": {
+                  "unit": "px",
+                  "size": "12"
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "__globals__": {
+                  "button_text_color": "globals/colors?id=rm_slate_400"
+                }
+              }
+            },
+            {
+              "id": "camp-card-badges-container",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "content_width": "full",
+                "flex_direction": "row",
+                "flex_wrap": "wrap",
+                "flex_justify_content": "flex-start",
+                "flex_align_items": "flex-end",
+                "flex_gap": {
+                  "column": "6",
+                  "row": "6",
+                  "unit": "px"
+                },
+                "position": "absolute",
+                "z_index": "1",
+                "_position": "absolute",
+                "_offset_orientation_h": "start",
+                "_offset_orientation_v": "end",
+                "_offset_x": {
+                  "unit": "px",
+                  "size": "12"
+                },
+                "_offset_y": {
+                  "unit": "px",
+                  "size": "12"
+                },
+                "background_background": "classic",
+                "background_color": "transparent",
+                "_padding": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                }
+              },
+              "elements": [
+                {
+                  "id": "camp-card-sport-badge",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<span class=\"badge badge--kitesurf\" style=\"display: inline-flex; align-items: center; padding: 4px 8px; background: rgba(8, 145, 178, 0.1); color: #0891B2; border-radius: 6px; font-size: 12px; font-weight: 500; white-space: nowrap;\">Kitesurf</span>",
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    }
+                  }
+                },
+                {
+                  "id": "camp-card-level-badge",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<span class=\"badge badge--level\" style=\"display: inline-flex; align-items: center; padding: 4px 8px; background: rgba(148, 163, 184, 0.1); color: #475569; border-radius: 6px; font-size: 12px; font-weight: 500; white-space: nowrap;\">Beginner</span>",
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "camp-card-content",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+            "content_width": "full",
+            "flex_direction": "column",
+            "flex_justify_content": "flex-start",
+            "flex_align_items": "stretch",
+            "flex_gap": {
+              "column": "0",
+              "row": "0",
+              "unit": "px"
+            },
+            "background_background": "classic",
+            "background_color": "transparent",
+            "_padding": {
+              "top": "16",
+              "right": "16",
+              "bottom": "16",
+              "left": "16",
+              "unit": "px",
+              "isLinked": true
+            },
+            "_margin": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "unit": "px",
+              "isLinked": true
+            }
+          },
+          "elements": [
+            {
+              "id": "camp-card-title",
+              "elType": "widget",
+              "widgetType": "heading",
+              "settings": {
+                "title": "Ultimate Kitesurf Experience",
+                "header_size": "h3",
+                "align": "left",
+                "title_color": "#0F172A",
+                "typography_typography": "custom",
+                "typography_font_family": "DM Sans",
+                "typography_font_size": {
+                  "unit": "px",
+                  "size": "16",
+                  "sizes": []
+                },
+                "typography_font_weight": "600",
+                "typography_line_height": {
+                  "unit": "em",
+                  "size": "1.375",
+                  "sizes": []
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "8",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": false
+                },
+                "__globals__": {
+                  "title_color": "globals/colors?id=rm_slate_900",
+                  "typography_typography": "globals/typography?id=secondary"
+                }
+              }
+            },
+            {
+              "id": "camp-card-location-container",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "content_width": "full",
+                "flex_direction": "row",
+                "flex_wrap": "nowrap",
+                "flex_justify_content": "flex-start",
+                "flex_align_items": "center",
+                "flex_gap": {
+                  "column": "4",
+                  "row": "4",
+                  "unit": "px"
+                },
+                "background_background": "classic",
+                "background_color": "transparent",
+                "_padding": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "4",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": false
+                }
+              },
+              "elements": [
+                {
+                  "id": "camp-card-location-icon",
+                  "elType": "widget",
+                  "widgetType": "icon",
+                  "settings": {
+                    "selected_icon": {
+                      "value": "fas fa-map-marker-alt",
+                      "library": "fa-solid"
+                    },
+                    "primary_color": "#94A3B8",
+                    "size": {
+                      "unit": "px",
+                      "size": 14,
+                      "sizes": []
+                    },
+                    "align": "left",
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "__globals__": {
+                      "primary_color": "globals/colors?id=rm_slate_400"
+                    }
+                  }
+                },
+                {
+                  "id": "camp-card-location-text",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p style=\"margin: 0; padding: 0;\">Tarifa, Spain</p>",
+                    "text_color": "#475569",
+                    "typography_typography": "custom",
+                    "typography_font_family": "DM Sans",
+                    "typography_font_size": {
+                      "unit": "px",
+                      "size": "14",
+                      "sizes": []
+                    },
+                    "typography_font_weight": "400",
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "__globals__": {
+                      "text_color": "globals/colors?id=rm_slate_600"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "camp-card-dates-container",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "content_width": "full",
+                "flex_direction": "row",
+                "flex_wrap": "nowrap",
+                "flex_justify_content": "flex-start",
+                "flex_align_items": "center",
+                "flex_gap": {
+                  "column": "4",
+                  "row": "4",
+                  "unit": "px"
+                },
+                "background_background": "classic",
+                "background_color": "transparent",
+                "_padding": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "8",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": false
+                }
+              },
+              "elements": [
+                {
+                  "id": "camp-card-dates-icon",
+                  "elType": "widget",
+                  "widgetType": "icon",
+                  "settings": {
+                    "selected_icon": {
+                      "value": "far fa-calendar",
+                      "library": "fa-regular"
+                    },
+                    "primary_color": "#94A3B8",
+                    "size": {
+                      "unit": "px",
+                      "size": 14,
+                      "sizes": []
+                    },
+                    "align": "left",
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "__globals__": {
+                      "primary_color": "globals/colors?id=rm_slate_400"
+                    }
+                  }
+                },
+                {
+                  "id": "camp-card-dates-text",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p style=\"margin: 0; padding: 0;\">Mar 15 - Mar 22, 2026</p>",
+                    "text_color": "#475569",
+                    "typography_typography": "custom",
+                    "typography_font_family": "DM Sans",
+                    "typography_font_size": {
+                      "unit": "px",
+                      "size": "14",
+                      "sizes": []
+                    },
+                    "typography_font_weight": "400",
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "__globals__": {
+                      "text_color": "globals/colors?id=rm_slate_600"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "camp-card-rating-container",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "content_width": "full",
+                "flex_direction": "row",
+                "flex_wrap": "nowrap",
+                "flex_justify_content": "flex-start",
+                "flex_align_items": "center",
+                "flex_gap": {
+                  "column": "4",
+                  "row": "4",
+                  "unit": "px"
+                },
+                "background_background": "classic",
+                "background_color": "transparent",
+                "_padding": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "12",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": false
+                }
+              },
+              "elements": [
+                {
+                  "id": "camp-card-rating-star",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p style=\"margin: 0; padding: 0; color: #F59E0B; font-size: 14px;\">★</p>",
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    }
+                  }
+                },
+                {
+                  "id": "camp-card-rating-value",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p style=\"margin: 0; padding: 0;\">4.9</p>",
+                    "text_color": "#0F172A",
+                    "typography_typography": "custom",
+                    "typography_font_family": "DM Sans",
+                    "typography_font_size": {
+                      "unit": "px",
+                      "size": "14",
+                      "sizes": []
+                    },
+                    "typography_font_weight": "600",
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "__globals__": {
+                      "text_color": "globals/colors?id=rm_slate_900"
+                    }
+                  }
+                },
+                {
+                  "id": "camp-card-rating-count",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p style=\"margin: 0; padding: 0;\">(127)</p>",
+                    "text_color": "#475569",
+                    "typography_typography": "custom",
+                    "typography_font_family": "DM Sans",
+                    "typography_font_size": {
+                      "unit": "px",
+                      "size": "14",
+                      "sizes": []
+                    },
+                    "typography_font_weight": "400",
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "__globals__": {
+                      "text_color": "globals/colors?id=rm_slate_600"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "camp-card-footer",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "content_width": "full",
+                "flex_direction": "row",
+                "flex_wrap": "nowrap",
+                "flex_justify_content": "space-between",
+                "flex_align_items": "center",
+                "flex_gap": {
+                  "column": "8",
+                  "row": "8",
+                  "unit": "px"
+                },
+                "background_background": "classic",
+                "background_color": "transparent",
+                "border_border": "solid",
+                "border_width": {
+                  "top": "1",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": false
+                },
+                "border_color": "#E2E8F0",
+                "_padding": {
+                  "top": "12",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": false
+                },
+                "_margin": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "__globals__": {
+                  "border_color": "globals/colors?id=rm_slate_200"
+                }
+              },
+              "elements": [
+                {
+                  "id": "camp-card-coach-container",
+                  "elType": "container",
+                  "isInner": true,
+                  "settings": {
+                    "content_width": "full",
+                    "flex_direction": "row",
+                    "flex_wrap": "nowrap",
+                    "flex_justify_content": "flex-start",
+                    "flex_align_items": "center",
+                    "flex_gap": {
+                      "column": "8",
+                      "row": "8",
+                      "unit": "px"
+                    },
+                    "background_background": "classic",
+                    "background_color": "transparent",
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "camp-card-coach-avatar",
+                      "elType": "widget",
+                      "widgetType": "image",
+                      "settings": {
+                        "image": {
+                          "url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
+                          "id": ""
+                        },
+                        "image_size": "thumbnail",
+                        "width": {
+                          "unit": "px",
+                          "size": "28"
+                        },
+                        "height": {
+                          "unit": "px",
+                          "size": "28"
+                        },
+                        "object_fit": "cover",
+                        "border_radius": {
+                          "unit": "px",
+                          "top": "9999",
+                          "right": "9999",
+                          "bottom": "9999",
+                          "left": "9999",
+                          "isLinked": true
+                        },
+                        "_margin": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "0",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": true
+                        },
+                        "_padding": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "0",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": true
+                        }
+                      }
+                    },
+                    {
+                      "id": "camp-card-coach-name",
+                      "elType": "widget",
+                      "widgetType": "text-editor",
+                      "settings": {
+                        "editor": "<p style=\"margin: 0; padding: 0;\">Marco Silva</p>",
+                        "text_color": "#475569",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_size": {
+                          "unit": "px",
+                          "size": "14",
+                          "sizes": []
+                        },
+                        "typography_font_weight": "400",
+                        "_margin": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "0",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": true
+                        },
+                        "_padding": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "0",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": true
+                        },
+                        "__globals__": {
+                          "text_color": "globals/colors?id=rm_slate_600"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "camp-card-price-container",
+                  "elType": "container",
+                  "isInner": true,
+                  "settings": {
+                    "content_width": "full",
+                    "flex_direction": "column",
+                    "flex_wrap": "nowrap",
+                    "flex_justify_content": "center",
+                    "flex_align_items": "flex-end",
+                    "flex_gap": {
+                      "column": "0",
+                      "row": "0",
+                      "unit": "px"
+                    },
+                    "background_background": "classic",
+                    "background_color": "transparent",
+                    "_padding": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    },
+                    "_margin": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "0",
+                      "left": "0",
+                      "unit": "px",
+                      "isLinked": true
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "camp-card-price-amount",
+                      "elType": "widget",
+                      "widgetType": "heading",
+                      "settings": {
+                        "title": "€890",
+                        "header_size": "p",
+                        "align": "right",
+                        "title_color": "#0F172A",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_size": {
+                          "unit": "px",
+                          "size": "18",
+                          "sizes": []
+                        },
+                        "typography_font_weight": "700",
+                        "_margin": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "0",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": true
+                        },
+                        "__globals__": {
+                          "title_color": "globals/colors?id=rm_slate_900"
+                        }
+                      }
+                    },
+                    {
+                      "id": "camp-card-price-unit",
+                      "elType": "widget",
+                      "widgetType": "text-editor",
+                      "settings": {
+                        "editor": "<p style=\"margin: 0; padding: 0;\">/person</p>",
+                        "text_color": "#475569",
+                        "typography_typography": "custom",
+                        "typography_font_family": "DM Sans",
+                        "typography_font_size": {
+                          "unit": "px",
+                          "size": "14",
+                          "sizes": []
+                        },
+                        "typography_font_weight": "400",
+                        "_margin": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "0",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": true
+                        },
+                        "_padding": {
+                          "top": "0",
+                          "right": "0",
+                          "bottom": "0",
+                          "left": "0",
+                          "unit": "px",
+                          "isLinked": true
+                        },
+                        "__globals__": {
+                          "text_color": "globals/colors?id=rm_slate_600"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "page_settings": {}
+}

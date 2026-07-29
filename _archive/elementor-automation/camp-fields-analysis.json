@@ -1,0 +1,22 @@
+{
+  "acfFields": [],
+  "metaBoxes": [
+    {
+      "title": "Settings",
+      "id": "jet-engine-cpt-1"
+    },
+    {
+      "title": "Content Permissions (Members)",
+      "id": "members-cp"
+    },
+    {
+      "title": "Parent  Coaches",
+      "id": "related_jet_engine_rel_20_parent_object"
+    },
+    {
+      "title": "Parent  Spots",
+      "id": "related_jet_engine_rel_18_parent_object"
+    }
+  ],
+  "elementorData": null
+}

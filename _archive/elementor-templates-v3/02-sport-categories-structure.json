@@ -1,0 +1,371 @@
+{
+  "version": "0.4",
+  "title": "Sport Categories Section - Structure with Specs",
+  "type": "page",
+  "content": [
+    {
+      "id": "specs-sports",
+      "elType": "widget",
+      "widgetType": "html",
+      "settings": {
+        "html": "<!--\n═══════════════════════════════════════════════════════════════\nSPORT CATEGORIES SECTION - DESIGN SPECIFICATIONS\n═══════════════════════════════════════════════════════════════\n\nSECTION CONTAINER:\n───────────────────────────────────────────────────────────────\n• Padding: 64px top/bottom (desktop), 80px (tablet)\n• Background: White or light gray (#F8FAFC)\n\nSCROLL CONTAINER:\n───────────────────────────────────────────────────────────────\n• Layout: Flexbox Row\n• Overflow: Scroll (horizontal on mobile/tablet)\n• Gap: 24px (desktop), 20px (tablet), 16px (mobile)\n• Snap: Scroll snap on mobile for smooth scrolling\n• No scrollbar visible (CSS: scrollbar-width: none)\n\nSPORT CARD (5 cards total):\n───────────────────────────────────────────────────────────────\nEach card is a clickable link with:\n\nStructure:\n• Container with flexbox column\n• Background: White\n• Border radius: 24px\n• Padding: 32px (desktop), 24px (tablet/mobile)\n• Min width: 200px (so cards don't shrink too much)\n• Box shadow: 0 4px 12px rgba(0,0,0,0.08)\n• Hover effect: transform scale(1.02), shadow increases\n• Transition: all 0.3s ease\n\nCard Elements:\n1. Icon/Emoji Container:\n   • Size: 64px × 64px\n   • Background: Gradient based on sport\n   • Border radius: 20px\n   • Display: Flex center\n   • Margin bottom: 20px\n\n2. Sport Name (Heading):\n   • Font: DM Sans, 700 (Bold)\n   • Size: 20px (desktop), 18px (mobile)\n   • Color: Slate 900 (#0F172A)\n   • Margin bottom: 8px\n\n3. Camp Count (Text):\n   • Font: DM Sans, 400\n   • Size: 14px\n   • Color: Slate 600 (#475569)\n\n───────────────────────────────────────────────────────────────\nSPORT CARDS DATA:\n───────────────────────────────────────────────────────────────\n\n1. KITESURF\n   • Emoji: 🪁\n   • Gradient: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%) - Blue\n   • Name: \"Kitesurf\"\n   • Count: \"42 camps\"\n   • Link: /camps/?sport=kitesurf\n\n2. WINGFOIL\n   • Emoji: 🏄\n   • Gradient: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%) - Teal\n   • Name: \"Wingfoil\"\n   • Count: \"28 camps\"\n   • Link: /camps/?sport=wingfoil\n\n3. SURF\n   • Emoji: 🌊\n   • Gradient: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%) - Purple\n   • Name: \"Surf\"\n   • Count: \"56 camps\"\n   • Link: /camps/?sport=surf\n\n4. PARAGLIDE\n   • Emoji: 🪂\n   • Gradient: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) - Orange\n   • Name: \"Paraglide\"\n   • Count: \"19 camps\"\n   • Link: /camps/?sport=paraglide\n\n5. SAILING\n   • Emoji: ⛵\n   • Gradient: linear-gradient(135deg, #EC4899 0%, #DB2777 100%) - Pink\n   • Name: \"Sailing\"\n   • Count: \"35 camps\"\n   • Link: /camps/?sport=sailing\n\n───────────────────────────────────────────────────────────────\nIMPLEMENTATION NOTES:\n───────────────────────────────────────────────────────────────\n\n• Use image-box widget for each card (icon + heading + description)\n• Or use container with icon widget + heading + text\n• Background gradients can be set on container background\n• Emoji can be added as HTML widget or text content\n• For dynamic version: Use JetEngine Listing Grid with sport taxonomy\n  and dynamic tags for name/count\n\n• Camp count can be dynamic with:\n  [jet-engine-dynamic-terms terms=\"sport\" show_count=\"yes\"]\n\n• Links should point to archive page with sport filter\n\n───────────────────────────────────────────────────────────────\nRESPONSIVE BEHAVIOR:\n───────────────────────────────────────────────────────────────\n\nDesktop (>1024px):\n• All 5 cards visible in row\n• Equal width distribution\n• No scrolling needed\n\nTablet (768-1024px):\n• 3-4 cards visible\n• Horizontal scroll for rest\n• Scroll snap enabled\n\nMobile (<768px):\n• 1.5-2 cards visible\n• Horizontal scroll\n• Cards maintain min-width: 200px\n• Padding reduced to 24px\n\n═══════════════════════════════════════════════════════════════\nEND OF SPECIFICATIONS\n═══════════════════════════════════════════════════════════════\n-->"
+      },
+      "elements": []
+    },
+    {
+      "id": "sports-section",
+      "elType": "container",
+      "isInner": false,
+      "settings": {
+        "padding": {
+          "top": "64",
+          "right": "16",
+          "bottom": "64",
+          "left": "16",
+          "unit": "px",
+          "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#F8FAFC"
+      },
+      "elements": [
+        {
+          "id": "sports-scroll",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+            "flex_direction": "row",
+            "flex_gap": {
+              "column": "24",
+              "row": "0",
+              "unit": "px"
+            }
+          },
+          "elements": [
+            {
+              "id": "sport-kite",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "flex_direction": "column",
+                "padding": {
+                  "top": "32",
+                  "right": "32",
+                  "bottom": "32",
+                  "left": "32",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "background_background": "classic",
+                "background_color": "#FFFFFF",
+                "border_radius": {
+                  "top": "24",
+                  "right": "24",
+                  "bottom": "24",
+                  "left": "24",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "box_shadow_box_shadow_type": "yes",
+                "box_shadow_box_shadow": {
+                  "horizontal": 0,
+                  "vertical": 4,
+                  "blur": 12,
+                  "spread": 0,
+                  "color": "rgba(0,0,0,0.08)"
+                }
+              },
+              "elements": [
+                {
+                  "id": "kite-icon",
+                  "elType": "widget",
+                  "widgetType": "html",
+                  "settings": {
+                    "html": "<div style=\"width: 64px; height: 64px; background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;\">🪁</div>"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "kite-name",
+                  "elType": "widget",
+                  "widgetType": "heading",
+                  "settings": {
+                    "title": "Kitesurf",
+                    "header_size": "h3"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "kite-count",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p>42 camps</p>"
+                  },
+                  "elements": []
+                }
+              ]
+            },
+            {
+              "id": "sport-wing",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "flex_direction": "column",
+                "padding": {
+                  "top": "32",
+                  "right": "32",
+                  "bottom": "32",
+                  "left": "32",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "background_background": "classic",
+                "background_color": "#FFFFFF",
+                "border_radius": {
+                  "top": "24",
+                  "right": "24",
+                  "bottom": "24",
+                  "left": "24",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "box_shadow_box_shadow_type": "yes",
+                "box_shadow_box_shadow": {
+                  "horizontal": 0,
+                  "vertical": 4,
+                  "blur": 12,
+                  "spread": 0,
+                  "color": "rgba(0,0,0,0.08)"
+                }
+              },
+              "elements": [
+                {
+                  "id": "wing-icon",
+                  "elType": "widget",
+                  "widgetType": "html",
+                  "settings": {
+                    "html": "<div style=\"width: 64px; height: 64px; background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;\">🏄</div>"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "wing-name",
+                  "elType": "widget",
+                  "widgetType": "heading",
+                  "settings": {
+                    "title": "Wingfoil",
+                    "header_size": "h3"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "wing-count",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p>28 camps</p>"
+                  },
+                  "elements": []
+                }
+              ]
+            },
+            {
+              "id": "sport-surf",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "flex_direction": "column",
+                "padding": {
+                  "top": "32",
+                  "right": "32",
+                  "bottom": "32",
+                  "left": "32",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "background_background": "classic",
+                "background_color": "#FFFFFF",
+                "border_radius": {
+                  "top": "24",
+                  "right": "24",
+                  "bottom": "24",
+                  "left": "24",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "box_shadow_box_shadow_type": "yes",
+                "box_shadow_box_shadow": {
+                  "horizontal": 0,
+                  "vertical": 4,
+                  "blur": 12,
+                  "spread": 0,
+                  "color": "rgba(0,0,0,0.08)"
+                }
+              },
+              "elements": [
+                {
+                  "id": "surf-icon",
+                  "elType": "widget",
+                  "widgetType": "html",
+                  "settings": {
+                    "html": "<div style=\"width: 64px; height: 64px; background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;\">🌊</div>"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "surf-name",
+                  "elType": "widget",
+                  "widgetType": "heading",
+                  "settings": {
+                    "title": "Surf",
+                    "header_size": "h3"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "surf-count",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p>56 camps</p>"
+                  },
+                  "elements": []
+                }
+              ]
+            },
+            {
+              "id": "sport-para",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "flex_direction": "column",
+                "padding": {
+                  "top": "32",
+                  "right": "32",
+                  "bottom": "32",
+                  "left": "32",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "background_background": "classic",
+                "background_color": "#FFFFFF",
+                "border_radius": {
+                  "top": "24",
+                  "right": "24",
+                  "bottom": "24",
+                  "left": "24",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "box_shadow_box_shadow_type": "yes",
+                "box_shadow_box_shadow": {
+                  "horizontal": 0,
+                  "vertical": 4,
+                  "blur": 12,
+                  "spread": 0,
+                  "color": "rgba(0,0,0,0.08)"
+                }
+              },
+              "elements": [
+                {
+                  "id": "para-icon",
+                  "elType": "widget",
+                  "widgetType": "html",
+                  "settings": {
+                    "html": "<div style=\"width: 64px; height: 64px; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;\">🪂</div>"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "para-name",
+                  "elType": "widget",
+                  "widgetType": "heading",
+                  "settings": {
+                    "title": "Paraglide",
+                    "header_size": "h3"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "para-count",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p>19 camps</p>"
+                  },
+                  "elements": []
+                }
+              ]
+            },
+            {
+              "id": "sport-sail",
+              "elType": "container",
+              "isInner": true,
+              "settings": {
+                "flex_direction": "column",
+                "padding": {
+                  "top": "32",
+                  "right": "32",
+                  "bottom": "32",
+                  "left": "32",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "background_background": "classic",
+                "background_color": "#FFFFFF",
+                "border_radius": {
+                  "top": "24",
+                  "right": "24",
+                  "bottom": "24",
+                  "left": "24",
+                  "unit": "px",
+                  "isLinked": true
+                },
+                "box_shadow_box_shadow_type": "yes",
+                "box_shadow_box_shadow": {
+                  "horizontal": 0,
+                  "vertical": 4,
+                  "blur": 12,
+                  "spread": 0,
+                  "color": "rgba(0,0,0,0.08)"
+                }
+              },
+              "elements": [
+                {
+                  "id": "sail-icon",
+                  "elType": "widget",
+                  "widgetType": "html",
+                  "settings": {
+                    "html": "<div style=\"width: 64px; height: 64px; background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;\">⛵</div>"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "sail-name",
+                  "elType": "widget",
+                  "widgetType": "heading",
+                  "settings": {
+                    "title": "Sailing",
+                    "header_size": "h3"
+                  },
+                  "elements": []
+                },
+                {
+                  "id": "sail-count",
+                  "elType": "widget",
+                  "widgetType": "text-editor",
+                  "settings": {
+                    "editor": "<p>35 camps</p>"
+                  },
+                  "elements": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "page_settings": []
+}
